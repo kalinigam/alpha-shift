@@ -1,0 +1,273 @@
+---
+import Base from '../layouts/Base.astro';
+import { brand, hero, look, shift, manifesto, work, chetan, closing, footer } from '../data/home.ts';
+
+// Split a string into word spans for the scroll "read" reveal (faint → ink).
+function words(str: string) {
+  return str.split(/\s+/).filter(Boolean);
+}
+const restWords = words(
+  'A problem you’re trying to solve. A conversation you’re not quite sure how to have. Or perhaps just a feeling that something needs to move.'
+);
+---
+
+<Base>
+  <!-- ============ NAV ============ -->
+  <header class="nav" id="nav">
+    <div class="wrap">
+      <a class="brand" href="#top"><span class="mark"></span>{brand.name}</a>
+      <nav class="nav-links">
+        <a href="#work">How we work</a>
+        <a href="#chetan">Meet Chetan</a>
+        <a class="cta" href="#explore">Let’s explore <span class="arr">→</span></a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- ============ HERO ============ -->
+    <section class="hero">
+      <div class="wrap">
+        <div class="hero-grid">
+          <div class="hero-copy">
+            <p class="kicker"><i></i>{hero.kickerLine}</p>
+            <h1>{hero.headBefore}<span class="accent">{hero.headAccent}{hero.headAfter}</span></h1>
+          </div>
+          <div class="art" data-hero-art>
+            <img src="/sketches/hero.svg" alt="A tangle of thoughts resolves through the mind into ordered, colourful possibilities." />
+          </div>
+        </div>
+      </div>
+      <div class="cue" aria-hidden="true"><i></i>Scroll</div>
+    </section>
+
+    <!-- ============ THOUGHT SCENE (pinned, word reveal) ============ -->
+    <section class="think" id="look" data-think>
+      <div class="pin">
+        <div class="wrap">
+          <div class="grid">
+            <h2 class="lead-big">Something you’re thinking about.</h2>
+            <p class="lead-rest">{restWords.map((w, i) => (<><span class="rvw" data-w={i}>{w}</span>{' '}</>))}</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SKETCH SCENE (sticky, crossfade) ============ -->
+    <section class="sketch" data-sketch>
+      <div class="pin">
+        <div class="wrap">
+          <div class="grid">
+            <div class="col-text">
+              <div class="fill"><i data-fill></i></div>
+              <div class="steps">
+                <div class="step step1" data-step1>
+                  <h2>Sometimes, you already know enough. Yet there’s still <em>a missing piece.</em></h2>
+                  <p>Something you can’t quite put your finger on. It could be a conversation. A different perspective. A small decision. Or simply seeing something you thought you knew in a different way.</p>
+                </div>
+                <div class="step step2" data-step2>
+                  <h2>Maybe it starts with a better <em>question.</em></h2>
+                  <p>Or a clearer observation. Perhaps you see a possibility you hadn’t considered. Perhaps you decide to do something differently. <span class="serif">And that’s where the shift begins.</span></p>
+                </div>
+              </div>
+            </div>
+            <div class="col-art">
+              <div class="card">
+                <img src={look.sketch.src} alt={look.sketch.alt} data-img1 />
+                <img src={shift.row.sketch.src} alt={shift.row.sketch.alt} data-img2 style="opacity:0" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ MAKE THE SHIFT (dark cinematic horizontal) ============ -->
+    <section class="mts is-dark" data-mts>
+      <div class="pin">
+        <div class="ghost" data-ghost aria-hidden="true">
+          <b>A thought</b><b>A possibility</b><b>A decision</b><b>Action</b>
+        </div>
+        <div class="wrap fg">
+          <p class="intro" data-mts-intro>Not everything needs a new plan. Sometimes, it needs <span class="serif">a new way of looking</span> at the old one.</p>
+          <p class="outro" data-mts-outro>Small shifts can change <span class="serif">what happens next.</span></p>
+        </div>
+        <div class="bar"><i data-mts-bar></i></div>
+      </div>
+    </section>
+
+    <!-- ============ MANIFESTO (dark tail) ============ -->
+    <section class="manifesto is-dark">
+      <div class="wrap">
+        <p class="bullet rise" data-rise>That’s what Alpha Shift is about.</p>
+        <p class="big rise" data-rise>Creating the space <span class="serif">to explore.</span></p>
+        <p class="say rise" data-rise>To think differently. To see more clearly. To find what matters. And then to do something about it.</p>
+      </div>
+    </section>
+
+    <!-- ============ HOW WE WORK ============ -->
+    <section class="work" id="work">
+      <div class="wrap">
+        <span class="tag rise" data-rise>How we work</span>
+        <div class="head">
+          <h2 class="rise" data-rise>We start <span class="serif">where you are.</span></h2>
+        </div>
+        <ol>
+          {work.items.map((item, i) => (
+            <li class="rise" data-rise>
+              <span class="no">0{i + 1}</span>
+              <p>{item}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+
+    <!-- ============ MEET CHETAN ============ -->
+    <section class="chetan" id="chetan">
+      <div class="wrap">
+        <div class="grid">
+          <div class="card rise" data-rise>
+            <span class="mk">{chetan.portrait.mark}</span>
+            <span class="glyph" aria-hidden="true">C.</span>
+          </div>
+          <div class="rise" data-rise>
+            <span class="tag">Meet Chetan</span>
+            <h2>{chetan.para}</h2>
+            <p class="body">{chetan.constant}</p>
+            <div class="quote"><p set:html={chetan.portrait.quoteHtml} /></div>
+            <p class="body">{chetan.soft}</p>
+            <a class="meet" href={chetan.link.href}>{chetan.link.label} <span class="arr">→</span></a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ CLOSING ============ -->
+    <section class="closing" id="explore">
+      <div class="wrap">
+        <h2 class="rise" data-rise>{closing.headBefore}<span class="serif">{closing.headSerif}</span>{closing.headAfter}</h2>
+        <p class="rise" data-rise>You don’t need to have it figured out. <b>Bring the question. Bring the challenge. Bring the half-formed thought.</b> We’ll start there.</p>
+        <a class="btn rise" data-rise href={closing.cta.href}>{closing.cta.label} <span class="arr">→</span></a>
+      </div>
+    </section>
+
+    <!-- ============ FOOTER ============ -->
+    <footer class="is-dark">
+      <div class="wrap">
+        <p class="say" set:html={footer.copyHtml} />
+        <div class="row">
+          <a class="brand" href="#top"><span class="mark"></span>{brand.name}</a>
+          <nav class="flinks">
+            {footer.links.map((l) => (<a href={l.href}>{l.label}</a>))}
+          </nav>
+          <span class="cr">{footer.copyright}</span>
+        </div>
+      </div>
+    </footer>
+  </main>
+</Base>
+
+<script>
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+  gsap.registerPlugin(ScrollTrigger);
+
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---- preloader ---- */
+  const pre = document.getElementById('preloader');
+  function hidePre() {
+    document.body.classList.add('loaded');
+    if (pre) { pre.classList.add('done'); setTimeout(() => pre.remove(), 700); }
+    ScrollTrigger.refresh();
+  }
+  window.addEventListener('load', () => setTimeout(hidePre, 900));
+  setTimeout(hidePre, 2600);
+
+  /* ---- nav: solid on scroll + invert over dark sections ---- */
+  const nav = document.getElementById('nav');
+  const onScroll = () => nav.classList.toggle('solid', window.scrollY > 40);
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
+  document.querySelectorAll('.is-dark').forEach((sec) => {
+    ScrollTrigger.create({
+      trigger: sec, start: 'top 64px', end: 'bottom 64px',
+      onToggle: (s) => nav.classList.toggle('on-dark', s.isActive),
+    });
+  });
+
+  /* ---- generic rise reveals ---- */
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: 0.18, rootMargin: '0px 0px -6% 0px' });
+  document.querySelectorAll('[data-rise]').forEach((el) => io.observe(el));
+
+  /* ---- hero art subtle parallax ---- */
+  const art = document.querySelector('[data-hero-art]');
+  if (art && !reduce) {
+    gsap.to(art, { yPercent: 12, ease: 'none',
+      scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true } });
+    gsap.from(art, { opacity: 0, x: 40, duration: 1.1, ease: 'power2.out', delay: 0.2 });
+    gsap.from('.hero h1', { opacity: 0, y: 30, duration: 1, ease: 'power3.out', delay: 0.15 });
+  }
+
+  const mm = gsap.matchMedia();
+
+  /* ---- THOUGHT scene: pin + word-by-word reveal ---- */
+  mm.add('(min-width: 861px) and (prefers-reduced-motion: no-preference)', () => {
+    const words = gsap.utils.toArray('[data-w]');
+    ScrollTrigger.create({
+      trigger: '[data-think]', start: 'top top', end: '+=120%', pin: '[data-think] .pin', scrub: true,
+      onUpdate: (self) => {
+        const n = Math.round(self.progress * words.length);
+        words.forEach((w, i) => w.classList.toggle('on', i < n));
+      },
+    });
+  });
+
+  /* ---- SKETCH scene: sticky, scroll-driven text slide + image crossfade ---- */
+  (function () {
+    const sec = document.querySelector('[data-sketch]');
+    if (!sec) return;
+    const step1 = sec.querySelector('[data-step1]');
+    const step2 = sec.querySelector('[data-step2]');
+    const img1 = sec.querySelector('[data-img1]');
+    const img2 = sec.querySelector('[data-img2]');
+    const fill = sec.querySelector('[data-fill]');
+    const cl = (v) => (v < 0 ? 0 : v > 1 ? 1 : v);
+    function upd() {
+      const mob = window.matchMedia('(max-width:880px)').matches || reduce;
+      if (mob) { [step1, step2, img1, img2].forEach((e) => e && (e.style.opacity = '', e.style.transform = '')); if (fill) fill.style.transform = 'scaleY(1)'; return; }
+      const vh = window.innerHeight;
+      const total = sec.offsetHeight - vh;
+      const p = cl(-sec.getBoundingClientRect().top / (total || 1));
+      if (fill) fill.style.transform = 'scaleY(' + p + ')';
+      // hold1 (see step1) → transition → hold2 (see step2)
+      const t = cl((p - 0.28) / 0.34);          // 0..1 across the middle third
+      if (step1) { step1.style.transform = 'translateY(' + (-t * 40) + 'px)'; step1.style.opacity = String(1 - cl(t * 1.6)); }
+      if (step2) { step2.style.transform = 'translateY(' + ((1 - t) * 40) + 'px)'; step2.style.opacity = String(cl((t - 0.35) * 1.7)); }
+      if (img1) img1.style.opacity = String(1 - cl((t - 0.1) * 1.6));
+      if (img2) img2.style.opacity = String(cl((t - 0.3) * 1.7));
+    }
+    window.addEventListener('scroll', upd, { passive: true });
+    window.addEventListener('resize', upd);
+    upd();
+  })();
+
+  /* ---- MAKE THE SHIFT: pin + horizontal ghost words + fg crossfade ---- */
+  mm.add('(min-width: 881px) and (prefers-reduced-motion: no-preference)', () => {
+    const ghost = document.querySelector('[data-ghost]');
+    const intro = document.querySelector('[data-mts-intro]');
+    const outro = document.querySelector('[data-mts-outro]');
+    const bar = document.querySelector('[data-mts-bar]');
+    const shift = () => ghost.scrollWidth - window.innerWidth * 0.9;
+    const tl = gsap.timeline({
+      scrollTrigger: { trigger: '[data-mts]', start: 'top top', end: 'bottom bottom', pin: '[data-mts] .pin', scrub: 0.6 },
+    });
+    tl.to(ghost, { x: () => -shift(), ease: 'none', duration: 1 }, 0);
+    tl.to(bar, { width: '100%', ease: 'none', duration: 1 }, 0);
+    tl.to(intro, { opacity: 0, y: -30, ease: 'none', duration: 0.25 }, 0.15);
+    tl.fromTo(outro, { opacity: 0, y: 30 }, { opacity: 1, y: 0, ease: 'none', duration: 0.25 }, 0.55);
+  });
+</script>

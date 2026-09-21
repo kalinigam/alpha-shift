@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 690 82" width="690" height="82">
+  <defs>
+    <filter id="pencil" x="-3%" y="-40%" width="106%" height="180%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.018" numOctaves="2" seed="9" result="warp"/>
+      <feDisplacementMap in="SourceGraphic" in2="warp" scale="5" result="rough"/>
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="23" result="grain"/>
+      <feDisplacementMap in="rough" in2="grain" scale="1.1"/>
+    </filter>
+  </defs>
+  <g fill="none" stroke="#45403a" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" filter="url(#pencil)">
+    <path d="M4 10 C42 7 53 59 92 64 C127 69 150 43 181 45"/>
+    <path d="M282 45 C374 45 471 45 686 45"/>
+  </g>
+</svg>

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 526 108" width="526" height="108">
+  <defs>
+    <filter id="pencil" x="-5%" y="-18%" width="110%" height="136%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.022" numOctaves="2" seed="13" result="warp"/>
+      <feDisplacementMap in="SourceGraphic" in2="warp" scale="5" result="rough"/>
+      <feTurbulence type="fractalNoise" baseFrequency="0.82" numOctaves="2" seed="29" result="grain"/>
+      <feDisplacementMap in="rough" in2="grain" scale="1.2"/>
+    </filter>
+  </defs>
+  <g stroke="#45403a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" filter="url(#pencil)">
+    <g fill="#E8551A"><circle class="sorted-ball" cx="32" cy="73" r="27"/><circle class="sorted-ball" cx="85" cy="73" r="27"/><circle class="sorted-ball" cx="59" cy="27" r="27"/></g>
+    <g fill="#F3DE9B"><circle class="sorted-ball" cx="166" cy="73" r="27"/><circle class="sorted-ball" cx="219" cy="73" r="27"/><circle class="sorted-ball" cx="193" cy="27" r="27"/></g>
+    <g fill="#B9CFB0"><circle class="sorted-ball" cx="300" cy="73" r="27"/><circle class="sorted-ball" cx="353" cy="73" r="27"/><circle class="sorted-ball" cx="327" cy="27" r="27"/></g>
+    <g fill="#CFC6E6"><circle class="sorted-ball" cx="434" cy="73" r="27"/><circle class="sorted-ball" cx="487" cy="73" r="27"/><circle class="sorted-ball" cx="461" cy="27" r="27"/></g>
+  </g>
+</svg>

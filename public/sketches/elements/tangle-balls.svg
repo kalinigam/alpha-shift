@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 326 336" width="326" height="336">
+  <defs>
+    <filter id="pencil" x="-10%" y="-10%" width="120%" height="120%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.024" numOctaves="2" seed="7" result="warp"/>
+      <feDisplacementMap in="SourceGraphic" in2="warp" scale="5" result="rough"/>
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="37" result="grain"/>
+      <feDisplacementMap in="rough" in2="grain" scale="1.2"/>
+    </filter>
+  </defs>
+  <g stroke="#45403a" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" filter="url(#pencil)">
+    <circle class="ball" cx="51" cy="41" r="29" fill="#E8551A"/>
+    <circle class="ball" cx="217" cy="5" r="29" fill="#F3DE9B" transform="translate(0 29)"/>
+    <circle class="ball" cx="151" cy="96" r="29" fill="#B9CFB0"/>
+    <circle class="ball" cx="277" cy="103" r="29" fill="#CFC6E6"/>
+    <circle class="ball" cx="32" cy="176" r="29" fill="#CFC6E6"/>
+    <circle class="ball" cx="212" cy="176" r="29" fill="#E8551A"/>
+    <circle class="ball" cx="297" cy="207" r="29" fill="#F3DE9B"/>
+    <circle class="ball" cx="76" cy="247" r="29" fill="#F3DE9B"/>
+    <circle class="ball" cx="126" cy="304" r="29" fill="#B9CFB0"/>
+    <circle class="ball" cx="228" cy="287" r="29" fill="#E8551A"/>
+  </g>
+</svg>

@@ -1,0 +1,41 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = 'Alpha Shift — Shift Thinking. Shape Success.',
+  description = 'Alpha Shift is a coaching, facilitation and consulting practice. Sometimes a useful shift begins not with more information, but with a different way of looking at what is already there.',
+} = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap"
+      rel="stylesheet"
+    />
+    <script is:inline>
+      // Mark JS as available so scroll-reveal / cluster fades never hide content without it.
+      document.documentElement.classList.add('js');
+    </script>
+  </head>
+  <body>
+    <div id="preloader" aria-hidden="true"><div class="pl-bar"><i></i></div></div>
+    <slot />
+  </body>
+</html>

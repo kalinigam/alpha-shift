@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 68 68" width="68" height="68" color="#E8551A">
+  <defs>
+    <filter id="pencil" x="-20%" y="-20%" width="140%" height="140%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.025" numOctaves="2" seed="17" result="warp"/>
+      <feDisplacementMap in="SourceGraphic" in2="warp" scale="5" result="rough"/>
+      <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="31" result="grain"/>
+      <feDisplacementMap in="rough" in2="grain" scale="1.1"/>
+    </filter>
+  </defs>
+  <circle class="ball" cx="34" cy="34" r="28" fill="currentColor" stroke="#45403a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" filter="url(#pencil)"/>
+</svg>

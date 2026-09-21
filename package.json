@@ -1,0 +1,21 @@
+{
+  "name": "alpha-shift",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Alpha Shift — Shift Thinking. Shape Success. Coaching, facilitation and consulting practice.",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "astro": "^5.6.1",
+    "gsap": "^3.15.0"
+  },
+  "devDependencies": {
+    "puppeteer-core": "^25.11.0"
+  }
+}

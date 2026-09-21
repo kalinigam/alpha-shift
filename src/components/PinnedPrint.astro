@@ -1,0 +1,19 @@
+---
+/*
+ * A hand-drawn sketchnote, presented flat and honest — no skeuomorphic tape/tilt.
+ * The white paper of the scan drops out via mix-blend-mode:multiply so the drawing
+ * sits directly on the page.
+ */
+interface Props {
+  src: string;
+  alt: string;
+  caption: string;
+}
+
+const { src, alt, caption } = Astro.props;
+---
+
+<figure class="sketch-figure">
+  <img src={src} alt={alt} loading="lazy" />
+  <figcaption>{caption}</figcaption>
+</figure>

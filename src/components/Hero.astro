@@ -1,0 +1,40 @@
+---
+import { hero } from '../data/home';
+import HeroScene from './HeroScene.astro';
+---
+
+<section class="hero wrap" id="hero">
+  <!-- Upper area: the animated tangle → brain → clarity scene -->
+  <div class="hero-visual">
+    <HeroScene />
+  </div>
+
+  <!-- Lower: headline bottom-left, supporting copy + chips + CTA bottom-right -->
+  <div class="hero-foot">
+    <div class="hero-head">
+      <p class="kick"><b>{hero.kicker}</b><span class="sep">—</span>{hero.kickerLine}</p>
+      <h1>{hero.headBefore}<span class="q" id="q">{hero.headAccent}</span>{hero.headAfter}</h1>
+    </div>
+
+    <div class="hero-aside">
+      <p class="lede" set:html={hero.ledeHtml}></p>
+
+      <p class="chips-lead">{hero.chipsLead}</p>
+      <div class="chips" id="chips" role="group" aria-label={hero.chipsLead}>
+        {hero.chips.map((chip) => (
+          <button class="chip" data-key={chip.key} aria-pressed="false">
+            <span class="swab" style={`background:${chip.color}`}></span>{chip.label}
+          </button>
+        ))}
+      </div>
+
+      <div class="actions">
+        {hero.ctas.map((cta) => (
+          <a class={`btn btn-${cta.style}`} href={cta.href}>
+            {cta.label}{cta.arrow && <span class="arw">→</span>}
+          </a>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>

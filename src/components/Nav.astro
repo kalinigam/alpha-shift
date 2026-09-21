@@ -1,0 +1,16 @@
+---
+import { brand, nav } from '../data/home';
+---
+
+<header class="nav" id="nav">
+  <div class="wrap nav-in">
+    <a class="brand" href="#top">
+      <b>{brand.name}<span class="dot">.</span></b>
+      <small>{brand.tagline}</small>
+    </a>
+    <nav class="menu">
+      {nav.map((item) => <a class="navlink" href={item.href}>{item.label}</a>)}
+      <a class="cta" href="#explore">Let’s Explore</a>
+    </nav>
+  </div>
+</header>
