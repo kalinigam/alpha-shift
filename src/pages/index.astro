@@ -34,7 +34,7 @@ const restWords = words(
             <h1>{hero.headBefore}<span class="accent">{hero.headAccent}{hero.headAfter}</span></h1>
           </div>
           <div class="art" data-hero-art>
-            <img src="/sketches/hero.svg" alt="A tangle of thoughts resolves through the mind into ordered, colourful possibilities." />
+            <img src={`${import.meta.env.BASE_URL}sketches/hero.svg`} alt="A tangle of thoughts resolves through the mind into ordered, colourful possibilities." />
           </div>
         </div>
       </div>

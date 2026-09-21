@@ -1,0 +1,10 @@
+const puppeteer=require('puppeteer-core');
+const EDGE='C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe';
+(async()=>{const b=await puppeteer.launch({executablePath:EDGE,headless:'new',args:['--no-sandbox','--hide-scrollbars']});
+const p=await b.newPage();await p.setViewport({width:1440,height:900});
+await p.goto('http://localhost:4321/sketch-variants/',{waitUntil:'networkidle0'});
+await new Promise(r=>setTimeout(r,2500));
+const h=await p.evaluate(()=>document.body.scrollHeight);
+console.log('docHeight',h,'opts',(await p.$$('.opt')).length);
+await p.screenshot({path:process.argv[2]+'-full.png',fullPage:true});
+await b.close();})();

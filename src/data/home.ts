@@ -56,7 +56,7 @@ export const look = {
   ],
   softHtml: 'Or simply seeing something you thought you knew in a different way.',
   sketch: {
-    src: '/sketches/river-crossing.jpeg',
+    src: import.meta.env.BASE_URL + 'sketches/river-crossing.jpeg',
     alt: 'A person crosses a river using boulders — the known ones dark, three coloured ones the possible next moves: a conversation, a different perspective, a small decision.',
     caption: 'Sketchnote', // label
     tilt: 'left' as const,
@@ -80,7 +80,7 @@ export const shift = {
       'A thought becomes a possibility. A possibility becomes a decision. <span class="o">A decision becomes action.</span>',
     soft: 'Small shifts can change what happens next.',
     sketch: {
-      src: '/sketches/thought-to-action.jpeg',
+      src: import.meta.env.BASE_URL + 'sketches/thought-to-action.jpeg',
       alt: 'A person is thinking; the thought becomes a light bulb; then the person runs holding the bulb — something is done with the insight.',
       caption: 'Sketchnote', // label
       tilt: 'right' as const,

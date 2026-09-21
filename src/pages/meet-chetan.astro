@@ -1,0 +1,272 @@
+---
+// Meet Chetan — internal page. Same chrome/design language as the v5 homepage.
+// Copy is SOURCE OF TRUTH (verbatim) from ../data/chetanPage.ts.
+import Internal from '../layouts/Internal.astro';
+import { chetanPage } from '../data/chetanPage.ts';
+
+const { narrative, thingsITry, refrain, closing, cta, credentials } = chetanPage;
+
+// Group the verbatim narrative lines into readable beats (words untouched).
+const leadPara = narrative.slice(1, 6).join(' ');
+const journey1 = narrative.slice(6, 11).join(' ');
+const journey2 = narrative.slice(11, 13).join(' ');
+const turnInward = narrative[13];
+const questions = narrative.slice(14, 19);
+const learning = narrative.slice(19, 21).join(' ');
+const noticeMissing = narrative[23];
+const lookCloser = narrative[24];
+const alreadyThere = narrative.slice(25, 29).join(' ');
+const someoneElse = narrative[29];
+const mission1 = narrative[30];
+const mission2 = narrative[31];
+
+// Things I try
+const tryHeading = thingsITry[0];
+const tryCards = [
+  thingsITry[1],
+  thingsITry[2],
+  [thingsITry[3], thingsITry[4], thingsITry[5]].join(' '),
+];
+const tryClose = thingsITry[6];
+---
+
+<Internal
+  title="Meet Chetan — Alpha Shift"
+  description="Curiosity that travelled through banking, fintech, marketing, education and business — and the questions it kept asking. Meet Chetan, founder of Alpha Shift."
+>
+  <!-- ============ INTRO — curiosity + portrait placeholder ============ -->
+  <section class="mc-intro">
+    <div class="wrap">
+      <div class="grid">
+        <div class="col-l rise" data-rise>
+          <span class="tag">Meet Chetan</span>
+          <h1>{narrative[0].replace(/curious\.$/, '')}<em>curious.</em></h1>
+          <p class="lede">{leadPara}</p>
+        </div>
+        <div class="col-r rise" data-rise>
+          <div class="portrait">
+            <span class="glyph serif" aria-hidden="true">C</span>
+            <span class="ph">Portrait — to come</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ THE JOURNEY ============ -->
+  <section class="mc-story">
+    <div class="wrap">
+      <div class="beat rise" data-rise>
+        <p>{journey1}</p>
+        <p>{journey2}</p>
+      </div>
+
+      <div class="inward rise" data-rise>
+        <p class="turn">{turnInward}</p>
+        <ul class="questions">
+          {questions.map((q) => (<li class="serif">{q}</li>))}
+        </ul>
+      </div>
+
+      <div class="beat rise" data-rise>
+        <p>{learning}</p>
+        <p class="still"><em>{narrative[21]}</em></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PULL QUOTE — what if we looked at what's already there ============ -->
+  <section class="mc-pull">
+    <div class="wrap">
+      <blockquote class="rise" data-rise>
+        <p class="q-small">{noticeMissing}</p>
+        <p class="q-big"><span class="serif">{lookCloser}</span></p>
+      </blockquote>
+    </div>
+  </section>
+
+  <!-- ============ ALREADY THERE + MISSION ============ -->
+  <section class="mc-story tight">
+    <div class="wrap">
+      <div class="beat rise" data-rise>
+        <p>{alreadyThere}</p>
+        <p>{someoneElse}</p>
+      </div>
+      <div class="mission rise" data-rise>
+        <p class="m1">{mission1}</p>
+        <p class="m2">{mission2}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ THINGS I TRY ============ -->
+  <section class="mc-try">
+    <div class="wrap">
+      <div class="head rise" data-rise>
+        <span class="tag">Off the page</span>
+        <h2>{tryHeading}</h2>
+      </div>
+      <div class="cards">
+        {tryCards.map((c, i) => (
+          <article class="card rise" data-rise>
+            <span class="no">0{i + 1}</span>
+            <p>{c}</p>
+          </article>
+        ))}
+      </div>
+      <p class="try-close serif rise" data-rise>{tryClose}</p>
+    </div>
+  </section>
+
+  <!-- ============ REFRAIN ============ -->
+  <section class="mc-refrain">
+    <div class="wrap">
+      <p class="rise" data-rise>
+        {refrain.map((r, i) => (
+          <span class={i === refrain.length - 1 ? 'serif line' : 'line'}>{r} </span>
+        ))}
+      </p>
+    </div>
+  </section>
+
+  <!-- ============ CLOSING ============ -->
+  <section class="mc-closing">
+    <div class="wrap">
+      <div class="grid">
+        <div class="col-l rise" data-rise>
+          <span class="tag">Why Alpha Shift</span>
+          <h2>{closing[0]}</h2>
+        </div>
+        <div class="col-r rise" data-rise>
+          <p class="lede">{closing.slice(1).join(' ')}</p>
+          <div class="ctas">
+            <a class="btn" href={`${import.meta.env.BASE_URL}explore/`}>{cta}</a>
+            <a class="ghost" href={`${import.meta.env.BASE_URL}programmes/`}>Programmes</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CREDENTIALS ============ -->
+  <section class="mc-creds">
+    <div class="wrap">
+      <div class="grid rise" data-rise>
+        <span class="tag">{credentials.heading}</span>
+        <ul>
+          {credentials.items.map((it) => (<li>{it}</li>))}
+        </ul>
+      </div>
+    </div>
+  </section>
+</Internal>
+
+<style>
+  /* ===== shared rhythm ===== */
+  section > .wrap{width:100%}
+
+  /* ===== INTRO — headline + muted lede + portrait placeholder ===== */
+  .mc-intro{padding-block:clamp(56px,11vh,120px) clamp(50px,9vh,110px)}
+  .mc-intro .grid{display:grid;grid-template-columns:1.12fr .88fr;gap:clamp(40px,6vw,88px);align-items:start}
+  .mc-intro h1{font-size:clamp(2.6rem,6.4vw,5rem);font-weight:600;letter-spacing:-.05em;line-height:.98;
+    margin:clamp(20px,3.4vh,30px) 0 clamp(24px,4vh,38px);max-width:12ch}
+  .mc-intro h1 em{color:var(--orange)}
+  .mc-intro .lede{font-size:clamp(1.1rem,1.8vw,1.35rem);color:var(--muted);line-height:1.58;max-width:46ch;margin:0}
+  .portrait{position:relative;aspect-ratio:4/5;background:var(--paper-2);border:1px solid var(--line);border-radius:18px;
+    overflow:hidden;display:flex;align-items:center;justify-content:center;
+    box-shadow:0 1px 2px rgba(20,19,17,.04),0 24px 60px rgba(20,19,17,.07)}
+  .portrait .glyph{font-size:clamp(6rem,15vw,11rem);line-height:1;color:rgba(20,19,17,.10)}
+  .portrait .ph{position:absolute;left:22px;bottom:20px;font-family:var(--mono);font-size:11px;
+    letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+
+  /* ===== STORY beats ===== */
+  .mc-story{padding-block:clamp(20px,4vh,44px)}
+  .mc-story.tight{padding-top:0}
+  .mc-story .beat{max-width:60ch;margin:0 auto}
+  .mc-story .beat + .inward,.mc-story .inward + .beat,.mc-story .beat + .mission{margin-top:clamp(34px,6vh,64px)}
+  .mc-story p{font-size:clamp(1.15rem,1.9vw,1.4rem);color:var(--muted);line-height:1.62;margin:0 0 1em;max-width:58ch}
+  .mc-story p:last-child{margin-bottom:0}
+  .mc-story .still{color:var(--ink)}
+  .mc-story .still em{color:var(--ink)}
+
+  /* the inward questions — a quiet serif stack, hairline-marked */
+  .inward{max-width:60ch;margin:0 auto}
+  .inward .turn{font-size:clamp(1.15rem,1.9vw,1.4rem);color:var(--ink);font-weight:500;line-height:1.5;
+    margin:0 0 clamp(20px,3vh,30px)}
+  .inward .questions{list-style:none;margin:0;padding-left:clamp(20px,2.6vw,34px);
+    border-left:2px solid var(--orange)}
+  .inward .questions li{font-size:clamp(1.35rem,3vw,2.1rem);letter-spacing:-.02em;line-height:1.3;
+    color:var(--ink);margin:0 0 .28em}
+  .inward .questions li:last-child{margin-bottom:0}
+
+  /* mission — the two purpose lines */
+  .mission{max-width:52ch;margin:0 auto}
+  .mission .m1{font-size:clamp(1.35rem,2.6vw,2rem);font-weight:600;letter-spacing:-.03em;line-height:1.2;
+    color:var(--ink);margin:0 0 .5em}
+  .mission .m2{font-size:clamp(1.15rem,1.9vw,1.4rem);color:var(--muted);line-height:1.55;margin:0}
+
+  /* ===== PULL QUOTE ===== */
+  .mc-pull{padding-block:clamp(56px,11vh,130px)}
+  .mc-pull blockquote{margin:0 auto;max-width:24ch;text-align:center}
+  .mc-pull .q-small{font-family:var(--mono);font-size:clamp(12px,1.3vw,14px);letter-spacing:.14em;
+    text-transform:uppercase;color:var(--muted);margin:0 0 clamp(18px,3vh,28px);max-width:none;line-height:1.5}
+  .mc-pull .q-big{font-size:clamp(2.4rem,6vw,4.6rem);font-weight:600;letter-spacing:-.04em;line-height:1.06;
+    color:var(--ink);margin:0}
+  .mc-pull .q-big .serif{color:var(--orange-deep)}
+
+  /* ===== THINGS I TRY ===== */
+  .mc-try{padding-block:clamp(56px,11vh,130px)}
+  .mc-try .head{max-width:60ch;margin:0 auto clamp(30px,5vh,52px)}
+  .mc-try .head h2{font-size:clamp(1.9rem,4.4vw,3rem);font-weight:600;letter-spacing:-.035em;line-height:1.08;
+    margin:clamp(16px,2.6vh,22px) 0 0;max-width:20ch}
+  .mc-try .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(16px,2.4vw,26px)}
+  .mc-try .card{background:var(--panel);border:1px solid var(--line);border-radius:18px;
+    padding:clamp(26px,2.8vw,38px);display:flex;flex-direction:column;gap:clamp(20px,3vw,34px);
+    box-shadow:0 1px 2px rgba(20,19,17,.03)}
+  .mc-try .card .no{font-family:var(--mono);font-size:13px;color:var(--orange-deep);letter-spacing:.08em}
+  .mc-try .card p{margin:0;font-size:clamp(1.1rem,1.6vw,1.28rem);color:var(--ink);line-height:1.5;letter-spacing:-.01em}
+  .mc-try .try-close{display:block;text-align:center;font-size:clamp(1.5rem,3.4vw,2.4rem);color:var(--ink);
+    letter-spacing:-.02em;margin:clamp(34px,6vh,60px) auto 0}
+
+  /* ===== REFRAIN ===== */
+  .mc-refrain{padding-block:clamp(46px,9vh,110px)}
+  .mc-refrain p{margin:0 auto;max-width:26ch;text-align:center;
+    font-size:clamp(2rem,5.2vw,4rem);font-weight:600;letter-spacing:-.04em;line-height:1.12;color:var(--ink)}
+  .mc-refrain .line{display:inline}
+  .mc-refrain .serif{color:var(--orange)}
+
+  /* ===== CLOSING ===== */
+  .mc-closing{padding-block:clamp(56px,11vh,130px)}
+  .mc-closing .grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(30px,5vw,76px);align-items:start}
+  .mc-closing h2{font-size:clamp(2.1rem,4.8vw,3.4rem);font-weight:600;letter-spacing:-.04em;line-height:1.08;
+    margin:clamp(18px,3vh,26px) 0 0;max-width:16ch}
+  .mc-closing .lede{font-size:clamp(1.1rem,1.8vw,1.35rem);color:var(--muted);line-height:1.6;margin:0 0 clamp(28px,4vh,40px)}
+  .mc-closing .ctas{display:flex;flex-wrap:wrap;gap:16px;align-items:center}
+  .mc-closing .btn{display:inline-flex;align-items:center;gap:.5em;background:var(--orange);color:#141311;font-weight:600;
+    font-size:1.02rem;padding:15px 32px;border-radius:999px;box-shadow:0 10px 28px rgba(232,85,26,.26);
+    transition:transform .2s,box-shadow .2s}
+  .mc-closing .btn:hover{transform:translateY(-2px);box-shadow:0 16px 38px rgba(232,85,26,.34)}
+  .mc-closing .ghost{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:999px;
+    padding:15px 28px;font-weight:600;color:var(--ink);transition:border-color .2s,background .2s}
+  .mc-closing .ghost:hover{border-color:var(--ink);background:#fff}
+
+  /* ===== CREDENTIALS ===== */
+  .mc-creds{padding-block:clamp(30px,6vh,70px) clamp(60px,12vh,140px)}
+  .mc-creds .grid{display:grid;grid-template-columns:.6fr 1.4fr;gap:clamp(24px,4vw,64px);align-items:start;
+    border-top:1px solid var(--line);padding-top:clamp(30px,5vh,48px)}
+  .mc-creds ul{list-style:none;margin:0;padding:0}
+  .mc-creds li{font-size:clamp(1.05rem,1.7vw,1.28rem);color:var(--ink);letter-spacing:-.01em;
+    padding:clamp(16px,2.4vh,22px) 0;border-bottom:1px solid var(--line)}
+  .mc-creds li:first-child{padding-top:0}
+  .mc-creds li:last-child{border-bottom:0;padding-bottom:0}
+
+  /* ===== RESPONSIVE ===== */
+  @media(max-width:860px){
+    .mc-intro .grid{grid-template-columns:1fr;gap:36px}
+    .mc-intro .col-r{order:-1;max-width:420px}
+    .mc-intro h1{max-width:none}
+    .mc-try .cards{grid-template-columns:1fr}
+    .mc-closing .grid{grid-template-columns:1fr;gap:14px}
+    .mc-creds .grid{grid-template-columns:1fr;gap:20px}
+  }
+</style>

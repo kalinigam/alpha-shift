@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Alpha Shift — Something on your mind?</title>
+<meta name="description" content="Shift Thinking. Shape Success." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    /* neutrals */
+    --paper:#F7F5F0; --paper-2:#EFECE4; --paper-3:#F3F0E8; --surface:#FFFFFF;
+    --ink:#141311; --muted:#6F6A60; --line:rgba(20,19,17,.14); --line-soft:rgba(20,19,17,.08);
+    /* signal */
+    --orange:#E8551A; --orange-deep:#B23F10;
+    /* pastels — pale fill / deep text */
+    --yellow:#F3DE9B;   --yellow-deep:#7A5A0F;
+    --green:#B9CFB0;    --green-deep:#3F5B3B;
+    --lavender:#CFC6E6; --lavender-deep:#4B3F72;
+    /* soft washes (for scroll colour shifts) */
+    --wash-lav:#ECE7F1; --wash-yellow:#F5EFD9; --wash-green:#E6EDE1;
+    --sans:"Geist",system-ui,-apple-system,sans-serif;
+    --mono:"Geist Mono",ui-monospace,monospace;
+    --serif:"Instrument Serif",Georgia,serif;
+    --maxw:1080px; --readw:660px;
+    --shadow:0 1px 2px rgba(20,19,17,.05),0 22px 50px rgba(20,19,17,.09);
+    --bg:var(--paper);
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-weight:400;
+    line-height:1.6;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:hidden;
+    transition:background-color .9s cubic-bezier(.4,0,.2,1)}
+  body::after{content:"";position:fixed;inset:0;z-index:300;pointer-events:none;opacity:.045;mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+  ::selection{background:rgba(232,85,26,.20)}
+  .serif{font-family:var(--serif);font-style:italic;font-weight:400}
+  .mono{font-family:var(--mono)}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 clamp(22px,5vw,48px)}
+  .read{max-width:var(--readw);margin:0 auto;padding:0 clamp(22px,5vw,48px)}
+  a{color:var(--orange-deep);text-decoration:none}
+
+  /* scroll progress — the orange thread */
+  .progress{position:fixed;top:0;left:0;height:3px;width:100%;transform:scaleX(0);transform-origin:0 50%;
+    background:var(--orange);z-index:400;transition:transform .1s linear}
+
+  /* ============ NAV ============ */
+  nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;
+    padding:18px clamp(22px,5vw,48px);transition:background .4s,box-shadow .4s,padding .4s}
+  nav.solid{background:color-mix(in srgb,var(--bg) 84%,transparent);backdrop-filter:blur(10px);
+    box-shadow:0 1px 0 var(--line-soft);padding-top:14px;padding-bottom:14px}
+  nav .wm{font-weight:600;letter-spacing:-.03em;font-size:1.15rem;color:var(--ink)}
+  nav .wm .dot{color:var(--orange)}
+  nav .nav-cta{display:inline-flex;align-items:center;gap:.5em;font-weight:500;font-size:.9rem;color:var(--ink);
+    border:1px solid var(--line);border-radius:999px;padding:9px 18px;transition:border-color .2s,background .2s}
+  nav .nav-cta:hover{border-color:var(--ink);background:var(--surface)}
+  nav .nav-cta .dot{color:var(--orange);font-weight:700}
+
+  /* ============ HERO ============ */
+  .hero{min-height:100svh;display:flex;flex-direction:column;justify-content:center;position:relative;
+    padding:120px 0 90px;overflow:hidden}
+  .hero .dateline{font-family:var(--mono);font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);
+    margin:0 0 clamp(24px,5vh,44px);display:flex;align-items:center;gap:14px}
+  .hero .dateline i{width:30px;height:1px;background:var(--line);display:inline-block}
+  .wordmark{font-weight:600;letter-spacing:-.05em;line-height:.86;font-size:clamp(3.6rem,15.5vw,12rem);margin:0;position:relative;z-index:2}
+  .wordmark .dot{color:var(--orange)}
+  .hero .tag{font-size:clamp(1.15rem,2.4vw,1.9rem);letter-spacing:-.01em;margin:.7em 0 0;color:var(--muted);font-weight:400;position:relative;z-index:2}
+  .hero .tag .serif{color:var(--ink)}
+  .hero .ask{margin-top:clamp(40px,7vh,80px);font-size:clamp(2rem,5.2vw,3.6rem);font-weight:600;letter-spacing:-.035em;
+    line-height:1.02;min-height:1.2em;position:relative;z-index:2}
+  .hero .ask .serif{color:var(--ink)}
+  .caret{display:inline-block;width:.06em;height:.95em;background:var(--orange);margin-left:.06em;vertical-align:-.06em;
+    animation:blink 1s steps(1) infinite}
+  .caret.done{animation:none;opacity:0}
+  @keyframes blink{50%{opacity:0}}
+  /* floating pastel spheres — the possibilities, unnamed */
+  .spheres{position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden}
+  .spheres b{position:absolute;border-radius:50%;filter:blur(2px);opacity:.7;mix-blend-mode:multiply}
+  .s1{width:230px;height:230px;background:radial-gradient(circle at 35% 30%,#fff6,transparent 60%),var(--yellow);
+    right:8%;top:16%;animation:float1 13s ease-in-out infinite}
+  .s2{width:300px;height:300px;background:radial-gradient(circle at 35% 30%,#fff6,transparent 60%),var(--lavender);
+    right:20%;top:40%;animation:float2 17s ease-in-out infinite}
+  .s3{width:170px;height:170px;background:radial-gradient(circle at 35% 30%,#fff6,transparent 60%),var(--green);
+    right:6%;top:56%;animation:float3 15s ease-in-out infinite}
+  @keyframes float1{50%{transform:translate(-24px,26px)}}
+  @keyframes float2{50%{transform:translate(20px,-30px)}}
+  @keyframes float3{50%{transform:translate(-16px,-22px)}}
+  @media(max-width:760px){.spheres{opacity:.55}.s2{width:210px;height:210px}.s1{width:150px;height:150px}}
+  .hero .cue{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);z-index:2;
+    font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);
+    display:flex;flex-direction:column;align-items:center;gap:8px}
+  .hero .cue span{width:1px;height:32px;background:linear-gradient(var(--line),transparent);animation:cue 2.4s ease-in-out infinite}
+  @keyframes cue{0%,100%{opacity:.3;transform:scaleY(.7);transform-origin:top}50%{opacity:1;transform:scaleY(1);transform-origin:top}}
+
+  /* ============ NARRATIVE VERSES ============ */
+  .verse{padding:clamp(70px,15vh,150px) 0}
+  .verse p{font-size:clamp(1.55rem,3.8vw,2.6rem);font-weight:400;letter-spacing:-.02em;line-height:1.26;
+    margin:0 0 .5em;color:var(--ink)}
+  .verse p.soft{color:var(--muted)}
+  .verse p .serif{color:var(--ink)}
+  .verse .lift{margin-top:1.1em;font-size:clamp(1.7rem,4.4vw,3rem);font-weight:500}
+  .verse .lift .serif{color:var(--orange-deep)}
+  /* line reveal */
+  .lines .ln{display:block;opacity:0;transform:translateY(16px);transition:opacity .7s ease,transform .7s ease}
+  .lines.in .ln{opacity:1;transform:none}
+  .lines.in .ln:nth-child(2){transition-delay:.09s}
+  .lines.in .ln:nth-child(3){transition-delay:.18s}
+  .lines.in .ln:nth-child(4){transition-delay:.27s}
+  .lines.in .ln:nth-child(5){transition-delay:.36s}
+  .lines.in .ln:nth-child(6){transition-delay:.45s}
+  .lines.in .ln:nth-child(7){transition-delay:.54s}
+
+  .thread{display:flex;align-items:center;gap:14px;margin:0 auto;max-width:var(--readw);padding:0 clamp(22px,5vw,48px)}
+  .thread i{flex:1;height:1px;background:var(--line)}
+  .thread b{width:9px;height:9px;border-radius:50%;background:var(--orange);flex:none}
+
+  /* ============ SKETCHNOTE — pinned prints ============ */
+  .sketch{padding:clamp(50px,10vh,120px) 0}
+  .sketch .panel{position:relative;border-radius:24px;padding:clamp(30px,5vw,64px);
+    display:grid;grid-template-columns:1fr 1.05fr;align-items:center;gap:clamp(20px,4vw,52px);box-shadow:var(--shadow)}
+  .sketch.rev .panel{grid-template-columns:1.05fr 1fr}
+  .sketch.rev .figure{order:-1}
+  .sketch.lav .panel{background:var(--lavender)}
+  .sketch.yel .panel{background:var(--yellow)}
+  .sketch .note p{font-size:clamp(1.4rem,2.8vw,2.15rem);line-height:1.24;letter-spacing:-.02em;margin:0;font-weight:500;color:var(--ink);max-width:22ch}
+  .sketch .note p .serif{font-weight:400}
+  .sketch.lav .note p .serif{color:var(--lavender-deep)}
+  .sketch.yel .note p .serif{color:var(--yellow-deep)}
+  .figure{display:flex;align-items:center;justify-content:center}
+  .figure img{width:100%;max-width:470px;height:auto;mix-blend-mode:multiply;filter:saturate(1.03) contrast(1.02);
+    transform:rotate(-2deg) scale(.94);opacity:0;transition:transform 1s cubic-bezier(.2,.7,.2,1),opacity 1s ease}
+  .sketch.rev .figure img{transform:rotate(2deg) scale(.94)}
+  .sketch.in .figure img{opacity:1;transform:rotate(0) scale(1)}
+  @media(max-width:760px){
+    .sketch .panel,.sketch.rev .panel{grid-template-columns:1fr}
+    .sketch.rev .figure{order:0}
+    .figure img{max-width:min(360px,78%)}
+  }
+
+  /* ============ HORIZONTAL PINNED ACT — make the shift ============ */
+  .hscroll{position:relative;height:520vh;background:var(--ink);color:var(--paper)}
+  .pin{position:sticky;top:0;height:100svh;overflow:hidden;display:flex;align-items:center}
+  .htrack{display:flex;height:100%;align-items:center;will-change:transform}
+  .hpanel{flex:0 0 100vw;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;padding:0 8vw;gap:.4em}
+  .hpanel .n{font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:rgba(247,245,240,.45)}
+  .hpanel .big{font-size:clamp(2.6rem,8vw,6rem);font-weight:600;letter-spacing:-.045em;line-height:1;margin:0;max-width:16ch}
+  .hpanel .big .serif{font-weight:400}
+  .hpanel .sub{font-size:clamp(1.1rem,2.2vw,1.5rem);color:rgba(247,245,240,.68);max-width:34ch;margin:.4em 0 0;line-height:1.4}
+  .hpanel.p0 .big .serif{color:var(--orange)}
+  .hpanel.p1 .to{color:var(--yellow-deep);background:var(--yellow);padding:.02em .28em;border-radius:.28em}
+  .hpanel.p2 .to{color:var(--lavender-deep);background:var(--lavender);padding:.02em .28em;border-radius:.28em}
+  .hpanel.p3 .to{color:var(--green-deep);background:var(--green);padding:.02em .28em;border-radius:.28em}
+  .hpanel.p4 .big{color:var(--paper)}
+  .hpanel.p4 .big .serif{color:var(--orange)}
+  .hint{position:absolute;bottom:30px;left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:11px;
+    letter-spacing:.18em;text-transform:uppercase;color:rgba(247,245,240,.4);display:flex;align-items:center;gap:10px}
+  .hprog{width:120px;height:2px;background:rgba(247,245,240,.18);border-radius:2px;overflow:hidden}
+  .hprog i{display:block;height:100%;width:0;background:var(--orange)}
+  /* reduced-motion / fallback vertical */
+  .hscroll.flat{height:auto}
+  .hscroll.flat .pin{position:static;height:auto;display:block;padding:clamp(60px,10vh,120px) 0}
+  .hscroll.flat .htrack{flex-direction:column;transform:none!important;height:auto;gap:clamp(50px,9vh,110px)}
+  .hscroll.flat .hpanel{flex:none;height:auto;min-height:38vh}
+  .hscroll.flat .hint{display:none}
+
+  /* ============ ABOUT ============ */
+  .about{padding:clamp(80px,15vh,170px) 0}
+  .about .lede{font-size:clamp(1.9rem,4.4vw,3rem);font-weight:400;letter-spacing:-.03em;line-height:1.14;
+    max-width:18ch;margin:0 0 1em}
+  .about .lede .serif{color:var(--orange-deep)}
+  .about .body{font-size:clamp(1.2rem,2.2vw,1.55rem);color:var(--ink);max-width:30ch;line-height:1.42}
+  .about .body .soft{color:var(--muted)}
+
+  /* ============ HOW WE WORK ============ */
+  .work{padding:clamp(70px,13vh,150px) 0;background:var(--ink);color:var(--paper);position:relative;overflow:hidden}
+  .work .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:rgba(247,245,240,.5);margin:0 0 34px}
+  .worklist{border-top:1px solid rgba(247,245,240,.16)}
+  .wrow{display:grid;grid-template-columns:64px 1fr;gap:clamp(16px,3vw,40px);align-items:baseline;
+    padding:clamp(22px,3.4vw,38px) 0;border-bottom:1px solid rgba(247,245,240,.16);
+    opacity:0;transform:translateY(20px);transition:opacity .7s ease,transform .7s ease}
+  .worklist.in .wrow{opacity:1;transform:none}
+  .worklist.in .wrow:nth-child(2){transition-delay:.08s}
+  .worklist.in .wrow:nth-child(3){transition-delay:.16s}
+  .worklist.in .wrow:nth-child(4){transition-delay:.24s}
+  .wrow .no{font-family:var(--mono);font-size:13px;color:var(--orange);letter-spacing:.06em}
+  .wrow p{margin:0;font-size:clamp(1.4rem,3.2vw,2.4rem);font-weight:500;letter-spacing:-.025em;line-height:1.12}
+  .wrow p .serif{font-weight:400;color:var(--yellow)}
+  .work .start{margin-top:clamp(46px,7vh,72px);font-size:clamp(1.6rem,3.6vw,2.6rem);font-weight:500;letter-spacing:-.03em}
+  .work .start .serif{color:var(--yellow)}
+
+  /* ============ MEET CHETAN ============ */
+  .chetan{padding:clamp(80px,15vh,170px) 0}
+  .chetan-grid{display:grid;grid-template-columns:.82fr 1.18fr;gap:clamp(28px,5vw,68px);align-items:center}
+  @media(max-width:820px){.chetan-grid{grid-template-columns:1fr;gap:38px}}
+  .portrait{aspect-ratio:4/5;border-radius:22px;overflow:hidden;position:relative;
+    background:linear-gradient(155deg,var(--lavender),var(--green) 58%,var(--yellow));box-shadow:var(--shadow);
+    display:flex;align-items:flex-end;justify-content:center}
+  .portrait .ph{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+    color:rgba(20,19,17,.5);position:absolute;top:20px;left:22px}
+  .portrait .glyph{font-family:var(--serif);font-style:italic;font-size:clamp(5rem,14vw,9rem);color:rgba(20,19,17,.18);margin-bottom:.05em;user-select:none}
+  .chetan .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin:0 0 22px}
+  .chetan h2{font-size:clamp(1.9rem,3.6vw,2.7rem);font-weight:600;letter-spacing:-.03em;line-height:1.05;margin:0 0 .7em;max-width:16ch}
+  .chetan h2 .serif{color:var(--orange-deep)}
+  .chetan p{font-size:clamp(1.05rem,1.7vw,1.22rem);color:var(--muted);line-height:1.6;margin:0 0 1em;max-width:50ch}
+  .chetan p b{color:var(--ink);font-weight:500}
+  .chetan p.pull{font-size:clamp(1.35rem,2.8vw,1.95rem);color:var(--ink);font-weight:400;letter-spacing:-.02em;line-height:1.28;margin:1.1em 0}
+  .chetan p.pull .serif{color:var(--orange-deep)}
+  .chetan .meet{display:inline-flex;align-items:center;gap:.5em;font-weight:500;color:var(--ink);border-bottom:1px solid var(--orange);padding-bottom:2px}
+  .chetan .meet:hover{color:var(--orange-deep)}
+
+  /* ============ MARQUEE ============ */
+  .marquee{overflow:hidden;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:24px 0;
+    -webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);
+    mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
+  .mtrack{display:flex;width:max-content;animation:scrollx 26s linear infinite}
+  .marquee:hover .mtrack{animation-play-state:paused}
+  .mtrack span{font-size:clamp(1.6rem,4vw,2.8rem);font-weight:600;letter-spacing:-.03em;padding:0 .5em;white-space:nowrap;color:var(--ink)}
+  .mtrack span .serif{color:var(--orange);font-weight:400}
+  .mtrack span .dot{color:var(--orange)}
+  @keyframes scrollx{to{transform:translateX(-50%)}}
+
+  /* ============ CTA ============ */
+  .cta{padding:clamp(90px,17vh,190px) 0;text-align:center;position:relative;overflow:hidden}
+  .cta .chips{display:flex;justify-content:center;gap:10px;margin:0 0 clamp(30px,5vh,48px)}
+  .cta .chips i{width:14px;height:14px;border-radius:50%;transition:transform .5s ease}
+  .cta:hover .chips i:nth-child(1){transform:translateY(-6px)}
+  .cta:hover .chips i:nth-child(2){transform:translateY(-10px)}
+  .cta:hover .chips i:nth-child(3){transform:translateY(-6px)}
+  .cta h2{font-size:clamp(2.6rem,7vw,5rem);font-weight:600;letter-spacing:-.045em;line-height:1;margin:0 0 .5em}
+  .cta h2 .serif{color:var(--orange)}
+  .cta .lines2 .ln{display:block;font-size:clamp(1.2rem,2.4vw,1.6rem);color:var(--muted);line-height:1.5;margin:0 auto;max-width:34ch}
+  .cta .lines2 b{color:var(--ink);font-weight:500}
+  .cta .btn{display:inline-flex;align-items:center;gap:.6em;background:var(--orange);color:#141311;font-weight:600;font-size:1.1rem;
+    padding:18px 40px;border-radius:999px;margin-top:2.4em;box-shadow:0 10px 30px rgba(232,85,26,.28);transition:transform .2s,box-shadow .2s}
+  .cta .btn:hover{transform:translateY(-2px);box-shadow:0 16px 40px rgba(232,85,26,.36)}
+  .cta .btn .arr{transition:transform .2s}
+  .cta .btn:hover .arr{transform:translateX(4px)}
+
+  /* ============ FOOTER ============ */
+  footer{padding:56px 0 72px;border-top:1px solid var(--line);color:var(--muted);font-size:.92rem}
+  footer .frow{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:20px}
+  footer .wm{font-weight:600;color:var(--ink);letter-spacing:-.02em;font-size:1.2rem}
+  footer .wm .dot{color:var(--orange)}
+  footer .t{font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase}
+  footer a{color:var(--muted)}footer a:hover{color:var(--ink)}
+
+  /* reveal utility */
+  .rise{opacity:0;transform:translateY(22px);transition:opacity .8s ease,transform .8s ease}
+  .rise.in{opacity:1;transform:none}
+  @media(prefers-reduced-motion:reduce){
+    *{scroll-behavior:auto}
+    .rise,.lines .ln,.worklist .wrow{opacity:1!important;transform:none!important}
+    .figure img{opacity:1!important;transform:none!important}
+    .hero .cue span,.spheres b,.mtrack,.caret{animation:none!important}
+    .caret{display:none}
+    body{transition:none}
+  }
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress" aria-hidden="true"></div>
+
+<nav id="nav">
+  <a class="wm" href="#top">Alpha Shift<span class="dot">.</span></a>
+  <a class="nav-cta" href="#explore">Let's explore <span class="dot">→</span></a>
+</nav>
+
+<!-- ============ HERO ============ -->
+<header class="hero" id="top" data-bg="#F7F5F0">
+  <div class="spheres" aria-hidden="true"><b class="s1"></b><b class="s2"></b><b class="s3"></b></div>
+  <div class="wrap">
+    <p class="dateline"><i></i> Shift Thinking · Shape Success</p>
+    <h1 class="wordmark">Alpha Shift<span class="dot">.</span></h1>
+    <p class="tag">Shift Thinking. Shape Success.</p>
+    <p class="ask" id="ask" aria-label="Something on your mind?"><span id="asktext"></span><span class="caret" id="caret"></span></p>
+  </div>
+  <div class="cue" aria-hidden="true"><span></span>Read on</div>
+</header>
+
+<!-- ============ VERSE — opening ============ -->
+<section class="verse" data-bg="#F7F5F0">
+  <div class="read lines" data-reveal>
+    <p><span class="ln">Something you're thinking about.</span>
+    <span class="ln">A problem you're trying to solve.</span>
+    <span class="ln">A conversation you're not quite sure how to have.</span>
+    <span class="ln soft">Or perhaps just a feeling that something needs to move.</span></p>
+  </div>
+</section>
+
+<div class="thread" aria-hidden="true"><i></i><b></b><i></i></div>
+
+<section class="verse" data-bg="#F7F5F0">
+  <div class="read lines" data-reveal>
+    <p><span class="ln">You don't necessarily know what it is.</span>
+    <span class="ln lift">And that's <span class="serif">okay</span>.</span></p>
+  </div>
+</section>
+
+<!-- ============ VERSE — the missing piece ============ -->
+<section class="verse" data-bg="#ECE7F2">
+  <div class="read lines" data-reveal>
+    <p><span class="ln soft">Sometimes, you already know enough.</span>
+    <span class="ln">Yet there's still a missing piece.</span>
+    <span class="ln">Something you can't quite put your finger on.</span></p>
+  </div>
+</section>
+
+<section class="verse" data-bg="#ECE7F2" style="padding-top:0">
+  <div class="read lines" data-reveal>
+    <p><span class="ln">It could be a conversation.</span>
+    <span class="ln">A different perspective.</span>
+    <span class="ln">A small decision.</span>
+    <span class="ln">Or simply seeing something you thought you knew <span class="serif">in a different way</span>.</span></p>
+  </div>
+</section>
+
+<!-- ============ SKETCHNOTE 1 ============ -->
+<section class="sketch lav" data-bg="#ECE7F2" data-sketch>
+  <div class="wrap">
+    <div class="panel">
+      <div class="note">
+        <p>Or simply seeing something you thought you knew <span class="serif">in a different way</span>.</p>
+      </div>
+      <div class="figure">
+        <img src="../Media/Sketches/1.jpeg" alt="A figure pausing at a fork in the path, colourful stepping stones ahead marking different possibilities." loading="lazy" />
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ VERSE — the shift begins ============ -->
+<section class="verse" data-bg="#F4EEDA">
+  <div class="read lines" data-reveal>
+    <p><span class="ln">Maybe it starts with a better <span class="serif">question</span>.</span>
+    <span class="ln">Or a clearer observation.</span>
+    <span class="ln soft">Perhaps you see a possibility you hadn't considered.</span>
+    <span class="ln soft">Perhaps you decide to do something differently.</span>
+    <span class="ln lift">And that's where the <span class="serif">shift</span> begins.</span></p>
+  </div>
+</section>
+
+<!-- ============ SKETCHNOTE 2 ============ -->
+<section class="sketch yel rev" data-bg="#F4EEDA" data-sketch>
+  <div class="wrap">
+    <div class="panel">
+      <div class="note">
+        <p>And that's where the <span class="serif">shift</span> begins.</p>
+      </div>
+      <div class="figure">
+        <img src="../Media/Sketches/2.jpeg" alt="Three figures — one puzzled with a thought cloud, one delighted as a lightbulb lights up, one running off holding the idea." loading="lazy" />
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ HORIZONTAL PINNED ACT — make the shift ============ -->
+<section class="hscroll" id="hscroll" data-bg="#141311">
+  <div class="pin">
+    <div class="htrack" id="htrack">
+      <div class="hpanel p0">
+        <span class="n">Make the shift</span>
+        <p class="big">Make the <span class="serif">shift</span>.</p>
+        <p class="sub">Not everything needs a new plan. Sometimes, it needs a new way of looking at the old one.</p>
+      </div>
+      <div class="hpanel p1"><span class="n">01</span><p class="big">A thought becomes a <span class="to">possibility</span>.</p></div>
+      <div class="hpanel p2"><span class="n">02</span><p class="big">A possibility becomes a <span class="to">decision</span>.</p></div>
+      <div class="hpanel p3"><span class="n">03</span><p class="big">A decision becomes <span class="to">action</span>.</p></div>
+      <div class="hpanel p4"><span class="n">04</span><p class="big">Small shifts can change <span class="serif">what happens next</span>.</p></div>
+    </div>
+  </div>
+  <div class="hint" aria-hidden="true">Keep scrolling <span class="hprog"><i id="hprog"></i></span></div>
+</section>
+
+<!-- ============ ABOUT ============ -->
+<section class="about" data-bg="#F7F5F0">
+  <div class="read rise" data-reveal>
+    <p class="lede">That's what <span class="serif">Alpha Shift</span> is about.</p>
+    <p class="body">Creating the space to explore. <span class="soft">To think differently. To see more clearly. To find what matters.</span> And then to do something about it.</p>
+  </div>
+</section>
+
+<!-- ============ HOW WE WORK ============ -->
+<section class="work" data-bg="#141311">
+  <div class="wrap">
+    <p class="eyebrow rise" data-reveal>How we work</p>
+    <div class="worklist" data-reveal>
+      <div class="wrow"><span class="no">01</span><p>It might begin with a <span class="serif">conversation</span>.</p></div>
+      <div class="wrow"><span class="no">02</span><p>It might be a workshop that gets people thinking and doing.</p></div>
+      <div class="wrow"><span class="no">03</span><p>It might be a deeper journey with a leader, a team or an organisation.</p></div>
+      <div class="wrow"><span class="no">04</span><p>Or it might be something we haven't put into a box yet.</p></div>
+    </div>
+    <p class="start rise" data-reveal>We start <span class="serif">where you are</span>.</p>
+  </div>
+</section>
+
+<!-- ============ MEET CHETAN ============ -->
+<section class="chetan" data-bg="#F7F5F0">
+  <div class="wrap">
+    <div class="chetan-grid">
+      <div class="portrait rise" data-reveal>
+        <span class="ph">Chetan · Founder</span>
+        <span class="glyph" aria-hidden="true">C.</span>
+      </div>
+      <div class="rise" data-reveal>
+        <p class="eyebrow">I'm Chetan.</p>
+        <h2>I've spent my career moving between banking, fintech, marketing, education and <span class="serif">business</span>.</h2>
+        <p><b>Different industries. Different challenges. Different people.</b> One thing has stayed constant:</p>
+        <p class="pull">Good answers don't always come from knowing more. <span class="serif">Sometimes they come from looking differently.</span></p>
+        <p>That's the thinking behind Alpha Shift.</p>
+        <a class="meet" href="#">Meet Chetan <span aria-hidden="true">→</span></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MARQUEE ============ -->
+<div class="marquee" aria-hidden="true">
+  <div class="mtrack">
+    <span>Shift Thinking. <span class="serif">Shape Success.</span> <span class="dot">·</span> </span>
+    <span>Shift Thinking. <span class="serif">Shape Success.</span> <span class="dot">·</span> </span>
+    <span>Shift Thinking. <span class="serif">Shape Success.</span> <span class="dot">·</span> </span>
+    <span>Shift Thinking. <span class="serif">Shape Success.</span> <span class="dot">·</span> </span>
+  </div>
+</div>
+
+<!-- ============ CTA ============ -->
+<section class="cta" data-bg="#F7F5F0" id="explore">
+  <div class="wrap rise" data-reveal>
+    <div class="chips" aria-hidden="true"><i style="background:#F3DE9B"></i><i style="background:#B9CFB0"></i><i style="background:#CFC6E6"></i></div>
+    <h2>Ready to <span class="serif">explore</span>?</h2>
+    <p class="lines2">
+      <span class="ln">You don't need to have it figured out.</span>
+      <span class="ln"><b>Bring the question. Bring the challenge. Bring the half-formed thought.</b></span>
+      <span class="ln">We'll start there.</span>
+    </p>
+    <a class="btn" href="mailto:hello@alphashift.co">Let's explore <span class="arr" aria-hidden="true">→</span></a>
+  </div>
+</section>
+
+<footer data-bg="#F7F5F0">
+  <div class="wrap">
+    <div class="frow">
+      <span class="wm">Alpha Shift<span class="dot">.</span></span>
+      <span class="t">Shift Thinking · Shape Success</span>
+      <span>© 2026 Alpha Shift · <a href="mailto:hello@alphashift.co">hello@alphashift.co</a></span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const nav = document.getElementById('nav');
+  const progress = document.getElementById('progress');
+
+  /* ---- sticky nav + scroll progress ---- */
+  function frame(){
+    nav.classList.toggle('solid', window.scrollY > 40);
+    const h = document.documentElement.scrollHeight - window.innerHeight;
+    progress.style.transform = 'scaleX(' + (h>0 ? window.scrollY/h : 0) + ')';
+  }
+  frame(); window.addEventListener('scroll', frame, {passive:true});
+
+  /* ---- scroll-driven background colour ---- */
+  const themed = Array.from(document.querySelectorAll('[data-bg]'));
+  const bgIO = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        document.body.style.setProperty('--bg', e.target.getAttribute('data-bg'));
+      }
+    });
+  },{threshold:0.5});
+  themed.forEach(el=>bgIO.observe(el));
+
+  /* ---- reveals ---- */
+  const revIO = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); revIO.unobserve(e.target);} });
+  },{threshold:0.2, rootMargin:'0px 0px -8% 0px'});
+  document.querySelectorAll('[data-reveal]').forEach(el=>revIO.observe(el));
+
+  const skIO = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); skIO.unobserve(e.target);} });
+  },{threshold:0.3});
+  document.querySelectorAll('[data-sketch]').forEach(el=>skIO.observe(el));
+
+  /* ---- typed hero ---- */
+  const asktext = document.getElementById('asktext');
+  const caret = document.getElementById('caret');
+  const segs = [{t:'Something on your '},{t:'mind',c:'serif'},{t:'?'}];
+  if(reduce){
+    asktext.innerHTML = 'Something on your <span class="serif">mind</span>?';
+  } else {
+    let si=0,ci=0,cur=null;
+    function type(){
+      if(si>=segs.length){ caret.classList.add('done'); return; }
+      const s=segs[si];
+      if(ci===0){ cur=document.createElement('span'); if(s.c)cur.className=s.c; asktext.appendChild(cur); }
+      cur.textContent = s.t.slice(0,++ci);
+      if(ci>=s.t.length){ si++; ci=0; }
+      setTimeout(type, 58);
+    }
+    setTimeout(type, 650);
+  }
+
+  /* ---- horizontal pinned act ---- */
+  const hs = document.getElementById('hscroll');
+  const track = document.getElementById('htrack');
+  const hprog = document.getElementById('hprog');
+  const panelBg = ['#141311','#141311','#1b1730','#151d16','#141311'];
+  function setupH(){
+    if(reduce){ hs.classList.add('flat'); return; }
+    function onH(){
+      const rect = hs.getBoundingClientRect();
+      const total = hs.offsetHeight - window.innerHeight;
+      let p = (-rect.top) / total;
+      p = Math.max(0, Math.min(1, p));
+      const dist = track.scrollWidth - window.innerWidth;
+      track.style.transform = 'translate3d(' + (-dist*p) + 'px,0,0)';
+      hprog.style.width = (p*100) + '%';
+      const idx = Math.min(panelBg.length-1, Math.round(p*(panelBg.length-1)));
+      hs.style.background = panelBg[idx];
+      if(rect.top<=window.innerHeight && rect.bottom>=0){
+        document.body.style.setProperty('--bg', panelBg[idx]);
+      }
+    }
+    onH(); window.addEventListener('scroll', onH, {passive:true});
+    window.addEventListener('resize', onH);
+  }
+  setupH();
+})();
+</script>
+</body>
+</html>

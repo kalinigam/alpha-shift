@@ -1,0 +1,2418 @@
+Reading additional input from stdin...
+2026-09-21T08:50:43.777179Z ERROR rmcp::transport::worker: worker quit with fatal: Transport channel closed, when AuthRequired(AuthRequiredError { www_authenticate_header: "Bearer realm=\"OAuth\", resource_metadata=\"https://mcp.cloudflare.com/.well-known/oauth-protected-resource/mcp\"" })
+OpenAI Codex v0.145.0
+--------
+workdir: C:\Users\asus\Desktop\lab\alpha
+model: gpt-5.6-sol
+provider: openai
+approval: never
+sandbox: workspace-write [workdir, /tmp, $TMPDIR]
+reasoning effort: none
+reasoning summaries: none
+session id: 01a0c329-09b4-7bc2-a839-afad448b4711
+--------
+user
+Re-verify the Alpha Shift v5 page (see .agents/CODEX_TASK.md for how to build/serve/screenshot). Two sections were just reworked in src/pages/v5.astro — verify them specifically and fix any bugs (v5.astro / global.css / hero anim copy ONLY; never touch src/pages/index.astro): (1) SKETCH scene '.sk' [data-sketch]: the sketch is now BIG and unboxed (mix-blend multiply on paper, ~86vh tall), there are TWO text beats [data-beat1]/[data-beat2] that must crossfade on scroll (beat2 MUST become visible — this was previously broken), and an ambient gradient kept on the LEFT away from the sketch. Confirm both beats appear and both sketches crossfade, no jank. (2) MAKE THE SHIFT '.shiftcard': the period wipe is now a vector clip-path circle ('.wipe', --wr/--wx/--wy) that must be crisp (NOT pixelated) at full size, grow SLOWLY and linearly from the period over most of the scroll, and fully cover to black before the horizontal act. Confirm crispness, slow growth, full coverage, and that it reverses on scroll-up. Build, screenshot at multiple scroll depths, fix bugs, report a concise bug/fix list.
+warning: Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest.
+codex
+I’m using the browser-control workflow plus the repo’s own verification instructions to inspect both scroll scenes at multiple depths, then I’ll limit any edits to `v5.astro`, `global.css`, or the hero animation copy as requested.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-Content -Raw .agents/CODEX_TASK.md; "`n---SKILL---`n"; Get-Content -Raw C:'"\\Users\\asus\\.codex\\plugins\\cache\\openai-bundled\\browser\\26.727.40816\\skills\\control-in-app-browser\\SKILL.md" in C:\Users\asus\Desktop\lab\alpha
+ succeeded in 1616ms:
+# Codex verification + debug brief â€” Alpha Shift (v5)
+
+You are the QA/debug engineer for this Astro site. Claude authors the sections; you verify and fix bugs. Work ONLY on the v5 variant; do NOT change `src/pages/index.astro` (that's a locked design).
+
+## Project
+- Astro 5 site at repo root. Working page: `src/pages/v5.astro` (route `/v5/`). Shared styles: `src/styles/global.css`. Copy data: `src/data/*.ts`.
+- The hero embeds `public/sketches/Thoughts-Animation-hero.html` (a 9MB canvas animation) in an iframe.
+
+## How to run + verify (a browser is available â€” do NOT rely on file://)
+- Build: `npm run build` (must succeed).
+- Serve: `npm run preview` (http://localhost:4321) OR use the already-running dev server on :4321.
+- Screenshot harness (puppeteer-core installed; Edge at `C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe`): see `.agents/shoot-scenes.cjs <outPrefix> <url>` and `.agents/shoot-card.cjs`. Run with `node .agents/<script>.cjs`.
+- Scratchpad for screenshots: `C:/Users/asus/AppData/Local/Temp/claude/C--Users-asus-Desktop-lab-alpha/81c5cb80-1f98-4a79-9ab6-0bd76fe0c00c/scratchpad`
+
+## What to check (the animations must be SMOOTH â€” this is the priority)
+1. Hero: canvas animation loops, no Pause/Replay buttons, and it MUST stop when scrolled off-screen (parent posts `as-pause`/`as-play` to the iframe; iframe halts its rAF). Confirm the canvas stops redrawing when the hero is out of view.
+2. Sketch scene (`.sketch`, `.flowcard`): flowing warm gradient behind the sketch; the two sketches crossfade; no scroll jank (the scroll handler is rAF-throttled). Gradient animation should pause when off-screen (`.flowcard.live`).
+3. `.shiftcard`: pinned grey card, black "Make the shift." + a BLACK CIRCULAR period (`.pdot`) that grows (`.expander`) and wipes the screen to black, handing into the dark horizontal act. No misaligned pin, no persistent black overlay after the section.
+4. `.mts` horizontal act: ghost words slide; readable line sits BELOW the strip; orange progress bar.
+5. Nav inverts to white over dark sections; no layout shift when the 9MB iframe loads (ScrollTrigger.refresh is wired on load/resize).
+
+## Rules
+- Fix bugs in `src/pages/v5.astro` and `src/styles/global.css` (v5-scoped only) and the hero animation copy `public/sketches/Thoughts-Animation-hero.html` if needed. NEVER touch `src/pages/index.astro`.
+- Keep the design: warm paper, ink, ORANGE as the only UI accent (pastels only inside sketches). Copy is verbatim from `src/data/*.ts` â€” do not reword.
+- After fixing, re-run build + screenshots to confirm. Report a concise list of bugs found and fixes applied.
+
+
+---SKILL---
+
+---
+name: control-in-app-browser
+description: "Control the in-app Browser for opening, navigating, inspecting visible or interactive page state, clicking, typing, screenshots, and local web testing. It can have existing signed-in sessions. For semantic operations on linked resources, prefer a purpose-built connector, API, or CLI when available."
+---
+
+# Browser
+## Stop: choose the right surface before any browser action
+
+Explicit browser intent wins: if the user names the in-app browser or Chrome, or asks to open, show, or navigate to a page; inspect its visual or interactive state; or interact with its UI, continue with Browser and do not substitute a connector.
+
+Otherwise, treat a URL or open browser tab as context, not browser intent. Earlier Browser use does not make later semantic work browser-first. Before each semantic operation on a linked resource, you MUST query available and deferred tools for an applicable connector, API, or CLI. Reading this skill or scanning visible tools does not count. Do not initialize Browser for that operation until the query is complete. Use the non-browser tool when available. If it handles the current operation, continue the larger workflow without Browser for that operation. Use Browser when no such tool exists, the tool cannot access the resource or lacks a required capability, or UI work remains; use available browser context before asking the user to repeat it.
+
+Use this skill for browser automation tasks such as inspecting pages, navigating, testing local apps, clicking, typing, taking screenshots, and reading visible page state.
+
+If this plugin is listed as available in the session, treat that as mandatory reading before browser work. Open and follow this skill before saying that Browser is unavailable and before falling back to standalone Playwright or Computer Use.
+
+Do not skip this skill just because Computer Use MCP tool calls are directly visible or appear easier to invoke. The presence of Computer Use tools is not evidence that Computer Use is the preferred browser surface.
+
+## Setup Documentation
+Use `await agent.documentation.get("<name>")` when one of these setup topics applies:
+- `bootstrap-troubleshooting`: read when browser setup succeeds but discovery or selection fails
+- `chrome-troubleshooting`: read when Chromium browser extension setup, installation, or communication fails
+
+## Bootstrap
+These setup details are internal. User-facing progress updates should be less technical in nature. Never mention `Node REPL`, `node_repl`, `REPL`, JavaScript sessions, module exports, reading documentation, or loading instructions unless a user is asking for that exact information. If setup or recovery is needed, describe it naturally as connecting to the browser or retrying the browser connection.
+
+The `browser-client` module is the core entry point for browser use, and is available under `scripts/browser-client.mjs` in this plugin's root directory. ALWAYS import it using an absolute path. IMPORTANT: If this path cannot be found, stop and report that this plugin is missing `scripts/browser-client.mjs`. NEVER use the built in `browser-client` library.
+
+Run browser setup code through the Node REPL `js` tool. In this environment the callable tool id typically appears as `mcp__node_repl__js`. If it is not already available, use tool discovery for `node_repl js` without setting a result limit. You need the `js` execution tool: `js_reset` only clears state, and `js_add_node_module_dir` only changes package resolution. Do not call either helper while trying to expose `js`. If `js` is still not available, search again for `node_repl js` with `limit: 10`.
+
+CODE MODE REQUIREMENT: When you call the Node REPL `js` tool from the code-mode `exec` tool, the outer `exec` script containing the initial `documentation()` call MUST begin with `// @exec: {"max_output_tokens": 20000}`. This is a first-line pragma for the outer `exec` call, not an argument to the nested `js` tool. Keep the exact `nodeRepl.write(await <browser>.documentation());` call shown in the applicable selection scenario below and forward its complete result.
+
+Initialize the runtime once per fresh Node session. If `agent.browsers` already exists, reuse it; do not import or initialize another browser runtime.
+
+```js
+if (globalThis.agent?.browsers == null) {
+  const { setupBrowserRuntime } = await import("<plugin root>/scripts/browser-client.mjs");
+  await setupBrowserRuntime({ globals: globalThis });
+}
+```
+
+Once a browser connection is established, reuse its existing browser binding across later turns and do not reread this skill. Once you have read a browser's complete documentation, do not read it again unless you select a different browser.
+
+A tab binding is separate from its browser binding. If a later turn reports that a tab is missing, stale, closed, or not part of the current browser session, discard that tab binding and obtain or create a fresh tab from the existing browser binding. An empty `browser.tabs.list()` or `browser.user.openTabs()` result is normal after tab cleanup and does not invalidate the browser binding. Never call `agent.browsers.get*` to recover a tab; only an explicit browser-disconnected error invalidates the binding.
+
+## Browser selection
+
+The scenarios below are for the initial browser selection only. Before calling any `agent.browsers.get*` method, reuse an existing `globalThis.browser`, `globalThis.iab`, `globalThis.chrome`, or `globalThis.edge` binding that already serves the task. A new user turn does not invalidate a browser binding or require another selection or documentation call.
+
+Select the initial browser with exactly one of these scenarios, in the order
+shown. An explicit request for the in-app browser, Chrome, or Edge always wins
+over URL selection. Never call `getForUrl()` when the user names a browser.
+An explicit browser request is a hard constraint: use only that browser and
+never fall back to another browser surface. If its exact selector is
+unavailable, report that browser as unavailable instead of calling
+`getDefault()`, `getForUrl()`, or `get("extension")`.
+
+App-provided in-app-browser context is ambient UI state, not a user instruction to select or switch browsers. Only the text of the user's request can explicitly choose a browser.
+
+Do not inspect browser cookies, local storage, profiles, passwords, or session stores. Browser discovery must remain read-only.
+
+When authentication blocks requested browser navigation, do not replace it with web search, a search engine, another site, or another source merely to bypass sign-in.
+
+### The user explicitly requests a browser
+
+A plugin mention in the user's request explicitly names its browser.
+`[@Browser](plugin://browser@openai-bundled)` names the in-app browser.
+Browser plugin mentions whose URL contains `browserFamily=chrome` or
+`browserFamily=edge` name Chrome or Edge respectively.
+`[@Chrome](plugin://chrome@openai-bundled)`,
+`[@chrome-internal](plugin://chrome-internal@openai-bundled)`, and
+`[@chrome-dev](plugin://chrome-dev@openai-bundled)` name Chrome. Follow the
+corresponding explicit-browser scenario below.
+
+The in-app browser is available only when the Browser skill is listed for the session. If the user explicitly requests the in-app browser and that skill is available, use a distinct persistent binding and immediately read its complete documentation:
+
+```js
+if (globalThis.iab == null) {
+  globalThis.iab = await agent.browsers.get("iab");
+  nodeRepl.write(await iab.documentation());
+}
+```
+
+If the user explicitly requests the in-app browser but the Browser skill is not available, report that the in-app browser is unavailable instead of substituting another browser.
+
+Chrome or Edge is available only when a Browser or Chrome skill is listed for
+the session and `agent.browsers.get("chrome")` or
+`agent.browsers.get("edge")` succeeds. The browser family is a stable selector;
+do not list browsers first or pass an opaque browser ID for an explicit family.
+
+For Chrome, use a separate persistent binding and immediately read its complete
+documentation:
+
+```js
+if (globalThis.chrome == null) {
+  globalThis.chrome = await agent.browsers.get("chrome");
+  nodeRepl.write(await chrome.documentation());
+}
+```
+
+For Edge, use its own persistent binding and immediately read its complete
+documentation:
+
+```js
+if (globalThis.edge == null) {
+  globalThis.edge = await agent.browsers.get("edge");
+  nodeRepl.write(await edge.documentation());
+}
+```
+
+If the user explicitly requests Chrome or Edge but that family is unavailable,
+tell them that browser needs the ChatGPT browser extension and direct them to
+**Settings â†’ Computer use** to install it. Do not substitute another browser.
+
+An explicit browser choice remains in force for the task. If authentication blocks the task in an explicitly selected browser, your next response must explicitly ask the user to sign in in that browser and tell you when it is ready, unless that browser's documentation provides a supported authentication flow to try first. Merely reporting that sign-in is required is not sufficient. Do not switch to another browser unless the user asks or approves the switch.
+
+### The user explicitly requests an external browser without naming a family
+
+When the user says to use their external browser, browser extension, or a
+similar external-browser surface without naming Chrome or Edge, select the
+first connected extension instance directly. Do not call
+`agent.browsers.list()` first:
+
+```js
+if (globalThis.browser == null) {
+  globalThis.browser = await agent.browsers.get("extension");
+  nodeRepl.write(await browser.documentation());
+}
+```
+
+If no extension instance is available, tell the user that their external
+browser needs the ChatGPT browser extension and direct them to
+**Settings â†’ Computer use** to install it. Do not substitute the in-app
+browser.
+
+### The task requires browser interaction, the user does not specify a browser, and the task has a target URL
+
+When the user supplies a URL or the intended URL can be reasonably inferred from the request, replace the example below with that URL and let browser-client choose the browser best suited to it. Do not call `agent.browsers.list()` first:
+
+```js
+if (globalThis.browser == null) {
+  globalThis.browser = await agent.browsers.getForUrl("https://example.com/");
+  nodeRepl.write(await browser.documentation());
+}
+```
+
+### The user specifies neither a browser nor a target URL
+
+Use the runtime default, which prefers the in-app browser when it is available and otherwise uses Chrome. Do not list browsers first:
+
+```js
+if (globalThis.browser == null) {
+  globalThis.browser = await agent.browsers.getDefault();
+  nodeRepl.write(await browser.documentation());
+}
+```
+
+## After setup
+
+If setup succeeds but browser discovery or selection fails, read `await agent.documentation.get("bootstrap-troubleshooting")` before resetting the JavaScript session or trying another browser-control mechanism.
+
+If the failure is specific to Chrome extension setup, installation, or communication, read `await agent.documentation.get("chrome-troubleshooting")` before retrying or taking another recovery action.
+
+When the user did not explicitly choose a browser, a browser selected by the runtime is not a user constraint. Do not switch browsers based only on an assumption about authentication. If navigation shows that the selected browser lacks the required authentication, select another available browser before asking the user to sign in. You may select it without resetting the Node session. Preserve existing `iab`, `chrome`, `edge`, and `browser` bindings when they are still useful. Existing tabs remain bound to the browser that created them. After selecting a different browser, obtain a tab from that browser before continuing and read its complete documentation.
+
+The ability to interact directly with browsers is exposed through the `browser-client` runtime via the `agent.browsers.*` API. Before trying to interact with a selected browser for the first time, you MUST emit and read the complete documentation returned by its `documentation()` call in one go. For the initial documentation read, run the exact direct `nodeRepl.write(await <browser>.documentation());` call shown in the applicable scenario above. Do not assign the documentation to a variable, inspect its length, slice it, truncate it, summarize it, or emit only an excerpt. Do not proactively split the documentation into pages or chunks. Only if the tool output itself explicitly reports that it was truncated may you emit and read smaller chunks until you have read the documentation in its entirety.
+
+Only the Node REPL `js` tool (`mcp__node_repl__js`) can be used to control the selected browser. Do not use external MCP browser-control tools, separate browser automation servers, or other browser skills for this surface. References to Playwright mean the in-skill `tab.playwright` API after browser-client setup.
+
+<!-- BROWSER_SKILL_EOF: This is the complete Browser skill. Do not request additional lines. -->
+
+
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "git status --short; rg -n \"data-sketch|data-beat|shiftcard|class=\\\"wipe\\\"|--wr|--wx|--wy|ScrollTrigger|flowcard\" src/pages/v5.astro src/styles/global.css; Get-Content -Raw .agents/shoot-scenes.cjs; \""'`n---CARD---`n"; Get-Content -Raw .agents/shoot-card.cjs' in C:\Users\asus\Desktop\lab\alpha
+ succeeded in 6128ms:
+ M src/pages/index.astro
+ M src/styles/global.css
+?? .agents/CODEX_TASK.md
+?? .agents/codex-run1.log
+?? .agents/codex-run2.log
+?? .agents/shoot-card.cjs
+?? .agents/shoot-cut.cjs
+?? .agents/shoot-mts.cjs
+?? .agents/shoot-sk.cjs
+?? .agents/shoot-sk2.cjs
+?? .agents/shoot-v5hero.cjs
+?? .agents/shoot-variants.cjs
+?? .agents/study-shift.cjs
+?? .agents/tmp-full.cjs
+?? .agents/verify-anim.cjs
+?? public/sketches/Thoughts-Animation-hero.html
+?? public/sketches/Thoughts-Animation.html
+?? public/sketches/ball-lavender.svg
+?? public/sketches/ball-orange.svg
+?? public/sketches/ball-sage.svg
+?? public/sketches/ball-yellow.svg
+?? public/versions/v1-editorial.html
+?? public/versions/v2-animated.html
+?? public/versions/v3-cards-bento.html
+?? screenshots/
+?? src/pages/sketch-variants.astro
+?? src/pages/v5.astro
+const puppeteer = require('puppeteer-core');
+const path = require('path');
+const EDGE = 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe';
+const OUT = process.argv[2];
+const FILE = process.argv[3] || ('file:///' + path.resolve('dist/index.html').replace(/\\/g,'/'));
+(async () => {
+  const browser = await puppeteer.launch({ executablePath: EDGE, headless: 'new', args: ['--no-sandbox','--hide-scrollbars'] });
+  const page = await browser.newPage();
+  await page.setViewport({ width: 1440, height: 900, deviceScaleFactor: 1 });
+  await page.goto(FILE, { waitUntil: 'networkidle0', timeout: 60000 });
+  await new Promise(r=>setTimeout(r,3000)); // let preloader clear + ScrollTrigger init
+  const H = await page.evaluate(()=>document.body.scrollHeight);
+  const VH = 900;
+  const steps = Math.min(20, Math.ceil(H/(VH*0.85)));
+  for(let i=0;i<steps;i++){
+    await page.evaluate(y=>window.scrollTo(0,y), Math.round(i*VH*0.85));
+    await new Promise(r=>setTimeout(r,600));
+    await page.screenshot({ path: `${OUT}-${String(i).padStart(2,'0')}.png` });
+  }
+  console.log('docHeight', H, 'shots', steps);
+  await browser.close();
+})();
+
+
+---CARD---
+
+const puppeteer = require('puppeteer-core');
+const EDGE = 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe';
+const OUT = process.argv[2];
+(async () => {
+  const b = await puppeteer.launch({ executablePath: EDGE, headless: 'new', args:['--no-sandbox','--hide-scrollbars'] });
+  const p = await b.newPage();
+  await p.setViewport({ width:1440, height:900, deviceScaleFactor:1 });
+  await p.goto('http://localhost:4321/v5/', { waitUntil:'networkidle0', timeout:60000 });
+  await new Promise(r=>setTimeout(r,3000));
+  const info = await p.evaluate(() => {
+    const el = document.querySelector('.shiftcard');
+    const r = el.getBoundingClientRect();
+    return { top: r.top + window.scrollY, height: el.offsetHeight, vh: window.innerHeight };
+  });
+  const usable = info.height - info.vh;
+  const points = [0.1, 0.4, 0.62, 0.78, 0.95];
+  for (let i=0;i<points.length;i++){
+    await p.evaluate(v=>window.scrollTo(0,v), Math.round(info.top + usable*points[i]));
+    await new Promise(r=>setTimeout(r,450));
+    await p.screenshot({ path: `${OUT}-${i}_p${Math.round(points[i]*100)}.png` });
+  }
+  console.log('shiftcard top', Math.round(info.top), 'height', info.height);
+  await b.close();
+})();
+
+warning: unable to access 'C:\Users\asus/.config/git/ignore': Permission denied
+warning: unable to access 'C:\Users\asus/.config/git/ignore': Permission denied
+rg : The term 'rg' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the 
+spelling of the name, or if a path was included, verify that the path is correct and try again.
+At line:2 char:21
++ git status --short; rg -n "data-sketch|data-beat|shiftcard|class=\"wi ...
++                     ~~
+    + CategoryInfo          : ObjectNotFound: (rg:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+ 
+
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Select-String -Path src/pages/v5.astro,src/styles/global.css -Pattern 'data-sketch|data-beat|shiftcard|class=\"wipe\"|--wr|--wx|--wy|ScrollTrigger|flowcard' -Context 4,10" in C:\Users\asus\Desktop\lab\alpha
+ succeeded in 1814ms:
+
+  src\pages\v5.astro:42:      </div>
+  src\pages\v5.astro:43:    </section>
+  src\pages\v5.astro:44:
+  src\pages\v5.astro:45:    <!-- ============ SKETCH SCENE — big unboxed sketch, two text beats, ambient gradient 
+============ -->
+> src\pages\v5.astro:46:    <section class="sk" id="look" data-sketch>
+  src\pages\v5.astro:47:      <div class="pin">
+  src\pages\v5.astro:48:        <div class="ambient" aria-hidden="true">
+  src\pages\v5.astro:49:          <span class="gb g1"></span><span class="gb g2"></span><span class="gb g3"></span>
+  src\pages\v5.astro:50:        </div>
+  src\pages\v5.astro:51:        <div class="wrap">
+  src\pages\v5.astro:52:          <div class="grid">
+  src\pages\v5.astro:53:            <div class="txt">
+  src\pages\v5.astro:54:              <div class="fill"><i data-fill></i></div>
+> src\pages\v5.astro:55:              <div class="beat b1" data-beat1>
+  src\pages\v5.astro:56:                <h2>Sometimes, you already know enough. Yet there’s still <em>a missing 
+piece.</em></h2>
+  src\pages\v5.astro:57:                <p>Something you can’t quite put your finger on.</p>
+  src\pages\v5.astro:58:              </div>
+> src\pages\v5.astro:59:              <div class="beat b2" data-beat2>
+  src\pages\v5.astro:60:                <h2>It could be a conversation. A different perspective. <em>A small 
+decision.</em></h2>
+  src\pages\v5.astro:61:                <p>Or simply seeing something you thought you knew in a different way.</p>
+  src\pages\v5.astro:62:              </div>
+  src\pages\v5.astro:63:            </div>
+  src\pages\v5.astro:64:            <div class="art">
+  src\pages\v5.astro:65:              <img src={look.sketch.src} alt={look.sketch.alt} data-img1 />
+  src\pages\v5.astro:66:              <img src={shift.row.sketch.src} alt={shift.row.sketch.alt} data-img2 />
+  src\pages\v5.astro:67:            </div>
+  src\pages\v5.astro:68:          </div>
+  src\pages\v5.astro:69:        </div>
+  src\pages\v5.astro:70:      </div>
+  src\pages\v5.astro:71:    </section>
+  src\pages\v5.astro:72:
+  src\pages\v5.astro:73:    <!-- ============ MAKE THE SHIFT — grey card, black text + circular growing period 
+============ -->
+> src\pages\v5.astro:74:    <section class="shiftcard" data-shiftcard>
+  src\pages\v5.astro:75:      <div class="pin">
+  src\pages\v5.astro:76:        <div class="card">
+  src\pages\v5.astro:77:          <span class="eyebrow">Where the shift begins</span>
+  src\pages\v5.astro:78:          <h2 class="line"><span class="w">Make</span> <span class="w">the</span> <span 
+class="w serif">shift</span><span class="period"><span class="pdot"></span></span></h2>
+  src\pages\v5.astro:79:          <p class="sub">Maybe it starts with a better question. Or a clearer observation. 
+Perhaps you see a possibility you hadn’t considered — <span class="serif">and that’s where the shift begins.</span></p>
+  src\pages\v5.astro:80:        </div>
+> src\pages\v5.astro:81:        <div class="wipe" data-wipe aria-hidden="true"></div>
+  src\pages\v5.astro:82:      </div>
+  src\pages\v5.astro:83:    </section>
+  src\pages\v5.astro:84:
+  src\pages\v5.astro:85:    <!-- ============ MAKE THE SHIFT (dark cinematic horizontal) ============ -->
+  src\pages\v5.astro:86:    <section class="mts is-dark" data-mts>
+  src\pages\v5.astro:87:      <div class="pin">
+  src\pages\v5.astro:88:        <div class="ghost" data-ghost aria-hidden="true">
+  src\pages\v5.astro:89:          <b>A thought</b><b>A possibility</b><b>A decision</b><b>Action</b>
+  src\pages\v5.astro:90:        </div>
+  src\pages\v5.astro:91:        <div class="fg">
+  src\pages\v5.astro:241:  }
+  src\pages\v5.astro:242:  @media(prefers-reduced-motion:reduce){.sk .ambient .gb{animation:none!important}}
+  src\pages\v5.astro:243:
+  src\pages\v5.astro:244:  /* ===== MAKE THE SHIFT — grey card, black text, black circular growing period ===== */
+> src\pages\v5.astro:245:  .shiftcard{position:relative;height:320vh;background:var(--paper)}
+> src\pages\v5.astro:246:  .shiftcard 
+.pin{position:sticky;top:0;height:100svh;overflow:hidden;display:flex;align-items:center;
+  src\pages\v5.astro:247:    justify-content:center;background:var(--paper)}
+> src\pages\v5.astro:248:  .shiftcard 
+.card{position:relative;z-index:2;width:min(1120px,92%);min-height:min(74vh,620px);border-radius:26px;
+  src\pages\v5.astro:249:    
+padding:clamp(38px,5.5vw,80px);display:flex;flex-direction:column;justify-content:center;overflow:hidden;
+  src\pages\v5.astro:250:    background:radial-gradient(130% 130% at 72% 24%, #E7E2D8 0%, #D2CCC0 78%);
+  src\pages\v5.astro:251:    box-shadow:0 1px 2px rgba(20,19,17,.05),0 44px 100px rgba(20,19,17,.16)}
+> src\pages\v5.astro:252:  .shiftcard 
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;
+  src\pages\v5.astro:253:    color:var(--muted);margin:0 0 clamp(18px,3vh,30px)}
+> src\pages\v5.astro:254:  .shiftcard 
+.line{margin:0;font-weight:700;letter-spacing:-.05em;line-height:.9;color:var(--ink);
+  src\pages\v5.astro:255:    font-size:clamp(3rem,9vw,7.6rem)}
+> src\pages\v5.astro:256:  .shiftcard .line .serif{font-weight:400}
+> src\pages\v5.astro:257:  .shiftcard .line 
+.period{display:inline-block;width:.15em;height:.15em;position:relative;vertical-align:baseline;margin-left:.03em}
+> src\pages\v5.astro:258:  .shiftcard .line .pdot{position:absolute;inset:0;border-radius:50%;background:var(--ink)}
+> src\pages\v5.astro:259:  .shiftcard 
+.sub{font-size:clamp(1.1rem,1.9vw,1.45rem);color:var(--muted);line-height:1.4;max-width:46ch;
+  src\pages\v5.astro:260:    margin:clamp(20px,3vh,34px) 0 0}
+> src\pages\v5.astro:261:  .shiftcard .sub .serif{font-family:var(--serif);font-style:italic;color:var(--orange-deep)}
+  src\pages\v5.astro:262:  /* vector clip-path wipe — razor-sharp at any size, grows from the period */
+> src\pages\v5.astro:263:  .shiftcard 
+.wipe{position:absolute;inset:0;background:var(--ink);z-index:20;pointer-events:none;
+> src\pages\v5.astro:264:    --wr:0px;--wx:50%;--wy:50%;clip-path:circle(var(--wr) at var(--wx) 
+var(--wy));will-change:clip-path}
+  src\pages\v5.astro:265:  @media(max-width:880px){
+> src\pages\v5.astro:266:    .shiftcard{height:auto}
+> src\pages\v5.astro:267:    .shiftcard .pin{position:static;height:auto;padding:10vh 0}
+> src\pages\v5.astro:268:    .shiftcard .card{min-height:auto}
+> src\pages\v5.astro:269:    .shiftcard .wipe{display:none}
+  src\pages\v5.astro:270:  }
+  src\pages\v5.astro:271:</style>
+  src\pages\v5.astro:272:
+  src\pages\v5.astro:273:<script>
+  src\pages\v5.astro:274:  import { gsap } from 'gsap';
+> src\pages\v5.astro:275:  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+> src\pages\v5.astro:276:  gsap.registerPlugin(ScrollTrigger);
+  src\pages\v5.astro:277:
+  src\pages\v5.astro:278:  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  src\pages\v5.astro:279:
+  src\pages\v5.astro:280:  /* ---- preloader ---- */
+  src\pages\v5.astro:281:  const pre = document.getElementById('preloader');
+  src\pages\v5.astro:282:  function hidePre() {
+  src\pages\v5.astro:283:    document.body.classList.add('loaded');
+  src\pages\v5.astro:284:    if (pre) { pre.classList.add('done'); setTimeout(() => pre.remove(), 700); }
+> src\pages\v5.astro:285:    ScrollTrigger.refresh();
+  src\pages\v5.astro:286:  }
+  src\pages\v5.astro:287:  window.addEventListener('load', () => setTimeout(hidePre, 900));
+  src\pages\v5.astro:288:  setTimeout(hidePre, 2600);
+  src\pages\v5.astro:289:
+  src\pages\v5.astro:290:  /* ---- nav: solid on scroll + invert over dark sections ---- */
+  src\pages\v5.astro:291:  const nav = document.getElementById('nav');
+  src\pages\v5.astro:292:  const darkSections = [...document.querySelectorAll('.is-dark')];
+> src\pages\v5.astro:293:  const shiftSection = document.querySelector('[data-shiftcard]');
+  src\pages\v5.astro:294:  function updateNav() {
+  src\pages\v5.astro:295:    const navLine = Math.min(64, window.innerHeight - 1);
+  src\pages\v5.astro:296:    const overDark = darkSections.some((sec) => {
+  src\pages\v5.astro:297:      const r = sec.getBoundingClientRect();
+  src\pages\v5.astro:298:      return r.top <= navLine && r.bottom > navLine;
+  src\pages\v5.astro:299:    });
+  src\pages\v5.astro:300:    // The period wipe turns the pinned shift scene dark before the next section arrives.
+  src\pages\v5.astro:301:    let overWipe = false;
+  src\pages\v5.astro:302:    if (shiftSection && window.innerWidth > 880 && !reduce) {
+  src\pages\v5.astro:303:      const r = shiftSection.getBoundingClientRect();
+  src\pages\v5.astro:345:      }
+  src\pages\v5.astro:346:    } catch (e) {}
+  src\pages\v5.astro:347:  }
+  src\pages\v5.astro:348:  if (af) {
+> src\pages\v5.astro:349:    af.addEventListener('load', () => { initAnim(); ScrollTrigger.refresh(); });
+  src\pages\v5.astro:350:    initAnim(); setTimeout(initAnim, 800); setTimeout(initAnim, 1800);
+  src\pages\v5.astro:351:  }
+  src\pages\v5.astro:352:  // keep pinned scenes aligned when layout shifts (heavy iframe, fonts, resize)
+> src\pages\v5.astro:353:  window.addEventListener('load', () => ScrollTrigger.refresh());
+> src\pages\v5.astro:354:  let rt; window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => 
+ScrollTrigger.refresh(), 200); });
+  src\pages\v5.astro:355:
+  src\pages\v5.astro:356:  // PERF: halt the hero canvas loop entirely when it's scrolled off-screen,
+  src\pages\v5.astro:357:  // so it doesn't fight the pinned scroll scenes below.
+  src\pages\v5.astro:358:  const animBox = document.querySelector('.hero-a .anim');
+  src\pages\v5.astro:359:  if (af && animBox) {
+  src\pages\v5.astro:360:    const post = (m) => { try { af.contentWindow && af.contentWindow.postMessage(m, '*'); } 
+catch (e) {} };
+  src\pages\v5.astro:361:    new IntersectionObserver((es) => es.forEach((e) => post(e.isIntersecting ? 'as-play' : 
+'as-pause')),
+  src\pages\v5.astro:362:      { rootMargin: '120px' }).observe(animBox);
+  src\pages\v5.astro:363:  }
+  src\pages\v5.astro:364:  // PERF: only run the ambient gradient while the sketch scene is on-screen
+> src\pages\v5.astro:365:  const skSec = document.querySelector('[data-sketch]');
+  src\pages\v5.astro:366:  if (skSec) new IntersectionObserver((es) => es.forEach((e) => 
+skSec.classList.toggle('live', e.isIntersecting)),
+  src\pages\v5.astro:367:    { rootMargin: '80px' }).observe(skSec);
+  src\pages\v5.astro:368:
+  src\pages\v5.astro:369:  /* ---- hero intro fade-ins ---- */
+  src\pages\v5.astro:370:  if (!reduce) {
+  src\pages\v5.astro:371:    gsap.from('.hero-a .anim', { opacity: 0, y: 24, duration: 1.1, ease: 'power2.out', delay: 
+0.15 });
+  src\pages\v5.astro:372:    gsap.from('.hero-a h1', { opacity: 0, y: 30, duration: 1, ease: 'power3.out', delay: 0.32 
+});
+  src\pages\v5.astro:373:    gsap.from('.hero-a .side', { opacity: 0, y: 20, duration: 0.9, ease: 'power2.out', delay: 
+0.5 });
+  src\pages\v5.astro:374:  }
+  src\pages\v5.astro:375:
+  src\pages\v5.astro:376:  const mm = gsap.matchMedia();
+  src\pages\v5.astro:377:
+  src\pages\v5.astro:378:  /* ---- SKETCH scene: pinned; two text beats + big sketch crossfade ---- */
+  src\pages\v5.astro:379:  (function () {
+> src\pages\v5.astro:380:    const sec = document.querySelector('[data-sketch]');
+  src\pages\v5.astro:381:    if (!sec) return;
+> src\pages\v5.astro:382:    const b1 = sec.querySelector('[data-beat1]');
+> src\pages\v5.astro:383:    const b2 = sec.querySelector('[data-beat2]');
+  src\pages\v5.astro:384:    const img1 = sec.querySelector('[data-img1]');
+  src\pages\v5.astro:385:    const img2 = sec.querySelector('[data-img2]');
+  src\pages\v5.astro:386:    const fill = sec.querySelector('[data-fill]');
+  src\pages\v5.astro:387:    const cl = (v) => (v < 0 ? 0 : v > 1 ? 1 : v);
+  src\pages\v5.astro:388:    function upd() {
+  src\pages\v5.astro:389:      const mob = window.matchMedia('(max-width:880px)').matches || reduce;
+  src\pages\v5.astro:390:      if (mob) { [b1, b2, img1, img2].forEach((e) => e && (e.style.opacity = '', 
+e.style.transform = '')); if (fill) fill.style.transform = 'scaleY(1)'; return; }
+  src\pages\v5.astro:391:      const vh = window.innerHeight;
+  src\pages\v5.astro:392:      const total = sec.offsetHeight - vh;
+  src\pages\v5.astro:393:      const p = cl(-sec.getBoundingClientRect().top / (total || 1));
+  src\pages\v5.astro:407:  })();
+  src\pages\v5.astro:408:
+  src\pages\v5.astro:409:  /* ---- MAKE THE SHIFT card: assemble, then the black circular period grows to wipe to 
+black ---- */
+  src\pages\v5.astro:410:  mm.add('(min-width: 881px) and (prefers-reduced-motion: no-preference)', () => {
+> src\pages\v5.astro:411:    const sec = document.querySelector('[data-shiftcard]');
+  src\pages\v5.astro:412:    const pin = sec.querySelector('.pin');
+> src\pages\v5.astro:413:    const words = gsap.utils.toArray('[data-shiftcard] .w, [data-shiftcard] .period');
+  src\pages\v5.astro:414:    const pdot = sec.querySelector('.pdot');
+  src\pages\v5.astro:415:    const wipe = sec.querySelector('[data-wipe]');
+  src\pages\v5.astro:416:    // centre the clip-path circle on the period (stable during the pin)
+  src\pages\v5.astro:417:    function placeWipe() {
+  src\pages\v5.astro:418:      const pr = pin.getBoundingClientRect();
+  src\pages\v5.astro:419:      const dr = pdot.getBoundingClientRect();
+> src\pages\v5.astro:420:      gsap.set(wipe, { '--wx': (dr.left - pr.left + dr.width / 2) + 'px', '--wy': (dr.top - 
+pr.top + dr.height / 2) + 'px' });
+  src\pages\v5.astro:421:    }
+  src\pages\v5.astro:422:    const tl = gsap.timeline({
+> src\pages\v5.astro:423:      scrollTrigger: {
+  src\pages\v5.astro:424:        trigger: sec, start: 'top top', end: 'bottom bottom', pin: pin, scrub: true,
+  src\pages\v5.astro:425:        onRefresh: placeWipe,
+  src\pages\v5.astro:426:      },
+  src\pages\v5.astro:427:    });
+  src\pages\v5.astro:428:    tl.from(words, { opacity: 0, yPercent: 60, stagger: 0.06, ease: 'power3.out', duration: 
+0.22 }, 0.05);
+  src\pages\v5.astro:429:    tl.add(placeWipe, 0.38);
+  src\pages\v5.astro:430:    // grow the vector circle slowly and LINEARLY over most of the scroll — the satisfying 
+part
+> src\pages\v5.astro:431:    tl.fromTo(wipe, { '--wr': '0px' },
+> src\pages\v5.astro:432:      { '--wr': () => Math.hypot(window.innerWidth, window.innerHeight) * 1.2 + 'px', ease: 
+'none', duration: 0.56 }, 0.4);
+  src\pages\v5.astro:433:  });
+  src\pages\v5.astro:434:
+  src\pages\v5.astro:435:  /* ---- MAKE THE SHIFT: pin + horizontal ghost words + fg crossfade ---- */
+  src\pages\v5.astro:436:  mm.add('(min-width: 881px) and (prefers-reduced-motion: no-preference)', () => {
+  src\pages\v5.astro:437:    const ghost = document.querySelector('[data-ghost]');
+  src\pages\v5.astro:438:    const intro = document.querySelector('[data-mts-intro]');
+  src\pages\v5.astro:439:    const outro = document.querySelector('[data-mts-outro]');
+  src\pages\v5.astro:440:    const bar = document.querySelector('[data-mts-bar]');
+  src\pages\v5.astro:441:    const shift = () => ghost.scrollWidth - window.innerWidth * 0.9;
+  src\pages\v5.astro:442:    const tl = gsap.timeline({
+> src\pages\v5.astro:443:      scrollTrigger: { trigger: '[data-mts]', start: 'top top', end: 'bottom bottom', pin: 
+'[data-mts] .pin', scrub: 0.6 },
+  src\pages\v5.astro:444:    });
+  src\pages\v5.astro:445:    tl.to(ghost, { x: () => -shift(), ease: 'none', duration: 1 }, 0);
+  src\pages\v5.astro:446:    tl.to(bar, { width: '100%', ease: 'none', duration: 1 }, 0);
+  src\pages\v5.astro:447:    tl.to(intro, { opacity: 0, y: -30, ease: 'none', duration: 0.25 }, 0.15);
+  src\pages\v5.astro:448:    tl.fromTo(outro, { opacity: 0, y: 30 }, { opacity: 1, y: 0, ease: 'none', duration: 0.25 
+}, 0.55);
+  src\pages\v5.astro:449:  });
+  src\pages\v5.astro:450:</script>
+
+
+
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command '$p=Get-Content src/pages/v5.astro; $p[185..270]; "`n---JS---`n"; $p[378..434]; "`n---GLOBAL SELECTORS---`n"; Select-String -Path src/styles/global.css -Pattern '"'\\.sk|shiftcard|\\.wipe|\\.beat|data-sketch' -Context 2,5" in C:\Users\asus\Desktop\lab\alpha
+ succeeded in 1883ms:
+  .hero-a h1 .accent{color:var(--orange)}
+  .hero-a .side{padding-bottom:.35em}
+  .hero-a .lede{font-size:clamp(1.05rem,1.5vw,1.3rem);color:var(--muted);line-height:1.55;max-width:46ch;
+    margin:0 0 clamp(22px,3vh,32px)}
+  .hero-a .cta{display:flex;flex-wrap:wrap;gap:18px;align-items:center}
+  .hero-a .btn{display:inline-flex;align-items:center;gap:.5em;background:var(--orange);color:#141311;font-weight:600;
+    font-size:1.02rem;padding:15px 30px;border-radius:999px;box-shadow:0 10px 28px rgba(232,85,26,.26);
+    transition:transform .2s,box-shadow .2s}
+  .hero-a .btn:hover{transform:translateY(-2px);box-shadow:0 16px 38px rgba(232,85,26,.34)}
+  .hero-a .btn .arr{transition:transform .2s}
+  .hero-a .btn:hover .arr{transform:translateX(4px)}
+  .hero-a .ghost{font-weight:500;color:var(--ink);border-bottom:1px solid var(--line);padding-bottom:2px}
+  .hero-a .ghost:hover{border-color:var(--ink)}
+  @media(max-width:860px){
+    .hero-a{min-height:auto;padding-top:calc(var(--nav-h) + 20px)}
+    .hero-a .anim{aspect-ratio:1672/720}
+    .hero-a .grid{grid-template-columns:1fr;gap:22px;align-items:start}
+    .hero-a h1{font-size:clamp(2.4rem,10vw,3.6rem)}
+  }
+
+  /* ===== SKETCH SCENE â€” big unboxed sketch + two text beats + ambient gradient (kept off the sketch) ===== */
+  .sk{position:relative;height:240vh}
+  .sk .pin{position:sticky;top:0;height:100svh;overflow:hidden;display:flex;align-items:center;background:var(--paper)}
+  /* ambient flowing gradient â€” concentrated on the LEFT behind the text, not around the sketch */
+  .sk .ambient{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+  .sk .ambient .gb{position:absolute;border-radius:50%;filter:blur(74px);animation-play-state:paused}
+  .sk.live .ambient .gb{animation-play-state:running}
+  .sk .gb.g1{width:42vw;height:42vw;background:var(--orange);opacity:.24;left:-16vw;top:-10vw;animation:skA 13s ease-in-out infinite}
+  .sk .gb.g2{width:38vw;height:38vw;background:var(--yellow);opacity:.48;left:-2vw;bottom:-16vw;animation:skB 16s ease-in-out infinite}
+  .sk .gb.g3{width:30vw;height:30vw;background:var(--lavender);opacity:.4;left:-6vw;top:34vh;animation:skC 15s ease-in-out infinite}
+  .sk .wrap{position:relative;z-index:1;width:100%}
+  .sk .grid{display:grid;grid-template-columns:.92fr 1.08fr;gap:clamp(30px,5vw,80px);align-items:center}
+  .sk .txt{position:relative;padding-left:clamp(20px,3vw,40px);min-height:46vh}
+  .sk .fill{position:absolute;left:0;top:6px;bottom:6px;width:2px;background:var(--line);overflow:hidden}
+  .sk .fill i{position:absolute;inset:0;background:var(--orange);transform:scaleY(0);transform-origin:top}
+  .sk .beat{position:absolute;top:50%;transform:translateY(-50%);max-width:26ch}
+  .sk .beat h2{font-size:clamp(1.9rem,4vw,3rem);font-weight:600;letter-spacing:-.03em;line-height:1.08;margin:0 0 .45em}
+  .sk .beat p{font-size:clamp(1.05rem,1.7vw,1.3rem);color:var(--muted);line-height:1.5;margin:0;max-width:40ch}
+  .sk .b2{opacity:0}
+  .sk .art{position:relative;height:min(86vh,780px);display:flex;align-items:center;justify-content:center}
+  .sk .art img{position:absolute;height:100%;width:auto;max-width:100%;object-fit:contain;mix-blend-mode:multiply;filter:saturate(1.03) contrast(1.02)}
+  .sk .art [data-img2]{opacity:0}
+  @keyframes skA{50%{transform:translate(26%,22%) scale(1.18)}}
+  @keyframes skB{50%{transform:translate(20%,-18%) scale(1.14)}}
+  @keyframes skC{50%{transform:translate(16%,18%) scale(1.2)}}
+  @media(max-width:880px){
+    .sk{height:auto}
+    .sk .pin{position:static;height:auto;padding:12vh 0}
+    .sk .grid{grid-template-columns:1fr;gap:6vh}
+    .sk .txt{min-height:auto}
+    .sk .beat{position:static;transform:none!important;max-width:none;opacity:1!important}
+    .sk .b2{margin-top:4vh}
+    .sk .art{height:auto}
+    .sk .art img{position:static;height:auto;max-height:66vh}
+    .sk .art [data-img2]{display:none}
+  }
+  @media(prefers-reduced-motion:reduce){.sk .ambient .gb{animation:none!important}}
+
+  /* ===== MAKE THE SHIFT â€” grey card, black text, black circular growing period ===== */
+  .shiftcard{position:relative;height:320vh;background:var(--paper)}
+  .shiftcard .pin{position:sticky;top:0;height:100svh;overflow:hidden;display:flex;align-items:center;
+    justify-content:center;background:var(--paper)}
+  .shiftcard .card{position:relative;z-index:2;width:min(1120px,92%);min-height:min(74vh,620px);border-radius:26px;
+    padding:clamp(38px,5.5vw,80px);display:flex;flex-direction:column;justify-content:center;overflow:hidden;
+    background:radial-gradient(130% 130% at 72% 24%, #E7E2D8 0%, #D2CCC0 78%);
+    box-shadow:0 1px 2px rgba(20,19,17,.05),0 44px 100px rgba(20,19,17,.16)}
+  .shiftcard .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--muted);margin:0 0 clamp(18px,3vh,30px)}
+  .shiftcard .line{margin:0;font-weight:700;letter-spacing:-.05em;line-height:.9;color:var(--ink);
+    font-size:clamp(3rem,9vw,7.6rem)}
+  .shiftcard .line .serif{font-weight:400}
+  .shiftcard .line .period{display:inline-block;width:.15em;height:.15em;position:relative;vertical-align:baseline;margin-left:.03em}
+  .shiftcard .line .pdot{position:absolute;inset:0;border-radius:50%;background:var(--ink)}
+  .shiftcard .sub{font-size:clamp(1.1rem,1.9vw,1.45rem);color:var(--muted);line-height:1.4;max-width:46ch;
+    margin:clamp(20px,3vh,34px) 0 0}
+  .shiftcard .sub .serif{font-family:var(--serif);font-style:italic;color:var(--orange-deep)}
+  /* vector clip-path wipe â€” razor-sharp at any size, grows from the period */
+  .shiftcard .wipe{position:absolute;inset:0;background:var(--ink);z-index:20;pointer-events:none;
+    --wr:0px;--wx:50%;--wy:50%;clip-path:circle(var(--wr) at var(--wx) var(--wy));will-change:clip-path}
+  @media(max-width:880px){
+    .shiftcard{height:auto}
+    .shiftcard .pin{position:static;height:auto;padding:10vh 0}
+    .shiftcard .card{min-height:auto}
+    .shiftcard .wipe{display:none}
+  }
+</style>
+
+---JS---
+
+  (function () {
+    const sec = document.querySelector('[data-sketch]');
+    if (!sec) return;
+    const b1 = sec.querySelector('[data-beat1]');
+    const b2 = sec.querySelector('[data-beat2]');
+    const img1 = sec.querySelector('[data-img1]');
+    const img2 = sec.querySelector('[data-img2]');
+    const fill = sec.querySelector('[data-fill]');
+    const cl = (v) => (v < 0 ? 0 : v > 1 ? 1 : v);
+    function upd() {
+      const mob = window.matchMedia('(max-width:880px)').matches || reduce;
+      if (mob) { [b1, b2, img1, img2].forEach((e) => e && (e.style.opacity = '', e.style.transform = '')); if (fill) fill.style.transform = 'scaleY(1)'; return; }
+      const vh = window.innerHeight;
+      const total = sec.offsetHeight - vh;
+      const p = cl(-sec.getBoundingClientRect().top / (total || 1));
+      if (fill) fill.style.transform = 'scaleY(' + p + ')';
+      // hold beat 1, crossfade to beat 2 mid-scroll, hold beat 2
+      const t = cl((p - 0.42) / 0.2);
+      if (b1) { b1.style.opacity = String(1 - t); b1.style.transform = 'translateY(calc(-50% + ' + (-t * 26) + 'px))'; }
+      if (b2) { b2.style.opacity = String(t); b2.style.transform = 'translateY(calc(-50% + ' + ((1 - t) * 26) + 'px))'; }
+      if (img1) img1.style.opacity = String(1 - t);
+      if (img2) img2.style.opacity = String(t);
+    }
+    let ticking = false;
+    const onScrollSketch = () => { if (!ticking) { ticking = true; requestAnimationFrame(() => { upd(); ticking = false; }); } };
+    window.addEventListener('scroll', onScrollSketch, { passive: true });
+    window.addEventListener('resize', upd);
+    upd();
+  })();
+
+  /* ---- MAKE THE SHIFT card: assemble, then the black circular period grows to wipe to black ---- */
+  mm.add('(min-width: 881px) and (prefers-reduced-motion: no-preference)', () => {
+    const sec = document.querySelector('[data-shiftcard]');
+    const pin = sec.querySelector('.pin');
+    const words = gsap.utils.toArray('[data-shiftcard] .w, [data-shiftcard] .period');
+    const pdot = sec.querySelector('.pdot');
+    const wipe = sec.querySelector('[data-wipe]');
+    // centre the clip-path circle on the period (stable during the pin)
+    function placeWipe() {
+      const pr = pin.getBoundingClientRect();
+      const dr = pdot.getBoundingClientRect();
+      gsap.set(wipe, { '--wx': (dr.left - pr.left + dr.width / 2) + 'px', '--wy': (dr.top - pr.top + dr.height / 2) + 'px' });
+    }
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: sec, start: 'top top', end: 'bottom bottom', pin: pin, scrub: true,
+        onRefresh: placeWipe,
+      },
+    });
+    tl.from(words, { opacity: 0, yPercent: 60, stagger: 0.06, ease: 'power3.out', duration: 0.22 }, 0.05);
+    tl.add(placeWipe, 0.38);
+    // grow the vector circle slowly and LINEARLY over most of the scroll â€” the satisfying part
+    tl.fromTo(wipe, { '--wr': '0px' },
+      { '--wr': () => Math.hypot(window.innerWidth, window.innerHeight) * 1.2 + 'px', ease: 'none', duration: 0.56 }, 0.4);
+  });
+
+  /* ---- MAKE THE SHIFT: pin + horizontal ghost words + fg crossfade ---- */
+
+---GLOBAL SELECTORS---
+
+
+  src\styles\global.css:119:
+  src\styles\global.css:120:/* ============ SKETCH SCENE (sticky, crossfade) ============ */
+> src\styles\global.css:121:.sketch{position:relative;height:280vh}
+> src\styles\global.css:122:.sketch 
+.pin{position:sticky;top:0;height:100svh;overflow:hidden;display:flex;align-items:center}
+> src\styles\global.css:123:.sketch .grid{display:grid;grid-template-columns:1fr 
+1fr;gap:clamp(30px,5vw,80px);width:100%;align-items:center}
+> src\styles\global.css:124:@media(max-width:880px){.sketch{height:auto}.sketch 
+.pin{position:static;height:auto;padding-block:12vh}.sketch .grid{grid-template-columns:1fr;gap:6vh}}
+> src\styles\global.css:125:.sketch .col-text{position:relative;padding-left:clamp(20px,3vw,40px)}
+> src\styles\global.css:126:.sketch 
+.fill{position:absolute;left:0;top:6px;bottom:6px;width:2px;background:var(--line);overflow:hidden}
+> src\styles\global.css:127:.sketch .fill 
+i{position:absolute;inset:0;background:var(--orange);transform:scaleY(0);transform-origin:top}
+> src\styles\global.css:128:.sketch .steps{position:relative}
+> src\styles\global.css:129:.sketch .step{}
+> src\styles\global.css:130:.sketch .step 
+h2{font-size:clamp(2rem,4.6vw,3.4rem);font-weight:600;letter-spacing:-.035em;line-height:1.05;margin:0 0 
+.5em;max-width:16ch}
+> src\styles\global.css:131:.sketch .step 
+p{font-size:clamp(1.05rem,1.7vw,1.3rem);color:var(--muted);line-height:1.55;margin:0;max-width:44ch}
+> src\styles\global.css:132:.sketch .step p .serif{color:var(--ink)}
+> src\styles\global.css:133:.sketch .step2{position:absolute;top:0;left:0}
+> src\styles\global.css:134:.sketch .col-art{position:relative}
+> src\styles\global.css:135:.sketch .card{position:relative;background:var(--panel);border:1px solid 
+var(--line);border-radius:22px;
+  src\styles\global.css:136:  padding:clamp(20px,3vw,40px);box-shadow:0 1px 2px rgba(20,19,17,.04),0 24px 60px 
+rgba(20,19,17,.08);
+  src\styles\global.css:137:  aspect-ratio:1/1;display:flex;align-items:center;justify-content:center}
+> src\styles\global.css:138:.sketch .card 
+img{position:absolute;width:82%;height:auto;mix-blend-mode:multiply;filter:saturate(1.03) contrast(1.02)}
+  src\styles\global.css:139:
+  src\styles\global.css:140:/* ============ MAKE THE SHIFT — grey headline + expanding period wipe ============ */
+  src\styles\global.css:141:.shiftcut{position:relative;height:300vh}
+  src\styles\global.css:142:.shiftcut .pin{position:sticky;top:0;height:100svh;overflow:hidden;display:flex;align-items
+:center;justify-content:center;background:var(--paper)}
+  src\styles\global.css:143:.shiftline{position:relative;z-index:2;margin:0;display:flex;align-items:baseline;gap:.26em
+;white-space:nowrap;
+
+
+
+codex
+The implementation is already scoped locally in `v5.astro`; I’m now measuring actual opacity/clip-path values while capturing the requested scroll depths, which will expose timing or coverage bugs that static review can miss.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'npm run build' in C:\Users\asus\Desktop\lab\alpha
+ succeeded in 9812ms:
+
+> alpha-shift@1.0.0 build
+> astro build
+
+[2m14:21:35[22m [34m[content][39m Syncing content
+[2m14:21:35[22m [34m[content][39m Synced content
+[2m14:21:35[22m [34m[types][39m Generated [2m109ms[22m
+[2m14:21:35[22m [34m[build][39m output: [34m"static"[39m
+[2m14:21:35[22m [34m[build][39m mode: [34m"static"[39m
+[2m14:21:35[22m [34m[build][39m directory: [34mC:\Users\asus\Desktop\lab\alpha\dist\[39m
+[2m14:21:35[22m [34m[build][39m Collecting build info...
+[2m14:21:35[22m [34m[build][39m [32m✓ Completed in 150ms.[39m
+[2m14:21:35[22m [34m[build][39m Building static entrypoints...
+[2m14:21:38[22m [34m[vite][39m [32m✓ built in 2.13s[39m
+[2m14:21:38[22m [34m[build][39m [32m✓ Completed in 2.22s.[39m
+
+[42m[30m building client (vite) [39m[49m
+[2m14:21:38[22m [34m[vite][39m transforming...
+[2m14:21:38[22m [34m[vite][39m [32m✓[39m 8 modules transformed.
+[2m14:21:38[22m [34m[vite][39m rendering chunks...
+[2m14:21:39[22m [34m[vite][39m computing gzip size...
+[2m14:21:39[22m [34m[vite][39m [2mdist/[22m[36m_astro/index.astro_astro_type_script_index_0_lang.CKCxkUZc.js  [39m[1m[2m  3.81 kB[22m[1m[22m[2m │ gzip:  1.46 kB[22m
+[2m14:21:39[22m [34m[vite][39m [2mdist/[22m[36m_astro/v5.astro_astro_type_script_index_0_lang.-7GzFM1m.js     [39m[1m[2m  4.95 kB[22m[1m[22m[2m │ gzip:  1.89 kB[22m
+[2m14:21:39[22m [34m[vite][39m [2mdist/[22m[36m_astro/ScrollTrigger.C8IefbVz.js                               [39m[1m[2m114.87 kB[22m[1m[22m[2m │ gzip: 45.46 kB[22m
+[2m14:21:39[22m [34m[vite][39m [32m✓ built in 985ms[39m
+
+[42m[30m generating static routes [39m[49m
+[2m14:21:39[22m [32m▶[39m src/pages/index.astro
+[2m14:21:39[22m   [34m└─[39m [2m/index.html[22m [2m(+30ms)[22m 
+[2m14:21:39[22m [32m▶[39m src/pages/sketch-variants.astro
+[2m14:21:39[22m   [34m└─[39m [2m/sketch-variants/index.html[22m [2m(+6ms)[22m 
+[2m14:21:39[22m [32m▶[39m src/pages/v5.astro
+[2m14:21:39[22m   [34m└─[39m [2m/v5/index.html[22m [2m(+12ms)[22m 
+[2m14:21:39[22m [32m✓ Completed in 84ms.
+[39m
+[2m14:21:39[22m [34m[build][39m 3 page(s) built in [1m3.50s[22m
+[2m14:21:39[22m [34m[build][39m [1mComplete![22m
+
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command '$p = Start-Process -FilePath npm.cmd -ArgumentList '"'run','preview','--','--host','127.0.0.1' -WorkingDirectory 'C:\\Users\\asus\\Desktop\\lab\\alpha' -WindowStyle Hidden -PassThru -RedirectStandardOutput '.agents\\preview-v5.log' -RedirectStandardError '.agents\\preview-v5.err'; "'$p.Id' in C:\Users\asus\Desktop\lab\alpha
+ succeeded in 1452ms:
+34184
+
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-Content -Raw .agents/shoot-sk2.cjs; "`n---VERIFY---`n"; Get-Content -Raw .agents/verify-anim.cjs' in C:\Users\asus\Desktop\lab\alpha
+ succeeded in 1462ms:
+const puppeteer=require('puppeteer-core');
+const EDGE='C:'+String.fromCharCode(92)+'Program Files (x86)'+String.fromCharCode(92)+'Microsoft'+String.fromCharCode(92)+'Edge'+String.fromCharCode(92)+'Application'+String.fromCharCode(92)+'msedge.exe';
+const OUT=process.argv[2];
+(async()=>{const b=await puppeteer.launch({executablePath:EDGE,headless:'new',args:['--no-sandbox','--hide-scrollbars']});
+const p=await b.newPage();await p.setViewport({width:1440,height:900});
+await p.goto('http://localhost:4321/v5/',{waitUntil:'networkidle0'});await new Promise(r=>setTimeout(r,3000));
+const info=await p.evaluate(()=>{const el=document.querySelector('[data-sketch]');const r=el.getBoundingClientRect();return{top:r.top+window.scrollY,height:el.offsetHeight,vh:window.innerHeight};});
+const usable=info.height-info.vh;
+for(const [name,pt] of [['beat1',0.1],['beat2',0.75]]){
+  await p.evaluate(y=>window.scrollTo(0,y),Math.round(info.top+usable*pt));
+  await new Promise(r=>setTimeout(r,500));
+  await p.screenshot({path:OUT+'-'+name+'.png'});
+}
+console.log('ok');await b.close();})();
+
+
+---VERIFY---
+
+const puppeteer = require('puppeteer-core');
+const EDGE = 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe';
+const OUT = process.argv[2];
+(async () => {
+  const b = await puppeteer.launch({ executablePath: EDGE, headless: 'new', args:['--no-sandbox','--hide-scrollbars'] });
+  const p = await b.newPage();
+  await p.setViewport({ width:1440, height:900, deviceScaleFactor:1 });
+  await p.goto('http://localhost:4321/v5/', { waitUntil:'networkidle0', timeout:60000 });
+  await new Promise(r=>setTimeout(r,3000));
+  async function probe(label){
+    const f = p.frames().find(fr => fr.url().includes('Thoughts-Animation'));
+    if(!f){ console.log(label,'NO IFRAME'); return; }
+    const info = await f.evaluate(()=>{
+      const canvas=document.querySelector('#scene');
+      const controls=document.querySelector('.controls');
+      const pause=document.querySelector('#pause');
+      return {
+        canvasDisplay: canvas?getComputedStyle(canvas).display:'none',
+        controlsDisplay: controls?getComputedStyle(controls).display:'gone',
+        pauseText: pause?pause.textContent:'',
+      };
+    });
+    console.log(label, JSON.stringify(info));
+  }
+  await probe('t=3s');
+  await p.screenshot({ path: OUT+'-a.png' });
+  // sample a canvas pixel hash to detect motion
+  async function frameHash(){
+    const f = p.frames().find(fr => fr.url().includes('Thoughts-Animation'));
+    return await f.evaluate(()=>{ const c=document.querySelector('#scene'); const x=c.getContext('2d'); const d=x.getImageData(0,0,60,60).data; let s=0; for(let i=0;i<d.length;i+=97)s+=d[i]; return s; });
+  }
+  const h1=await frameHash(); await new Promise(r=>setTimeout(r,1500)); const h2=await frameHash();
+  console.log('motion?', h1!==h2, h1, h2);
+  await b.close();
+})();
+
+
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command '$out='"'C:/Users/asus/AppData/Local/Temp/claude/C--Users-asus-Desktop-lab-alpha/81c5cb80-1f98-4a79-9ab6-0bd76fe0c00c/scratchpad'; node .agents/shoot-sk2.cjs \""'$out/v5-sk"; node .agents/shoot-card.cjs "$out/v5-card"' in C:\Users\asus\Desktop\lab\alpha
+ succeeded in 43733ms:
+ok
+shiftcard top 3060 height 2880
+
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-Content -Raw .agents/study-shift.cjs; Get-Content -Raw .agents/shoot-cut.cjs' in C:\Users\asus\Desktop\lab\alpha
+ succeeded in 1562ms:
+const puppeteer = require('puppeteer-core');
+const EDGE = 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe';
+const URL = 'https://kalinigam.github.io/alpha-shift-home/';
+const OUT = process.argv[2];
+const START = parseInt(process.argv[3]||'3600',10);
+const END = parseInt(process.argv[4]||'9000',10);
+const STEP = parseInt(process.argv[5]||'350',10);
+(async () => {
+  const browser = await puppeteer.launch({ executablePath: EDGE, headless: 'new', args: ['--no-sandbox','--hide-scrollbars'] });
+  const page = await browser.newPage();
+  await page.setViewport({ width: 1440, height: 900, deviceScaleFactor: 1 });
+  await page.goto(URL, { waitUntil: 'networkidle0', timeout: 60000 });
+  await new Promise(r=>setTimeout(r,2000));
+  let i=0;
+  for(let y=START;y<=END;y+=STEP,i++){
+    await page.evaluate(v=>window.scrollTo(0,v), y);
+    await new Promise(r=>setTimeout(r,500));
+    await page.screenshot({ path: `${OUT}-${String(i).padStart(2,'0')}_y${y}.png` });
+  }
+  console.log('done', i, 'frames', START, '->', END);
+  await browser.close();
+})();
+
+const puppeteer = require('puppeteer-core');
+const EDGE = 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe';
+const OUT = process.argv[2];
+(async () => {
+  const browser = await puppeteer.launch({ executablePath: EDGE, headless: 'new', args: ['--no-sandbox','--hide-scrollbars'] });
+  const page = await browser.newPage();
+  await page.setViewport({ width: 1440, height: 900, deviceScaleFactor: 1 });
+  await page.goto('http://localhost:4321/', { waitUntil: 'networkidle0', timeout: 60000 });
+  await new Promise(r=>setTimeout(r,3000));
+  const info = await page.evaluate(() => {
+    const el = document.querySelector('.shiftcut');
+    const r = el.getBoundingClientRect();
+    return { top: r.top + window.scrollY, height: el.offsetHeight, vh: window.innerHeight };
+  });
+  const usable = info.height - info.vh;
+  const points = [0.06, 0.22, 0.45, 0.66, 0.82, 0.97];
+  for (let i=0;i<points.length;i++){
+    const y = Math.round(info.top + usable*points[i]);
+    await page.evaluate(v=>window.scrollTo(0,v), y);
+    await new Promise(r=>setTimeout(r,450));
+    await page.screenshot({ path: `${OUT}-${i}_p${Math.round(points[i]*100)}.png` });
+  }
+  console.log('shiftcut top', Math.round(info.top), 'span', Math.round(usable));
+  await browser.close();
+})();
+
+
+codex
+The sketch scene passes visually: beat 2 and the second sketch both become fully visible, the images crossfade together, and the ambient color stays confined to the left. I found one timing mismatch in the wipe: its linear growth occupied only 56% of the scroll span, so I’m extending it across 70% while preserving the vector clip-path and full-cover endpoint.
+2026-09-21T08:53:28.963257Z ERROR codex_core::tools::router: error=apply_patch verification failed: Failed to find expected lines in C:\Users\asus\Desktop\lab\alpha\src\pages\v5.astro:
+    tl.add(placeWipe, 0.38);
+    // grow the vector circle slowly and LINEARLY over most of the scroll â€” the satisfying part
+    tl.fromTo(wipe, { '--wr': '0px' },
+      { '--wr': () => Math.hypot(window.innerWidth, window.innerHeight) * 1.2 + 'px', ease: 'none', duration: 0.56 }, 0.4);
+apply patch
+patch: completed
+C:\Users\asus\Desktop\lab\alpha\src\pages\v5.astro
+diff --git a/src/pages/v5.astro b/src/pages/v5.astro
+index 8499575b0fc566d13aa3bf7cfcec0ba7a3df45d1..860b850c3a46168bc5bd807675313e504736caa5
+--- a/src/pages/v5.astro
++++ b/src/pages/v5.astro
+@@ -426,10 +426,10 @@
+       },
+     });
+     tl.from(words, { opacity: 0, yPercent: 60, stagger: 0.06, ease: 'power3.out', duration: 0.22 }, 0.05);
+-    tl.add(placeWipe, 0.38);
++    tl.add(placeWipe, 0.28);
+     // grow the vector circle slowly and LINEARLY over most of the scroll — the satisfying part
+     tl.fromTo(wipe, { '--wr': '0px' },
+-      { '--wr': () => Math.hypot(window.innerWidth, window.innerHeight) * 1.2 + 'px', ease: 'none', duration: 0.56 }, 0.4);
++      { '--wr': () => Math.hypot(window.innerWidth, window.innerHeight) * 1.2 + 'px', ease: 'none', duration: 0.7 }, 0.28);
+   });
+ 
+   /* ---- MAKE THE SHIFT: pin + horizontal ghost words + fg crossfade ---- */
+
+diff --git a/src/pages/v5.astro b/src/pages/v5.astro
+index 8499575b0fc566d13aa3bf7cfcec0ba7a3df45d1..860b850c3a46168bc5bd807675313e504736caa5
+--- a/src/pages/v5.astro
++++ b/src/pages/v5.astro
+@@ -426,10 +426,10 @@
+       },
+     });
+     tl.from(words, { opacity: 0, yPercent: 60, stagger: 0.06, ease: 'power3.out', duration: 0.22 }, 0.05);
+-    tl.add(placeWipe, 0.38);
++    tl.add(placeWipe, 0.28);
+     // grow the vector circle slowly and LINEARLY over most of the scroll — the satisfying part
+     tl.fromTo(wipe, { '--wr': '0px' },
+-      { '--wr': () => Math.hypot(window.innerWidth, window.innerHeight) * 1.2 + 'px', ease: 'none', duration: 0.56 }, 0.4);
++      { '--wr': () => Math.hypot(window.innerWidth, window.innerHeight) * 1.2 + 'px', ease: 'none', duration: 0.7 }, 0.28);
+   });
+ 
+   /* ---- MAKE THE SHIFT: pin + horizontal ghost words + fg crossfade ---- */
+
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Stop-Process -Id 34184 -ErrorAction SilentlyContinue; npm run build' in C:\Users\asus\Desktop\lab\alpha
+ succeeded in 9424ms:
+
+> alpha-shift@1.0.0 build
+> astro build
+
+[2m14:23:48[22m [34m[content][39m Syncing content
+[2m14:23:48[22m [34m[content][39m Synced content
+[2m14:23:48[22m [34m[types][39m Generated [2m105ms[22m
+[2m14:23:48[22m [34m[build][39m output: [34m"static"[39m
+[2m14:23:48[22m [34m[build][39m mode: [34m"static"[39m
+[2m14:23:48[22m [34m[build][39m directory: [34mC:\Users\asus\Desktop\lab\alpha\dist\[39m
+[2m14:23:48[22m [34m[build][39m Collecting build info...
+[2m14:23:48[22m [34m[build][39m [32m✓ Completed in 137ms.[39m
+[2m14:23:48[22m [34m[build][39m Building static entrypoints...
+[2m14:23:50[22m [34m[vite][39m [32m✓ built in 2.09s[39m
+[2m14:23:50[22m [34m[build][39m [32m✓ Completed in 2.16s.[39m
+
+[42m[30m building client (vite) [39m[49m
+[2m14:23:50[22m [34m[vite][39m transforming...
+[2m14:23:51[22m [34m[vite][39m [32m✓[39m 8 modules transformed.
+[2m14:23:51[22m [34m[vite][39m rendering chunks...
+[2m14:23:51[22m [34m[vite][39m computing gzip size...
+[2m14:23:51[22m [34m[vite][39m [2mdist/[22m[36m_astro/index.astro_astro_type_script_index_0_lang.CKCxkUZc.js  [39m[1m[2m  3.81 kB[22m[1m[22m[2m │ gzip:  1.46 kB[22m
+[2m14:23:51[22m [34m[vite][39m [2mdist/[22m[36m_astro/v5.astro_astro_type_script_index_0_lang.B09cVGsf.js     [39m[1m[2m  4.95 kB[22m[1m[22m[2m │ gzip:  1.88 kB[22m
+[2m14:23:51[22m [34m[vite][39m [2mdist/[22m[36m_astro/ScrollTrigger.C8IefbVz.js                               [39m[1m[2m114.87 kB[22m[1m[22m[2m │ gzip: 45.46 kB[22m
+[2m14:23:51[22m [34m[vite][39m [32m✓ built in 941ms[39m
+
+[42m[30m generating static routes [39m[49m
+[2m14:23:51[22m [32m▶[39m src/pages/index.astro
+[2m14:23:51[22m   [34m└─[39m [2m/index.html[22m [2m(+23ms)[22m 
+[2m14:23:51[22m [32m▶[39m src/pages/sketch-variants.astro
+[2m14:23:51[22m   [34m└─[39m [2m/sketch-variants/index.html[22m [2m(+6ms)[22m 
+[2m14:23:51[22m [32m▶[39m src/pages/v5.astro
+[2m14:23:51[22m   [34m└─[39m [2m/v5/index.html[22m [2m(+7ms)[22m 
+[2m14:23:51[22m [32m✓ Completed in 74ms.
+[39m
+[2m14:23:51[22m [34m[build][39m 3 page(s) built in [1m3.38s[22m
+[2m14:23:51[22m [34m[build][39m [1mComplete![22m
+
+diff --git a/src/pages/v5.astro b/src/pages/v5.astro
+index 8499575b0fc566d13aa3bf7cfcec0ba7a3df45d1..860b850c3a46168bc5bd807675313e504736caa5
+--- a/src/pages/v5.astro
++++ b/src/pages/v5.astro
+@@ -426,10 +426,10 @@
+       },
+     });
+     tl.from(words, { opacity: 0, yPercent: 60, stagger: 0.06, ease: 'power3.out', duration: 0.22 }, 0.05);
+-    tl.add(placeWipe, 0.38);
++    tl.add(placeWipe, 0.28);
+     // grow the vector circle slowly and LINEARLY over most of the scroll — the satisfying part
+     tl.fromTo(wipe, { '--wr': '0px' },
+-      { '--wr': () => Math.hypot(window.innerWidth, window.innerHeight) * 1.2 + 'px', ease: 'none', duration: 0.56 }, 0.4);
++      { '--wr': () => Math.hypot(window.innerWidth, window.innerHeight) * 1.2 + 'px', ease: 'none', duration: 0.7 }, 0.28);
+   });
+ 
+   /* ---- MAKE THE SHIFT: pin + horizontal ghost words + fg crossfade ---- */
+
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command '$p = Start-Process -FilePath npm.cmd -ArgumentList '"'run','preview','--','--host','127.0.0.1' -WorkingDirectory 'C:\\Users\\asus\\Desktop\\lab\\alpha' -WindowStyle Hidden -PassThru -RedirectStandardOutput '.agents\\preview-v5.log' -RedirectStandardError '.agents\\preview-v5.err'; Start-Sleep -Seconds 2; "'$p.Id; $out='"'C:/Users/asus/AppData/Local/Temp/claude/C--Users-asus-Desktop-lab-alpha/81c5cb80-1f98-4a79-9ab6-0bd76fe0c00c/scratchpad'; node .agents/shoot-card.cjs \""'$out/v5-card-final"; node .agents/shoot-sk2.cjs "$out/v5-sk-final"' in C:\Users\asus\Desktop\lab\alpha
+diff --git a/src/pages/v5.astro b/src/pages/v5.astro
+index 8499575b0fc566d13aa3bf7cfcec0ba7a3df45d1..860b850c3a46168bc5bd807675313e504736caa5
+--- a/src/pages/v5.astro
++++ b/src/pages/v5.astro
+@@ -426,10 +426,10 @@
+       },
+     });
+     tl.from(words, { opacity: 0, yPercent: 60, stagger: 0.06, ease: 'power3.out', duration: 0.22 }, 0.05);
+-    tl.add(placeWipe, 0.38);
++    tl.add(placeWipe, 0.28);
+     // grow the vector circle slowly and LINEARLY over most of the scroll — the satisfying part
+     tl.fromTo(wipe, { '--wr': '0px' },
+-      { '--wr': () => Math.hypot(window.innerWidth, window.innerHeight) * 1.2 + 'px', ease: 'none', duration: 0.56 }, 0.4);
++      { '--wr': () => Math.hypot(window.innerWidth, window.innerHeight) * 1.2 + 'px', ease: 'none', duration: 0.7 }, 0.28);
+   });
+ 
+   /* ---- MAKE THE SHIFT: pin + horizontal ghost words + fg crossfade ---- */
+
+diff --git a/src/pages/v5.astro b/src/pages/v5.astro
+index 8499575b0fc566d13aa3bf7cfcec0ba7a3df45d1..860b850c3a46168bc5bd807675313e504736caa5
+--- a/src/pages/v5.astro
++++ b/src/pages/v5.astro
+@@ -426,10 +426,10 @@
+       },
+     });
+     tl.from(words, { opacity: 0, yPercent: 60, stagger: 0.06, ease: 'power3.out', duration: 0.22 }, 0.05);
+-    tl.add(placeWipe, 0.38);
++    tl.add(placeWipe, 0.28);
+     // grow the vector circle slowly and LINEARLY over most of the scroll — the satisfying part
+     tl.fromTo(wipe, { '--wr': '0px' },
+-      { '--wr': () => Math.hypot(window.innerWidth, window.innerHeight) * 1.2 + 'px', ease: 'none', duration: 0.56 }, 0.4);
++      { '--wr': () => Math.hypot(window.innerWidth, window.innerHeight) * 1.2 + 'px', ease: 'none', duration: 0.7 }, 0.28);
+   });
+ 
+   /* ---- MAKE THE SHIFT: pin + horizontal ghost words + fg crossfade ---- */
+
+diff --git a/src/pages/v5.astro b/src/pages/v5.astro
+index 8499575b0fc566d13aa3bf7cfcec0ba7a3df45d1..860b850c3a46168bc5bd807675313e504736caa5
+--- a/src/pages/v5.astro
++++ b/src/pages/v5.astro
+@@ -426,10 +426,10 @@
+       },
+     });
+     tl.from(words, { opacity: 0, yPercent: 60, stagger: 0.06, ease: 'power3.out', duration: 0.22 }, 0.05);
+-    tl.add(placeWipe, 0.38);
++    tl.add(placeWipe, 0.28);
+     // grow the vector circle slowly and LINEARLY over most of the scroll — the satisfying part
+     tl.fromTo(wipe, { '--wr': '0px' },
+-      { '--wr': () => Math.hypot(window.innerWidth, window.innerHeight) * 1.2 + 'px', ease: 'none', duration: 0.56 }, 0.4);
++      { '--wr': () => Math.hypot(window.innerWidth, window.innerHeight) * 1.2 + 'px', ease: 'none', duration: 0.7 }, 0.28);
+   });
+ 
+   /* ---- MAKE THE SHIFT: pin + horizontal ghost words + fg crossfade ---- */
+
+ succeeded in 44752ms:
+23140
+shiftcard top 3060 height 2880
+ok
+
+diff --git a/src/pages/v5.astro b/src/pages/v5.astro
+index 8499575b0fc566d13aa3bf7cfcec0ba7a3df45d1..860b850c3a46168bc5bd807675313e504736caa5
+--- a/src/pages/v5.astro
++++ b/src/pages/v5.astro
+@@ -426,10 +426,10 @@
+       },
+     });
+     tl.from(words, { opacity: 0, yPercent: 60, stagger: 0.06, ease: 'power3.out', duration: 0.22 }, 0.05);
+-    tl.add(placeWipe, 0.38);
++    tl.add(placeWipe, 0.28);
+     // grow the vector circle slowly and LINEARLY over most of the scroll — the satisfying part
+     tl.fromTo(wipe, { '--wr': '0px' },
+-      { '--wr': () => Math.hypot(window.innerWidth, window.innerHeight) * 1.2 + 'px', ease: 'none', duration: 0.56 }, 0.4);
++      { '--wr': () => Math.hypot(window.innerWidth, window.innerHeight) * 1.2 + 'px', ease: 'none', duration: 0.7 }, 0.28);
+   });
+ 
+   /* ---- MAKE THE SHIFT: pin + horizontal ghost words + fg crossfade ---- */
+
+diff --git a/src/pages/v5.astro b/src/pages/v5.astro
+index 8499575b0fc566d13aa3bf7cfcec0ba7a3df45d1..860b850c3a46168bc5bd807675313e504736caa5
+--- a/src/pages/v5.astro
++++ b/src/pages/v5.astro
+@@ -426,10 +426,10 @@
+       },
+     });
+     tl.from(words, { opacity: 0, yPercent: 60, stagger: 0.06, ease: 'power3.out', duration: 0.22 }, 0.05);
+-    tl.add(placeWipe, 0.38);
++    tl.add(placeWipe, 0.28);
+     // grow the vector circle slowly and LINEARLY over most of the scroll — the satisfying part
+     tl.fromTo(wipe, { '--wr': '0px' },
+-      { '--wr': () => Math.hypot(window.innerWidth, window.innerHeight) * 1.2 + 'px', ease: 'none', duration: 0.56 }, 0.4);
++      { '--wr': () => Math.hypot(window.innerWidth, window.innerHeight) * 1.2 + 'px', ease: 'none', duration: 0.7 }, 0.28);
+   });
+ 
+   /* ---- MAKE THE SHIFT: pin + horizontal ghost words + fg crossfade ---- */
+
+codex
+The follow-up frames revealed a second, subtler issue: although the radius animated for longer, it was oversized to roughly twice the necessary cover radius, so the viewport still turned black too early. I’m correcting the endpoint to the exact farthest-corner distance from the period; this keeps the edge moving visibly and linearly until near the end, then reaches guaranteed full coverage.
+apply patch
+patch: completed
+C:\Users\asus\Desktop\lab\alpha\src\pages\v5.astro
+diff --git a/src/pages/v5.astro b/src/pages/v5.astro
+index 8499575b0fc566d13aa3bf7cfcec0ba7a3df45d1..2a96aec7c73dcc8de2159eafbca21a121d5c1864
+--- a/src/pages/v5.astro
++++ b/src/pages/v5.astro
+@@ -413,23 +413,30 @@
+     const words = gsap.utils.toArray('[data-shiftcard] .w, [data-shiftcard] .period');
+     const pdot = sec.querySelector('.pdot');
+     const wipe = sec.querySelector('[data-wipe]');
++    let wipeRadius = 0;
+     // centre the clip-path circle on the period (stable during the pin)
+     function placeWipe() {
+       const pr = pin.getBoundingClientRect();
+       const dr = pdot.getBoundingClientRect();
+-      gsap.set(wipe, { '--wx': (dr.left - pr.left + dr.width / 2) + 'px', '--wy': (dr.top - pr.top + dr.height / 2) + 'px' });
++      const x = dr.left - pr.left + dr.width / 2;
++      const y = dr.top - pr.top + dr.height / 2;
++      wipeRadius = Math.max(
++        Math.hypot(x, y), Math.hypot(pr.width - x, y),
++        Math.hypot(x, pr.height - y), Math.hypot(pr.width - x, pr.height - y)
++      ) + 2;
++      gsap.set(wipe, { '--wx': x + 'px', '--wy': y + 'px' });
+     }
+     const tl = gsap.timeline({
+       scrollTrigger: {
+         trigger: sec, start: 'top top', end: 'bottom bottom', pin: pin, scrub: true,
+-        onRefresh: placeWipe,
++        onRefresh: placeWipe, invalidateOnRefresh: true,
+       },
+     });
+     tl.from(words, { opacity: 0, yPercent: 60, stagger: 0.06, ease: 'power3.out', duration: 0.22 }, 0.05);
+-    tl.add(placeWipe, 0.38);
++    tl.add(placeWipe, 0.24);
+     // grow the vector circle slowly and LINEARLY over most of the scroll — the satisfying part
+     tl.fromTo(wipe, { '--wr': '0px' },
+-      { '--wr': () => Math.hypot(window.innerWidth, window.innerHeight) * 1.2 + 'px', ease: 'none', duration: 0.56 }, 0.4);
++      { '--wr': () => wipeRadius + 'px', ease: 'none', duration: 0.72 }, 0.24);
+   });
+ 
+   /* ---- MAKE THE SHIFT: pin + horizontal ghost words + fg crossfade ---- */
+
+diff --git a/src/pages/v5.astro b/src/pages/v5.astro
+index 8499575b0fc566d13aa3bf7cfcec0ba7a3df45d1..2a96aec7c73dcc8de2159eafbca21a121d5c1864
+--- a/src/pages/v5.astro
++++ b/src/pages/v5.astro
+@@ -413,23 +413,30 @@
+     const words = gsap.utils.toArray('[data-shiftcard] .w, [data-shiftcard] .period');
+     const pdot = sec.querySelector('.pdot');
+     const wipe = sec.querySelector('[data-wipe]');
++    let wipeRadius = 0;
+     // centre the clip-path circle on the period (stable during the pin)
+     function placeWipe() {
+       const pr = pin.getBoundingClientRect();
+       const dr = pdot.getBoundingClientRect();
+-      gsap.set(wipe, { '--wx': (dr.left - pr.left + dr.width / 2) + 'px', '--wy': (dr.top - pr.top + dr.height / 2) + 'px' });
++      const x = dr.left - pr.left + dr.width / 2;
++      const y = dr.top - pr.top + dr.height / 2;
++      wipeRadius = Math.max(
++        Math.hypot(x, y), Math.hypot(pr.width - x, y),
++        Math.hypot(x, pr.height - y), Math.hypot(pr.width - x, pr.height - y)
++      ) + 2;
++      gsap.set(wipe, { '--wx': x + 'px', '--wy': y + 'px' });
+     }
+     const tl = gsap.timeline({
+       scrollTrigger: {
+         trigger: sec, start: 'top top', end: 'bottom bottom', pin: pin, scrub: true,
+-        onRefresh: placeWipe,
++        onRefresh: placeWipe, invalidateOnRefresh: true,
+       },
+     });
+     tl.from(words, { opacity: 0, yPercent: 60, stagger: 0.06, ease: 'power3.out', duration: 0.22 }, 0.05);
+-    tl.add(placeWipe, 0.38);
++    tl.add(placeWipe, 0.24);
+     // grow the vector circle slowly and LINEARLY over most of the scroll — the satisfying part
+     tl.fromTo(wipe, { '--wr': '0px' },
+-      { '--wr': () => Math.hypot(window.innerWidth, window.innerHeight) * 1.2 + 'px', ease: 'none', duration: 0.56 }, 0.4);
++      { '--wr': () => wipeRadius + 'px', ease: 'none', duration: 0.72 }, 0.24);
+   });
+ 
+   /* ---- MAKE THE SHIFT: pin + horizontal ghost words + fg crossfade ---- */
+
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Stop-Process -Id 23140 -ErrorAction SilentlyContinue; npm run build; $p = Start-Process -FilePath npm.cmd -ArgumentList '"'run','preview','--','--host','127.0.0.1' -WorkingDirectory 'C:\\Users\\asus\\Desktop\\lab\\alpha' -WindowStyle Hidden -PassThru -RedirectStandardOutput '.agents\\preview-v5.log' -RedirectStandardError '.agents\\preview-v5.err'; Start-Sleep -Seconds 2; "'$out='"'C:/Users/asus/AppData/Local/Temp/claude/C--Users-asus-Desktop-lab-alpha/81c5cb80-1f98-4a79-9ab6-0bd76fe0c00c/scratchpad'; node .agents/shoot-card.cjs \""'$out/v5-card-verified"; Write-Output "previewPid=$($p.Id)"' in C:\Users\asus\Desktop\lab\alpha
+diff --git a/src/pages/v5.astro b/src/pages/v5.astro
+index 8499575b0fc566d13aa3bf7cfcec0ba7a3df45d1..2a96aec7c73dcc8de2159eafbca21a121d5c1864
+--- a/src/pages/v5.astro
++++ b/src/pages/v5.astro
+@@ -413,23 +413,30 @@
+     const words = gsap.utils.toArray('[data-shiftcard] .w, [data-shiftcard] .period');
+     const pdot = sec.querySelector('.pdot');
+     const wipe = sec.querySelector('[data-wipe]');
++    let wipeRadius = 0;
+     // centre the clip-path circle on the period (stable during the pin)
+     function placeWipe() {
+       const pr = pin.getBoundingClientRect();
+       const dr = pdot.getBoundingClientRect();
+-      gsap.set(wipe, { '--wx': (dr.left - pr.left + dr.width / 2) + 'px', '--wy': (dr.top - pr.top + dr.height / 2) + 'px' });
++      const x = dr.left - pr.left + dr.width / 2;
++      const y = dr.top - pr.top + dr.height / 2;
++      wipeRadius = Math.max(
++        Math.hypot(x, y), Math.hypot(pr.width - x, y),
++        Math.hypot(x, pr.height - y), Math.hypot(pr.width - x, pr.height - y)
++      ) + 2;
++      gsap.set(wipe, { '--wx': x + 'px', '--wy': y + 'px' });
+     }
+     const tl = gsap.timeline({
+       scrollTrigger: {
+         trigger: sec, start: 'top top', end: 'bottom bottom', pin: pin, scrub: true,
+-        onRefresh: placeWipe,
++        onRefresh: placeWipe, invalidateOnRefresh: true,
+       },
+     });
+     tl.from(words, { opacity: 0, yPercent: 60, stagger: 0.06, ease: 'power3.out', duration: 0.22 }, 0.05);
+-    tl.add(placeWipe, 0.38);
++    tl.add(placeWipe, 0.24);
+     // grow the vector circle slowly and LINEARLY over most of the scroll — the satisfying part
+     tl.fromTo(wipe, { '--wr': '0px' },
+-      { '--wr': () => Math.hypot(window.innerWidth, window.innerHeight) * 1.2 + 'px', ease: 'none', duration: 0.56 }, 0.4);
++      { '--wr': () => wipeRadius + 'px', ease: 'none', duration: 0.72 }, 0.24);
+   });
+ 
+   /* ---- MAKE THE SHIFT: pin + horizontal ghost words + fg crossfade ---- */
+
+diff --git a/src/pages/v5.astro b/src/pages/v5.astro
+index 8499575b0fc566d13aa3bf7cfcec0ba7a3df45d1..2a96aec7c73dcc8de2159eafbca21a121d5c1864
+--- a/src/pages/v5.astro
++++ b/src/pages/v5.astro
+@@ -413,23 +413,30 @@
+     const words = gsap.utils.toArray('[data-shiftcard] .w, [data-shiftcard] .period');
+     const pdot = sec.querySelector('.pdot');
+     const wipe = sec.querySelector('[data-wipe]');
++    let wipeRadius = 0;
+     // centre the clip-path circle on the period (stable during the pin)
+     function placeWipe() {
+       const pr = pin.getBoundingClientRect();
+       const dr = pdot.getBoundingClientRect();
+-      gsap.set(wipe, { '--wx': (dr.left - pr.left + dr.width / 2) + 'px', '--wy': (dr.top - pr.top + dr.height / 2) + 'px' });
++      const x = dr.left - pr.left + dr.width / 2;
++      const y = dr.top - pr.top + dr.height / 2;
++      wipeRadius = Math.max(
++        Math.hypot(x, y), Math.hypot(pr.width - x, y),
++        Math.hypot(x, pr.height - y), Math.hypot(pr.width - x, pr.height - y)
++      ) + 2;
++      gsap.set(wipe, { '--wx': x + 'px', '--wy': y + 'px' });
+     }
+     const tl = gsap.timeline({
+       scrollTrigger: {
+         trigger: sec, start: 'top top', end: 'bottom bottom', pin: pin, scrub: true,
+-        onRefresh: placeWipe,
++        onRefresh: placeWipe, invalidateOnRefresh: true,
+       },
+     });
+     tl.from(words, { opacity: 0, yPercent: 60, stagger: 0.06, ease: 'power3.out', duration: 0.22 }, 0.05);
+-    tl.add(placeWipe, 0.38);
++    tl.add(placeWipe, 0.24);
+     // grow the vector circle slowly and LINEARLY over most of the scroll — the satisfying part
+     tl.fromTo(wipe, { '--wr': '0px' },
+-      { '--wr': () => Math.hypot(window.innerWidth, window.innerHeight) * 1.2 + 'px', ease: 'none', duration: 0.56 }, 0.4);
++      { '--wr': () => wipeRadius + 'px', ease: 'none', duration: 0.72 }, 0.24);
+   });
+ 
+   /* ---- MAKE THE SHIFT: pin + horizontal ghost words + fg crossfade ---- */
+
+ succeeded in 26460ms:
+
+> alpha-shift@1.0.0 build
+> astro build
+
+[2m14:25:37[22m [34m[content][39m Syncing content
+[2m14:25:37[22m [34m[content][39m Synced content
+[2m14:25:37[22m [34m[types][39m Generated [2m61ms[22m
+[2m14:25:37[22m [34m[build][39m output: [34m"static"[39m
+[2m14:25:37[22m [34m[build][39m mode: [34m"static"[39m
+[2m14:25:37[22m [34m[build][39m directory: [34mC:\Users\asus\Desktop\lab\alpha\dist\[39m
+[2m14:25:37[22m [34m[build][39m Collecting build info...
+[2m14:25:37[22m [34m[build][39m [32m✓ Completed in 89ms.[39m
+[2m14:25:37[22m [34m[build][39m Building static entrypoints...
+[2m14:25:38[22m [34m[vite][39m [32m✓ built in 1.05s[39m
+[2m14:25:38[22m [34m[build][39m [32m✓ Completed in 1.10s.[39m
+
+[42m[30m building client (vite) [39m[49m
+[2m14:25:38[22m [34m[vite][39m transforming...
+[2m14:25:39[22m [34m[vite][39m [32m✓[39m 8 modules transformed.
+[2m14:25:39[22m [34m[vite][39m rendering chunks...
+[2m14:25:39[22m [34m[vite][39m computing gzip size...
+[2m14:25:39[22m [34m[vite][39m [2mdist/[22m[36m_astro/index.astro_astro_type_script_index_0_lang.CKCxkUZc.js  [39m[1m[2m  3.81 kB[22m[1m[22m[2m │ gzip:  1.46 kB[22m
+[2m14:25:39[22m [34m[vite][39m [2mdist/[22m[36m_astro/v5.astro_astro_type_script_index_0_lang.wcIFS9iq.js     [39m[1m[2m  5.06 kB[22m[1m[22m[2m │ gzip:  1.93 kB[22m
+[2m14:25:39[22m [34m[vite][39m [2mdist/[22m[36m_astro/ScrollTrigger.C8IefbVz.js                               [39m[1m[2m114.87 kB[22m[1m[22m[2m │ gzip: 45.46 kB[22m
+[2m14:25:39[22m [34m[vite][39m [32m✓ built in 958ms[39m
+
+[42m[30m generating static routes [39m[49m
+[2m14:25:39[22m [32m▶[39m src/pages/index.astro
+[2m14:25:39[22m   [34m└─[39m [2m/index.html[22m [2m(+24ms)[22m 
+[2m14:25:39[22m [32m▶[39m src/pages/sketch-variants.astro
+[2m14:25:39[22m   [34m└─[39m [2m/sketch-variants/index.html[22m [2m(+11ms)[22m 
+[2m14:25:39[22m [32m▶[39m src/pages/v5.astro
+[2m14:25:39[22m   [34m└─[39m [2m/v5/index.html[22m [2m(+9ms)[22m 
+[2m14:25:39[22m [32m✓ Completed in 88ms.
+[39m
+[2m14:25:39[22m [34m[build][39m 3 page(s) built in [1m2.28s[22m
+[2m14:25:39[22m [34m[build][39m [1mComplete![22m
+shiftcard top 3060 height 2880
+previewPid=14020
+
+diff --git a/src/pages/v5.astro b/src/pages/v5.astro
+index 8499575b0fc566d13aa3bf7cfcec0ba7a3df45d1..2a96aec7c73dcc8de2159eafbca21a121d5c1864
+--- a/src/pages/v5.astro
++++ b/src/pages/v5.astro
+@@ -413,23 +413,30 @@
+     const words = gsap.utils.toArray('[data-shiftcard] .w, [data-shiftcard] .period');
+     const pdot = sec.querySelector('.pdot');
+     const wipe = sec.querySelector('[data-wipe]');
++    let wipeRadius = 0;
+     // centre the clip-path circle on the period (stable during the pin)
+     function placeWipe() {
+       const pr = pin.getBoundingClientRect();
+       const dr = pdot.getBoundingClientRect();
+-      gsap.set(wipe, { '--wx': (dr.left - pr.left + dr.width / 2) + 'px', '--wy': (dr.top - pr.top + dr.height / 2) + 'px' });
++      const x = dr.left - pr.left + dr.width / 2;
++      const y = dr.top - pr.top + dr.height / 2;
++      wipeRadius = Math.max(
++        Math.hypot(x, y), Math.hypot(pr.width - x, y),
++        Math.hypot(x, pr.height - y), Math.hypot(pr.width - x, pr.height - y)
++      ) + 2;
++      gsap.set(wipe, { '--wx': x + 'px', '--wy': y + 'px' });
+     }
+     const tl = gsap.timeline({
+       scrollTrigger: {
+         trigger: sec, start: 'top top', end: 'bottom bottom', pin: pin, scrub: true,
+-        onRefresh: placeWipe,
++        onRefresh: placeWipe, invalidateOnRefresh: true,
+       },
+     });
+     tl.from(words, { opacity: 0, yPercent: 60, stagger: 0.06, ease: 'power3.out', duration: 0.22 }, 0.05);
+-    tl.add(placeWipe, 0.38);
++    tl.add(placeWipe, 0.24);
+     // grow the vector circle slowly and LINEARLY over most of the scroll — the satisfying part
+     tl.fromTo(wipe, { '--wr': '0px' },
+-      { '--wr': () => Math.hypot(window.innerWidth, window.innerHeight) * 1.2 + 'px', ease: 'none', duration: 0.56 }, 0.4);
++      { '--wr': () => wipeRadius + 'px', ease: 'none', duration: 0.72 }, 0.24);
+   });
+ 
+   /* ---- MAKE THE SHIFT: pin + horizontal ghost words + fg crossfade ---- */
+
+diff --git a/src/pages/v5.astro b/src/pages/v5.astro
+index 8499575b0fc566d13aa3bf7cfcec0ba7a3df45d1..2a96aec7c73dcc8de2159eafbca21a121d5c1864
+--- a/src/pages/v5.astro
++++ b/src/pages/v5.astro
+@@ -413,23 +413,30 @@
+     const words = gsap.utils.toArray('[data-shiftcard] .w, [data-shiftcard] .period');
+     const pdot = sec.querySelector('.pdot');
+     const wipe = sec.querySelector('[data-wipe]');
++    let wipeRadius = 0;
+     // centre the clip-path circle on the period (stable during the pin)
+     function placeWipe() {
+       const pr = pin.getBoundingClientRect();
+       const dr = pdot.getBoundingClientRect();
+-      gsap.set(wipe, { '--wx': (dr.left - pr.left + dr.width / 2) + 'px', '--wy': (dr.top - pr.top + dr.height / 2) + 'px' });
++      const x = dr.left - pr.left + dr.width / 2;
++      const y = dr.top - pr.top + dr.height / 2;
++      wipeRadius = Math.max(
++        Math.hypot(x, y), Math.hypot(pr.width - x, y),
++        Math.hypot(x, pr.height - y), Math.hypot(pr.width - x, pr.height - y)
++      ) + 2;
++      gsap.set(wipe, { '--wx': x + 'px', '--wy': y + 'px' });
+     }
+     const tl = gsap.timeline({
+       scrollTrigger: {
+         trigger: sec, start: 'top top', end: 'bottom bottom', pin: pin, scrub: true,
+-        onRefresh: placeWipe,
++        onRefresh: placeWipe, invalidateOnRefresh: true,
+       },
+     });
+     tl.from(words, { opacity: 0, yPercent: 60, stagger: 0.06, ease: 'power3.out', duration: 0.22 }, 0.05);
+-    tl.add(placeWipe, 0.38);
++    tl.add(placeWipe, 0.24);
+     // grow the vector circle slowly and LINEARLY over most of the scroll — the satisfying part
+     tl.fromTo(wipe, { '--wr': '0px' },
+-      { '--wr': () => Math.hypot(window.innerWidth, window.innerHeight) * 1.2 + 'px', ease: 'none', duration: 0.56 }, 0.4);
++      { '--wr': () => wipeRadius + 'px', ease: 'none', duration: 0.72 }, 0.24);
+   });
+ 
+   /* ---- MAKE THE SHIFT: pin + horizontal ghost words + fg crossfade ---- */
+
+apply patch
+patch: completed
+C:\Users\asus\Desktop\lab\alpha\src\pages\v5.astro
+diff --git a/src/pages/v5.astro b/src/pages/v5.astro
+index 8499575b0fc566d13aa3bf7cfcec0ba7a3df45d1..34fb0b5a5c599570a922b7419c7aaeafd6874ef4
+--- a/src/pages/v5.astro
++++ b/src/pages/v5.astro
+@@ -213,7 +213,7 @@
+   .sk .gb.g1{width:42vw;height:42vw;background:var(--orange);opacity:.24;left:-16vw;top:-10vw;animation:skA 13s ease-in-out infinite}
+   .sk .gb.g2{width:38vw;height:38vw;background:var(--yellow);opacity:.48;left:-2vw;bottom:-16vw;animation:skB 16s ease-in-out infinite}
+   .sk .gb.g3{width:30vw;height:30vw;background:var(--lavender);opacity:.4;left:-6vw;top:34vh;animation:skC 15s ease-in-out infinite}
+-  .sk .wrap{position:relative;z-index:1;width:100%}
++  .sk .wrap{position:relative;width:100%}
+   .sk .grid{display:grid;grid-template-columns:.92fr 1.08fr;gap:clamp(30px,5vw,80px);align-items:center}
+   .sk .txt{position:relative;padding-left:clamp(20px,3vw,40px);min-height:46vh}
+   .sk .fill{position:absolute;left:0;top:6px;bottom:6px;width:2px;background:var(--line);overflow:hidden}
+@@ -246,7 +246,8 @@
+   .shiftcard .pin{position:sticky;top:0;height:100svh;overflow:hidden;display:flex;align-items:center;
+     justify-content:center;background:var(--paper)}
+   .shiftcard .card{position:relative;z-index:2;width:min(1120px,92%);min-height:min(74vh,620px);border-radius:26px;
+-    padding:clamp(38px,5.5vw,80px);display:flex;flex-direction:column;justify-content:center;overflow:hidden;
++    padding:clamp(38px,5.5vw,80px);display:flex;flex-direction:column;justify-content:center;align-items:center;
++    text-align:center;overflow:hidden;
+     background:radial-gradient(130% 130% at 72% 24%, #E7E2D8 0%, #D2CCC0 78%);
+     box-shadow:0 1px 2px rgba(20,19,17,.05),0 44px 100px rgba(20,19,17,.16)}
+   .shiftcard .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;
+@@ -413,23 +414,30 @@
+     const words = gsap.utils.toArray('[data-shiftcard] .w, [data-shiftcard] .period');
+     const pdot = sec.querySelector('.pdot');
+     const wipe = sec.querySelector('[data-wipe]');
++    let wipeRadius = 0;
+     // centre the clip-path circle on the period (stable during the pin)
+     function placeWipe() {
+       const pr = pin.getBoundingClientRect();
+       const dr = pdot.getBoundingClientRect();
+-      gsap.set(wipe, { '--wx': (dr.left - pr.left + dr.width / 2) + 'px', '--wy': (dr.top - pr.top + dr.height / 2) + 'px' });
++      const x = dr.left - pr.left + dr.width / 2;
++      const y = dr.top - pr.top + dr.height / 2;
++      wipeRadius = Math.max(
++        Math.hypot(x, y), Math.hypot(pr.width - x, y),
++        Math.hypot(x, pr.height - y), Math.hypot(pr.width - x, pr.height - y)
++      ) + 2;
++      gsap.set(wipe, { '--wx': x + 'px', '--wy': y + 'px' });
+     }
+     const tl = gsap.timeline({
+       scrollTrigger: {
+         trigger: sec, start: 'top top', end: 'bottom bottom', pin: pin, scrub: true,
+-        onRefresh: placeWipe,
++        onRefresh: placeWipe, invalidateOnRefresh: true,
+       },
+     });
+     tl.from(words, { opacity: 0, yPercent: 60, stagger: 0.06, ease: 'power3.out', duration: 0.22 }, 0.05);
+-    tl.add(placeWipe, 0.38);
++    tl.add(placeWipe, 0.24);
+     // grow the vector circle slowly and LINEARLY over most of the scroll — the satisfying part
+     tl.fromTo(wipe, { '--wr': '0px' },
+-      { '--wr': () => Math.hypot(window.innerWidth, window.innerHeight) * 1.2 + 'px', ease: 'none', duration: 0.56 }, 0.4);
++      { '--wr': () => wipeRadius + 'px', ease: 'none', duration: 0.68 }, 0.24);
+   });
+ 
+   /* ---- MAKE THE SHIFT: pin + horizontal ghost words + fg crossfade ---- */
+
+diff --git a/src/pages/v5.astro b/src/pages/v5.astro
+index 8499575b0fc566d13aa3bf7cfcec0ba7a3df45d1..34fb0b5a5c599570a922b7419c7aaeafd6874ef4
+--- a/src/pages/v5.astro
++++ b/src/pages/v5.astro
+@@ -213,7 +213,7 @@
+   .sk .gb.g1{width:42vw;height:42vw;background:var(--orange);opacity:.24;left:-16vw;top:-10vw;animation:skA 13s ease-in-out infinite}
+   .sk .gb.g2{width:38vw;height:38vw;background:var(--yellow);opacity:.48;left:-2vw;bottom:-16vw;animation:skB 16s ease-in-out infinite}
+   .sk .gb.g3{width:30vw;height:30vw;background:var(--lavender);opacity:.4;left:-6vw;top:34vh;animation:skC 15s ease-in-out infinite}
+-  .sk .wrap{position:relative;z-index:1;width:100%}
++  .sk .wrap{position:relative;width:100%}
+   .sk .grid{display:grid;grid-template-columns:.92fr 1.08fr;gap:clamp(30px,5vw,80px);align-items:center}
+   .sk .txt{position:relative;padding-left:clamp(20px,3vw,40px);min-height:46vh}
+   .sk .fill{position:absolute;left:0;top:6px;bottom:6px;width:2px;background:var(--line);overflow:hidden}
+@@ -246,7 +246,8 @@
+   .shiftcard .pin{position:sticky;top:0;height:100svh;overflow:hidden;display:flex;align-items:center;
+     justify-content:center;background:var(--paper)}
+   .shiftcard .card{position:relative;z-index:2;width:min(1120px,92%);min-height:min(74vh,620px);border-radius:26px;
+-    padding:clamp(38px,5.5vw,80px);display:flex;flex-direction:column;justify-content:center;overflow:hidden;
++    padding:clamp(38px,5.5vw,80px);display:flex;flex-direction:column;justify-content:center;align-items:center;
++    text-align:center;overflow:hidden;
+     background:radial-gradient(130% 130% at 72% 24%, #E7E2D8 0%, #D2CCC0 78%);
+     box-shadow:0 1px 2px rgba(20,19,17,.05),0 44px 100px rgba(20,19,17,.16)}
+   .shiftcard .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;
+@@ -413,23 +414,30 @@
+     const words = gsap.utils.toArray('[data-shiftcard] .w, [data-shiftcard] .period');
+     const pdot = sec.querySelector('.pdot');
+     const wipe = sec.querySelector('[data-wipe]');
++    let wipeRadius = 0;
+     // centre the clip-path circle on the period (stable during the pin)
+     function placeWipe() {
+       const pr = pin.getBoundingClientRect();
+       const dr = pdot.getBoundingClientRect();
+-      gsap.set(wipe, { '--wx': (dr.left - pr.left + dr.width / 2) + 'px', '--wy': (dr.top - pr.top + dr.height / 2) + 'px' });
++      const x = dr.left - pr.left + dr.width / 2;
++      const y = dr.top - pr.top + dr.height / 2;
++      wipeRadius = Math.max(
++        Math.hypot(x, y), Math.hypot(pr.width - x, y),
++        Math.hypot(x, pr.height - y), Math.hypot(pr.width - x, pr.height - y)
++      ) + 2;
++      gsap.set(wipe, { '--wx': x + 'px', '--wy': y + 'px' });
+     }
+     const tl = gsap.timeline({
+       scrollTrigger: {
+         trigger: sec, start: 'top top', end: 'bottom bottom', pin: pin, scrub: true,
+-        onRefresh: placeWipe,
++        onRefresh: placeWipe, invalidateOnRefresh: true,
+       },
+     });
+     tl.from(words, { opacity: 0, yPercent: 60, stagger: 0.06, ease: 'power3.out', duration: 0.22 }, 0.05);
+-    tl.add(placeWipe, 0.38);
++    tl.add(placeWipe, 0.24);
+     // grow the vector circle slowly and LINEARLY over most of the scroll — the satisfying part
+     tl.fromTo(wipe, { '--wr': '0px' },
+-      { '--wr': () => Math.hypot(window.innerWidth, window.innerHeight) * 1.2 + 'px', ease: 'none', duration: 0.56 }, 0.4);
++      { '--wr': () => wipeRadius + 'px', ease: 'none', duration: 0.68 }, 0.24);
+   });
+ 
+   /* ---- MAKE THE SHIFT: pin + horizontal ghost words + fg crossfade ---- */
+
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Stop-Process -Id 14020 -ErrorAction SilentlyContinue; npm run build; $p = Start-Process -FilePath npm.cmd -ArgumentList '"'run','preview','--','--host','127.0.0.1' -WorkingDirectory 'C:\\Users\\asus\\Desktop\\lab\\alpha' -WindowStyle Hidden -PassThru -RedirectStandardOutput '.agents\\preview-v5.log' -RedirectStandardError '.agents\\preview-v5.err'; Start-Sleep -Seconds 2; "'$out='"'C:/Users/asus/AppData/Local/Temp/claude/C--Users-asus-Desktop-lab-alpha/81c5cb80-1f98-4a79-9ab6-0bd76fe0c00c/scratchpad'; node .agents/shoot-card.cjs \""'$out/v5-card-pass"; Write-Output "previewPid=$($p.Id)"' in C:\Users\asus\Desktop\lab\alpha
+diff --git a/src/pages/v5.astro b/src/pages/v5.astro
+index 8499575b0fc566d13aa3bf7cfcec0ba7a3df45d1..34fb0b5a5c599570a922b7419c7aaeafd6874ef4
+--- a/src/pages/v5.astro
++++ b/src/pages/v5.astro
+@@ -213,7 +213,7 @@
+   .sk .gb.g1{width:42vw;height:42vw;background:var(--orange);opacity:.24;left:-16vw;top:-10vw;animation:skA 13s ease-in-out infinite}
+   .sk .gb.g2{width:38vw;height:38vw;background:var(--yellow);opacity:.48;left:-2vw;bottom:-16vw;animation:skB 16s ease-in-out infinite}
+   .sk .gb.g3{width:30vw;height:30vw;background:var(--lavender);opacity:.4;left:-6vw;top:34vh;animation:skC 15s ease-in-out infinite}
+-  .sk .wrap{position:relative;z-index:1;width:100%}
++  .sk .wrap{position:relative;width:100%}
+   .sk .grid{display:grid;grid-template-columns:.92fr 1.08fr;gap:clamp(30px,5vw,80px);align-items:center}
+   .sk .txt{position:relative;padding-left:clamp(20px,3vw,40px);min-height:46vh}
+   .sk .fill{position:absolute;left:0;top:6px;bottom:6px;width:2px;background:var(--line);overflow:hidden}
+@@ -246,7 +246,8 @@
+   .shiftcard .pin{position:sticky;top:0;height:100svh;overflow:hidden;display:flex;align-items:center;
+     justify-content:center;background:var(--paper)}
+   .shiftcard .card{position:relative;z-index:2;width:min(1120px,92%);min-height:min(74vh,620px);border-radius:26px;
+-    padding:clamp(38px,5.5vw,80px);display:flex;flex-direction:column;justify-content:center;overflow:hidden;
++    padding:clamp(38px,5.5vw,80px);display:flex;flex-direction:column;justify-content:center;align-items:center;
++    text-align:center;overflow:hidden;
+     background:radial-gradient(130% 130% at 72% 24%, #E7E2D8 0%, #D2CCC0 78%);
+     box-shadow:0 1px 2px rgba(20,19,17,.05),0 44px 100px rgba(20,19,17,.16)}
+   .shiftcard .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;
+@@ -413,23 +414,30 @@
+     const words = gsap.utils.toArray('[data-shiftcard] .w, [data-shiftcard] .period');
+     const pdot = sec.querySelector('.pdot');
+     const wipe = sec.querySelector('[data-wipe]');
++    let wipeRadius = 0;
+     // centre the clip-path circle on the period (stable during the pin)
+     function placeWipe() {
+       const pr = pin.getBoundingClientRect();
+       const dr = pdot.getBoundingClientRect();
+-      gsap.set(wipe, { '--wx': (dr.left - pr.left + dr.width / 2) + 'px', '--wy': (dr.top - pr.top + dr.height / 2) + 'px' });
++      const x = dr.left - pr.left + dr.width / 2;
++      const y = dr.top - pr.top + dr.height / 2;
++      wipeRadius = Math.max(
++        Math.hypot(x, y), Math.hypot(pr.width - x, y),
++        Math.hypot(x, pr.height - y), Math.hypot(pr.width - x, pr.height - y)
++      ) + 2;
++      gsap.set(wipe, { '--wx': x + 'px', '--wy': y + 'px' });
+     }
+     const tl = gsap.timeline({
+       scrollTrigger: {
+         trigger: sec, start: 'top top', end: 'bottom bottom', pin: pin, scrub: true,
+-        onRefresh: placeWipe,
++        onRefresh: placeWipe, invalidateOnRefresh: true,
+       },
+     });
+     tl.from(words, { opacity: 0, yPercent: 60, stagger: 0.06, ease: 'power3.out', duration: 0.22 }, 0.05);
+-    tl.add(placeWipe, 0.38);
++    tl.add(placeWipe, 0.24);
+     // grow the vector circle slowly and LINEARLY over most of the scroll — the satisfying part
+     tl.fromTo(wipe, { '--wr': '0px' },
+-      { '--wr': () => Math.hypot(window.innerWidth, window.innerHeight) * 1.2 + 'px', ease: 'none', duration: 0.56 }, 0.4);
++      { '--wr': () => wipeRadius + 'px', ease: 'none', duration: 0.68 }, 0.24);
+   });
+ 
+   /* ---- MAKE THE SHIFT: pin + horizontal ghost words + fg crossfade ---- */
+
+diff --git a/src/pages/v5.astro b/src/pages/v5.astro
+index 8499575b0fc566d13aa3bf7cfcec0ba7a3df45d1..34fb0b5a5c599570a922b7419c7aaeafd6874ef4
+--- a/src/pages/v5.astro
++++ b/src/pages/v5.astro
+@@ -213,7 +213,7 @@
+   .sk .gb.g1{width:42vw;height:42vw;background:var(--orange);opacity:.24;left:-16vw;top:-10vw;animation:skA 13s ease-in-out infinite}
+   .sk .gb.g2{width:38vw;height:38vw;background:var(--yellow);opacity:.48;left:-2vw;bottom:-16vw;animation:skB 16s ease-in-out infinite}
+   .sk .gb.g3{width:30vw;height:30vw;background:var(--lavender);opacity:.4;left:-6vw;top:34vh;animation:skC 15s ease-in-out infinite}
+-  .sk .wrap{position:relative;z-index:1;width:100%}
++  .sk .wrap{position:relative;width:100%}
+   .sk .grid{display:grid;grid-template-columns:.92fr 1.08fr;gap:clamp(30px,5vw,80px);align-items:center}
+   .sk .txt{position:relative;padding-left:clamp(20px,3vw,40px);min-height:46vh}
+   .sk .fill{position:absolute;left:0;top:6px;bottom:6px;width:2px;background:var(--line);overflow:hidden}
+@@ -246,7 +246,8 @@
+   .shiftcard .pin{position:sticky;top:0;height:100svh;overflow:hidden;display:flex;align-items:center;
+     justify-content:center;background:var(--paper)}
+   .shiftcard .card{position:relative;z-index:2;width:min(1120px,92%);min-height:min(74vh,620px);border-radius:26px;
+-    padding:clamp(38px,5.5vw,80px);display:flex;flex-direction:column;justify-content:center;overflow:hidden;
++    padding:clamp(38px,5.5vw,80px);display:flex;flex-direction:column;justify-content:center;align-items:center;
++    text-align:center;overflow:hidden;
+     background:radial-gradient(130% 130% at 72% 24%, #E7E2D8 0%, #D2CCC0 78%);
+     box-shadow:0 1px 2px rgba(20,19,17,.05),0 44px 100px rgba(20,19,17,.16)}
+   .shiftcard .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;
+@@ -413,23 +414,30 @@
+     const words = gsap.utils.toArray('[data-shiftcard] .w, [data-shiftcard] .period');
+     const pdot = sec.querySelector('.pdot');
+     const wipe = sec.querySelector('[data-wipe]');
++    let wipeRadius = 0;
+     // centre the clip-path circle on the period (stable during the pin)
+     function placeWipe() {
+       const pr = pin.getBoundingClientRect();
+       const dr = pdot.getBoundingClientRect();
+-      gsap.set(wipe, { '--wx': (dr.left - pr.left + dr.width / 2) + 'px', '--wy': (dr.top - pr.top + dr.height / 2) + 'px' });
++      const x = dr.left - pr.left + dr.width / 2;
++      const y = dr.top - pr.top + dr.height / 2;
++      wipeRadius = Math.max(
++        Math.hypot(x, y), Math.hypot(pr.width - x, y),
++        Math.hypot(x, pr.height - y), Math.hypot(pr.width - x, pr.height - y)
++      ) + 2;
++      gsap.set(wipe, { '--wx': x + 'px', '--wy': y + 'px' });
+     }
+     const tl = gsap.timeline({
+       scrollTrigger: {
+         trigger: sec, start: 'top top', end: 'bottom bottom', pin: pin, scrub: true,
+-        onRefresh: placeWipe,
++        onRefresh: placeWipe, invalidateOnRefresh: true,
+       },
+     });
+     tl.from(words, { opacity: 0, yPercent: 60, stagger: 0.06, ease: 'power3.out', duration: 0.22 }, 0.05);
+-    tl.add(placeWipe, 0.38);
++    tl.add(placeWipe, 0.24);
+     // grow the vector circle slowly and LINEARLY over most of the scroll — the satisfying part
+     tl.fromTo(wipe, { '--wr': '0px' },
+-      { '--wr': () => Math.hypot(window.innerWidth, window.innerHeight) * 1.2 + 'px', ease: 'none', duration: 0.56 }, 0.4);
++      { '--wr': () => wipeRadius + 'px', ease: 'none', duration: 0.68 }, 0.24);
+   });
+ 
+   /* ---- MAKE THE SHIFT: pin + horizontal ghost words + fg crossfade ---- */
+
+ succeeded in 28234ms:
+
+> alpha-shift@1.0.0 build
+> astro build
+
+[2m14:26:36[22m [34m[content][39m Syncing content
+[2m14:26:36[22m [34m[content][39m Synced content
+[2m14:26:36[22m [34m[types][39m Generated [2m79ms[22m
+[2m14:26:36[22m [34m[build][39m output: [34m"static"[39m
+[2m14:26:36[22m [34m[build][39m mode: [34m"static"[39m
+[2m14:26:36[22m [34m[build][39m directory: [34mC:\Users\asus\Desktop\lab\alpha\dist\[39m
+[2m14:26:36[22m [34m[build][39m Collecting build info...
+[2m14:26:36[22m [34m[build][39m [32m✓ Completed in 101ms.[39m
+[2m14:26:36[22m [34m[build][39m Building static entrypoints...
+[2m14:26:38[22m [34m[vite][39m [32m✓ built in 1.83s[39m
+[2m14:26:38[22m [34m[build][39m [32m✓ Completed in 1.88s.[39m
+
+[42m[30m building client (vite) [39m[49m
+[2m14:26:38[22m [34m[vite][39m transforming...
+[2m14:26:39[22m [34m[vite][39m [32m✓[39m 8 modules transformed.
+[2m14:26:39[22m [34m[vite][39m rendering chunks...
+[2m14:26:39[22m [34m[vite][39m computing gzip size...
+[2m14:26:39[22m [34m[vite][39m [2mdist/[22m[36m_astro/index.astro_astro_type_script_index_0_lang.CKCxkUZc.js  [39m[1m[2m  3.81 kB[22m[1m[22m[2m │ gzip:  1.46 kB[22m
+[2m14:26:39[22m [34m[vite][39m [2mdist/[22m[36m_astro/v5.astro_astro_type_script_index_0_lang.C8LLQrZY.js     [39m[1m[2m  5.06 kB[22m[1m[22m[2m │ gzip:  1.93 kB[22m
+[2m14:26:39[22m [34m[vite][39m [2mdist/[22m[36m_astro/ScrollTrigger.C8IefbVz.js                               [39m[1m[2m114.87 kB[22m[1m[22m[2m │ gzip: 45.46 kB[22m
+[2m14:26:39[22m [34m[vite][39m [32m✓ built in 1.29s[39m
+
+[42m[30m generating static routes [39m[49m
+[2m14:26:39[22m [32m▶[39m src/pages/index.astro
+[2m14:26:39[22m   [34m└─[39m [2m/index.html[22m [2m(+38ms)[22m 
+[2m14:26:39[22m [32m▶[39m src/pages/sketch-variants.astro
+[2m14:26:39[22m   [34m└─[39m [2m/sketch-variants/index.html[22m [2m(+7ms)[22m 
+[2m14:26:39[22m [32m▶[39m src/pages/v5.astro
+[2m14:26:39[22m   [34m└─[39m [2m/v5/index.html[22m [2m(+17ms)[22m 
+[2m14:26:39[22m [32m✓ Completed in 130ms.
+[39m
+[2m14:26:39[22m [34m[build][39m 3 page(s) built in [1m3.52s[22m
+[2m14:26:39[22m [34m[build][39m [1mComplete![22m
+shiftcard top 3060 height 2880
+previewPid=23380
+
+diff --git a/src/pages/v5.astro b/src/pages/v5.astro
+index 8499575b0fc566d13aa3bf7cfcec0ba7a3df45d1..34fb0b5a5c599570a922b7419c7aaeafd6874ef4
+--- a/src/pages/v5.astro
++++ b/src/pages/v5.astro
+@@ -213,7 +213,7 @@
+   .sk .gb.g1{width:42vw;height:42vw;background:var(--orange);opacity:.24;left:-16vw;top:-10vw;animation:skA 13s ease-in-out infinite}
+   .sk .gb.g2{width:38vw;height:38vw;background:var(--yellow);opacity:.48;left:-2vw;bottom:-16vw;animation:skB 16s ease-in-out infinite}
+   .sk .gb.g3{width:30vw;height:30vw;background:var(--lavender);opacity:.4;left:-6vw;top:34vh;animation:skC 15s ease-in-out infinite}
+-  .sk .wrap{position:relative;z-index:1;width:100%}
++  .sk .wrap{position:relative;width:100%}
+   .sk .grid{display:grid;grid-template-columns:.92fr 1.08fr;gap:clamp(30px,5vw,80px);align-items:center}
+   .sk .txt{position:relative;padding-left:clamp(20px,3vw,40px);min-height:46vh}
+   .sk .fill{position:absolute;left:0;top:6px;bottom:6px;width:2px;background:var(--line);overflow:hidden}
+@@ -246,7 +246,8 @@
+   .shiftcard .pin{position:sticky;top:0;height:100svh;overflow:hidden;display:flex;align-items:center;
+     justify-content:center;background:var(--paper)}
+   .shiftcard .card{position:relative;z-index:2;width:min(1120px,92%);min-height:min(74vh,620px);border-radius:26px;
+-    padding:clamp(38px,5.5vw,80px);display:flex;flex-direction:column;justify-content:center;overflow:hidden;
++    padding:clamp(38px,5.5vw,80px);display:flex;flex-direction:column;justify-content:center;align-items:center;
++    text-align:center;overflow:hidden;
+     background:radial-gradient(130% 130% at 72% 24%, #E7E2D8 0%, #D2CCC0 78%);
+     box-shadow:0 1px 2px rgba(20,19,17,.05),0 44px 100px rgba(20,19,17,.16)}
+   .shiftcard .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;
+@@ -413,23 +414,30 @@
+     const words = gsap.utils.toArray('[data-shiftcard] .w, [data-shiftcard] .period');
+     const pdot = sec.querySelector('.pdot');
+     const wipe = sec.querySelector('[data-wipe]');
++    let wipeRadius = 0;
+     // centre the clip-path circle on the period (stable during the pin)
+     function placeWipe() {
+       const pr = pin.getBoundingClientRect();
+       const dr = pdot.getBoundingClientRect();
+-      gsap.set(wipe, { '--wx': (dr.left - pr.left + dr.width / 2) + 'px', '--wy': (dr.top - pr.top + dr.height / 2) + 'px' });
++      const x = dr.left - pr.left + dr.width / 2;
++      const y = dr.top - pr.top + dr.height / 2;
++      wipeRadius = Math.max(
++        Math.hypot(x, y), Math.hypot(pr.width - x, y),
++        Math.hypot(x, pr.height - y), Math.hypot(pr.width - x, pr.height - y)
++      ) + 2;
++      gsap.set(wipe, { '--wx': x + 'px', '--wy': y + 'px' });
+     }
+     const tl = gsap.timeline({
+       scrollTrigger: {
+         trigger: sec, start: 'top top', end: 'bottom bottom', pin: pin, scrub: true,
+-        onRefresh: placeWipe,
++        onRefresh: placeWipe, invalidateOnRefresh: true,
+       },
+     });
+     tl.from(words, { opacity: 0, yPercent: 60, stagger: 0.06, ease: 'power3.out', duration: 0.22 }, 0.05);
+-    tl.add(placeWipe, 0.38);
++    tl.add(placeWipe, 0.24);
+     // grow the vector circle slowly and LINEARLY over most of the scroll — the satisfying part
+     tl.fromTo(wipe, { '--wr': '0px' },
+-      { '--wr': () => Math.hypot(window.innerWidth, window.innerHeight) * 1.2 + 'px', ease: 'none', duration: 0.56 }, 0.4);
++      { '--wr': () => wipeRadius + 'px', ease: 'none', duration: 0.68 }, 0.24);
+   });
+ 
+   /* ---- MAKE THE SHIFT: pin + horizontal ghost words + fg crossfade ---- */
+
+diff --git a/src/pages/v5.astro b/src/pages/v5.astro
+index 8499575b0fc566d13aa3bf7cfcec0ba7a3df45d1..34fb0b5a5c599570a922b7419c7aaeafd6874ef4
+--- a/src/pages/v5.astro
++++ b/src/pages/v5.astro
+@@ -213,7 +213,7 @@
+   .sk .gb.g1{width:42vw;height:42vw;background:var(--orange);opacity:.24;left:-16vw;top:-10vw;animation:skA 13s ease-in-out infinite}
+   .sk .gb.g2{width:38vw;height:38vw;background:var(--yellow);opacity:.48;left:-2vw;bottom:-16vw;animation:skB 16s ease-in-out infinite}
+   .sk .gb.g3{width:30vw;height:30vw;background:var(--lavender);opacity:.4;left:-6vw;top:34vh;animation:skC 15s ease-in-out infinite}
+-  .sk .wrap{position:relative;z-index:1;width:100%}
++  .sk .wrap{position:relative;width:100%}
+   .sk .grid{display:grid;grid-template-columns:.92fr 1.08fr;gap:clamp(30px,5vw,80px);align-items:center}
+   .sk .txt{position:relative;padding-left:clamp(20px,3vw,40px);min-height:46vh}
+   .sk .fill{position:absolute;left:0;top:6px;bottom:6px;width:2px;background:var(--line);overflow:hidden}
+@@ -246,7 +246,8 @@
+   .shiftcard .pin{position:sticky;top:0;height:100svh;overflow:hidden;display:flex;align-items:center;
+     justify-content:center;background:var(--paper)}
+   .shiftcard .card{position:relative;z-index:2;width:min(1120px,92%);min-height:min(74vh,620px);border-radius:26px;
+-    padding:clamp(38px,5.5vw,80px);display:flex;flex-direction:column;justify-content:center;overflow:hidden;
++    padding:clamp(38px,5.5vw,80px);display:flex;flex-direction:column;justify-content:center;align-items:center;
++    text-align:center;overflow:hidden;
+     background:radial-gradient(130% 130% at 72% 24%, #E7E2D8 0%, #D2CCC0 78%);
+     box-shadow:0 1px 2px rgba(20,19,17,.05),0 44px 100px rgba(20,19,17,.16)}
+   .shiftcard .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;
+@@ -413,23 +414,30 @@
+     const words = gsap.utils.toArray('[data-shiftcard] .w, [data-shiftcard] .period');
+     const pdot = sec.querySelector('.pdot');
+     const wipe = sec.querySelector('[data-wipe]');
++    let wipeRadius = 0;
+     // centre the clip-path circle on the period (stable during the pin)
+     function placeWipe() {
+       const pr = pin.getBoundingClientRect();
+       const dr = pdot.getBoundingClientRect();
+-      gsap.set(wipe, { '--wx': (dr.left - pr.left + dr.width / 2) + 'px', '--wy': (dr.top - pr.top + dr.height / 2) + 'px' });
++      const x = dr.left - pr.left + dr.width / 2;
++      const y = dr.top - pr.top + dr.height / 2;
++      wipeRadius = Math.max(
++        Math.hypot(x, y), Math.hypot(pr.width - x, y),
++        Math.hypot(x, pr.height - y), Math.hypot(pr.width - x, pr.height - y)
++      ) + 2;
++      gsap.set(wipe, { '--wx': x + 'px', '--wy': y + 'px' });
+     }
+     const tl = gsap.timeline({
+       scrollTrigger: {
+         trigger: sec, start: 'top top', end: 'bottom bottom', pin: pin, scrub: true,
+-        onRefresh: placeWipe,
++        onRefresh: placeWipe, invalidateOnRefresh: true,
+       },
+     });
+     tl.from(words, { opacity: 0, yPercent: 60, stagger: 0.06, ease: 'power3.out', duration: 0.22 }, 0.05);
+-    tl.add(placeWipe, 0.38);
++    tl.add(placeWipe, 0.24);
+     // grow the vector circle slowly and LINEARLY over most of the scroll — the satisfying part
+     tl.fromTo(wipe, { '--wr': '0px' },
+-      { '--wr': () => Math.hypot(window.innerWidth, window.innerHeight) * 1.2 + 'px', ease: 'none', duration: 0.56 }, 0.4);
++      { '--wr': () => wipeRadius + 'px', ease: 'none', duration: 0.68 }, 0.24);
+   });
+ 
+   /* ---- MAKE THE SHIFT: pin + horizontal ghost words + fg crossfade ---- */
+
+apply patch
+patch: completed
+C:\Users\asus\Desktop\lab\alpha\src\pages\v5.astro
+diff --git a/src/pages/v5.astro b/src/pages/v5.astro
+index 8499575b0fc566d13aa3bf7cfcec0ba7a3df45d1..f04b8cd04b4d18d98b599cfa9811afa9184db068
+--- a/src/pages/v5.astro
++++ b/src/pages/v5.astro
+@@ -213,7 +213,7 @@
+   .sk .gb.g1{width:42vw;height:42vw;background:var(--orange);opacity:.24;left:-16vw;top:-10vw;animation:skA 13s ease-in-out infinite}
+   .sk .gb.g2{width:38vw;height:38vw;background:var(--yellow);opacity:.48;left:-2vw;bottom:-16vw;animation:skB 16s ease-in-out infinite}
+   .sk .gb.g3{width:30vw;height:30vw;background:var(--lavender);opacity:.4;left:-6vw;top:34vh;animation:skC 15s ease-in-out infinite}
+-  .sk .wrap{position:relative;z-index:1;width:100%}
++  .sk .wrap{position:relative;width:100%}
+   .sk .grid{display:grid;grid-template-columns:.92fr 1.08fr;gap:clamp(30px,5vw,80px);align-items:center}
+   .sk .txt{position:relative;padding-left:clamp(20px,3vw,40px);min-height:46vh}
+   .sk .fill{position:absolute;left:0;top:6px;bottom:6px;width:2px;background:var(--line);overflow:hidden}
+@@ -246,7 +246,8 @@
+   .shiftcard .pin{position:sticky;top:0;height:100svh;overflow:hidden;display:flex;align-items:center;
+     justify-content:center;background:var(--paper)}
+   .shiftcard .card{position:relative;z-index:2;width:min(1120px,92%);min-height:min(74vh,620px);border-radius:26px;
+-    padding:clamp(38px,5.5vw,80px);display:flex;flex-direction:column;justify-content:center;overflow:hidden;
++    padding:clamp(38px,5.5vw,80px);display:flex;flex-direction:column;justify-content:center;align-items:center;
++    text-align:center;overflow:hidden;
+     background:radial-gradient(130% 130% at 72% 24%, #E7E2D8 0%, #D2CCC0 78%);
+     box-shadow:0 1px 2px rgba(20,19,17,.05),0 44px 100px rgba(20,19,17,.16)}
+   .shiftcard .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;
+@@ -413,23 +414,30 @@
+     const words = gsap.utils.toArray('[data-shiftcard] .w, [data-shiftcard] .period');
+     const pdot = sec.querySelector('.pdot');
+     const wipe = sec.querySelector('[data-wipe]');
++    let wipeRadius = 0;
+     // centre the clip-path circle on the period (stable during the pin)
+     function placeWipe() {
+       const pr = pin.getBoundingClientRect();
+       const dr = pdot.getBoundingClientRect();
+-      gsap.set(wipe, { '--wx': (dr.left - pr.left + dr.width / 2) + 'px', '--wy': (dr.top - pr.top + dr.height / 2) + 'px' });
++      const x = dr.left - pr.left + dr.width / 2;
++      const y = dr.top - pr.top + dr.height / 2;
++      wipeRadius = Math.max(
++        Math.hypot(x, y), Math.hypot(pr.width - x, y),
++        Math.hypot(x, pr.height - y), Math.hypot(pr.width - x, pr.height - y)
++      ) + 2;
++      gsap.set(wipe, { '--wx': x + 'px', '--wy': y + 'px' });
+     }
+     const tl = gsap.timeline({
+       scrollTrigger: {
+         trigger: sec, start: 'top top', end: 'bottom bottom', pin: pin, scrub: true,
+-        onRefresh: placeWipe,
++        onRefresh: placeWipe, invalidateOnRefresh: true,
+       },
+     });
+     tl.from(words, { opacity: 0, yPercent: 60, stagger: 0.06, ease: 'power3.out', duration: 0.22 }, 0.05);
+-    tl.add(placeWipe, 0.38);
++    tl.add(placeWipe, 0.2);
+     // grow the vector circle slowly and LINEARLY over most of the scroll — the satisfying part
+     tl.fromTo(wipe, { '--wr': '0px' },
+-      { '--wr': () => Math.hypot(window.innerWidth, window.innerHeight) * 1.2 + 'px', ease: 'none', duration: 0.56 }, 0.4);
++      { '--wr': () => wipeRadius + 'px', ease: 'none', duration: 0.65 }, 0.2);
+   });
+ 
+   /* ---- MAKE THE SHIFT: pin + horizontal ghost words + fg crossfade ---- */
+
+diff --git a/src/pages/v5.astro b/src/pages/v5.astro
+index 8499575b0fc566d13aa3bf7cfcec0ba7a3df45d1..f04b8cd04b4d18d98b599cfa9811afa9184db068
+--- a/src/pages/v5.astro
++++ b/src/pages/v5.astro
+@@ -213,7 +213,7 @@
+   .sk .gb.g1{width:42vw;height:42vw;background:var(--orange);opacity:.24;left:-16vw;top:-10vw;animation:skA 13s ease-in-out infinite}
+   .sk .gb.g2{width:38vw;height:38vw;background:var(--yellow);opacity:.48;left:-2vw;bottom:-16vw;animation:skB 16s ease-in-out infinite}
+   .sk .gb.g3{width:30vw;height:30vw;background:var(--lavender);opacity:.4;left:-6vw;top:34vh;animation:skC 15s ease-in-out infinite}
+-  .sk .wrap{position:relative;z-index:1;width:100%}
++  .sk .wrap{position:relative;width:100%}
+   .sk .grid{display:grid;grid-template-columns:.92fr 1.08fr;gap:clamp(30px,5vw,80px);align-items:center}
+   .sk .txt{position:relative;padding-left:clamp(20px,3vw,40px);min-height:46vh}
+   .sk .fill{position:absolute;left:0;top:6px;bottom:6px;width:2px;background:var(--line);overflow:hidden}
+@@ -246,7 +246,8 @@
+   .shiftcard .pin{position:sticky;top:0;height:100svh;overflow:hidden;display:flex;align-items:center;
+     justify-content:center;background:var(--paper)}
+   .shiftcard .card{position:relative;z-index:2;width:min(1120px,92%);min-height:min(74vh,620px);border-radius:26px;
+-    padding:clamp(38px,5.5vw,80px);display:flex;flex-direction:column;justify-content:center;overflow:hidden;
++    padding:clamp(38px,5.5vw,80px);display:flex;flex-direction:column;justify-content:center;align-items:center;
++    text-align:center;overflow:hidden;
+     background:radial-gradient(130% 130% at 72% 24%, #E7E2D8 0%, #D2CCC0 78%);
+     box-shadow:0 1px 2px rgba(20,19,17,.05),0 44px 100px rgba(20,19,17,.16)}
+   .shiftcard .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;
+@@ -413,23 +414,30 @@
+     const words = gsap.utils.toArray('[data-shiftcard] .w, [data-shiftcard] .period');
+     const pdot = sec.querySelector('.pdot');
+     const wipe = sec.querySelector('[data-wipe]');
++    let wipeRadius = 0;
+     // centre the clip-path circle on the period (stable during the pin)
+     function placeWipe() {
+       const pr = pin.getBoundingClientRect();
+       const dr = pdot.getBoundingClientRect();
+-      gsap.set(wipe, { '--wx': (dr.left - pr.left + dr.width / 2) + 'px', '--wy': (dr.top - pr.top + dr.height / 2) + 'px' });
++      const x = dr.left - pr.left + dr.width / 2;
++      const y = dr.top - pr.top + dr.height / 2;
++      wipeRadius = Math.max(
++        Math.hypot(x, y), Math.hypot(pr.width - x, y),
++        Math.hypot(x, pr.height - y), Math.hypot(pr.width - x, pr.height - y)
++      ) + 2;
++      gsap.set(wipe, { '--wx': x + 'px', '--wy': y + 'px' });
+     }
+     const tl = gsap.timeline({
+       scrollTrigger: {
+         trigger: sec, start: 'top top', end: 'bottom bottom', pin: pin, scrub: true,
+-        onRefresh: placeWipe,
++        onRefresh: placeWipe, invalidateOnRefresh: true,
+       },
+     });
+     tl.from(words, { opacity: 0, yPercent: 60, stagger: 0.06, ease: 'power3.out', duration: 0.22 }, 0.05);
+-    tl.add(placeWipe, 0.38);
++    tl.add(placeWipe, 0.2);
+     // grow the vector circle slowly and LINEARLY over most of the scroll — the satisfying part
+     tl.fromTo(wipe, { '--wr': '0px' },
+-      { '--wr': () => Math.hypot(window.innerWidth, window.innerHeight) * 1.2 + 'px', ease: 'none', duration: 0.56 }, 0.4);
++      { '--wr': () => wipeRadius + 'px', ease: 'none', duration: 0.65 }, 0.2);
+   });
+ 
+   /* ---- MAKE THE SHIFT: pin + horizontal ghost words + fg crossfade ---- */
+
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Stop-Process -Id 23380 -ErrorAction SilentlyContinue; npm run build; $p = Start-Process -FilePath npm.cmd -ArgumentList '"'run','preview','--','--host','127.0.0.1' -WorkingDirectory 'C:\\Users\\asus\\Desktop\\lab\\alpha' -WindowStyle Hidden -PassThru -RedirectStandardOutput '.agents\\preview-v5.log' -RedirectStandardError '.agents\\preview-v5.err'; Start-Sleep -Seconds 2; "'$out='"'C:/Users/asus/AppData/Local/Temp/claude/C--Users-asus-Desktop-lab-alpha/81c5cb80-1f98-4a79-9ab6-0bd76fe0c00c/scratchpad'; node .agents/shoot-card.cjs \""'$out/v5-card-finalpass"; Write-Output "previewPid=$($p.Id)"' in C:\Users\asus\Desktop\lab\alpha
+diff --git a/src/pages/v5.astro b/src/pages/v5.astro
+index 8499575b0fc566d13aa3bf7cfcec0ba7a3df45d1..f04b8cd04b4d18d98b599cfa9811afa9184db068
+--- a/src/pages/v5.astro
++++ b/src/pages/v5.astro
+@@ -213,7 +213,7 @@
+   .sk .gb.g1{width:42vw;height:42vw;background:var(--orange);opacity:.24;left:-16vw;top:-10vw;animation:skA 13s ease-in-out infinite}
+   .sk .gb.g2{width:38vw;height:38vw;background:var(--yellow);opacity:.48;left:-2vw;bottom:-16vw;animation:skB 16s ease-in-out infinite}
+   .sk .gb.g3{width:30vw;height:30vw;background:var(--lavender);opacity:.4;left:-6vw;top:34vh;animation:skC 15s ease-in-out infinite}
+-  .sk .wrap{position:relative;z-index:1;width:100%}
++  .sk .wrap{position:relative;width:100%}
+   .sk .grid{display:grid;grid-template-columns:.92fr 1.08fr;gap:clamp(30px,5vw,80px);align-items:center}
+   .sk .txt{position:relative;padding-left:clamp(20px,3vw,40px);min-height:46vh}
+   .sk .fill{position:absolute;left:0;top:6px;bottom:6px;width:2px;background:var(--line);overflow:hidden}
+@@ -246,7 +246,8 @@
+   .shiftcard .pin{position:sticky;top:0;height:100svh;overflow:hidden;display:flex;align-items:center;
+     justify-content:center;background:var(--paper)}
+   .shiftcard .card{position:relative;z-index:2;width:min(1120px,92%);min-height:min(74vh,620px);border-radius:26px;
+-    padding:clamp(38px,5.5vw,80px);display:flex;flex-direction:column;justify-content:center;overflow:hidden;
++    padding:clamp(38px,5.5vw,80px);display:flex;flex-direction:column;justify-content:center;align-items:center;
++    text-align:center;overflow:hidden;
+     background:radial-gradient(130% 130% at 72% 24%, #E7E2D8 0%, #D2CCC0 78%);
+     box-shadow:0 1px 2px rgba(20,19,17,.05),0 44px 100px rgba(20,19,17,.16)}
+   .shiftcard .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;
+@@ -413,23 +414,30 @@
+     const words = gsap.utils.toArray('[data-shiftcard] .w, [data-shiftcard] .period');
+     const pdot = sec.querySelector('.pdot');
+     const wipe = sec.querySelector('[data-wipe]');
++    let wipeRadius = 0;
+     // centre the clip-path circle on the period (stable during the pin)
+     function placeWipe() {
+       const pr = pin.getBoundingClientRect();
+       const dr = pdot.getBoundingClientRect();
+-      gsap.set(wipe, { '--wx': (dr.left - pr.left + dr.width / 2) + 'px', '--wy': (dr.top - pr.top + dr.height / 2) + 'px' });
++      const x = dr.left - pr.left + dr.width / 2;
++      const y = dr.top - pr.top + dr.height / 2;
++      wipeRadius = Math.max(
++        Math.hypot(x, y), Math.hypot(pr.width - x, y),
++        Math.hypot(x, pr.height - y), Math.hypot(pr.width - x, pr.height - y)
++      ) + 2;
++      gsap.set(wipe, { '--wx': x + 'px', '--wy': y + 'px' });
+     }
+     const tl = gsap.timeline({
+       scrollTrigger: {
+         trigger: sec, start: 'top top', end: 'bottom bottom', pin: pin, scrub: true,
+-        onRefresh: placeWipe,
++        onRefresh: placeWipe, invalidateOnRefresh: true,
+       },
+     });
+     tl.from(words, { opacity: 0, yPercent: 60, stagger: 0.06, ease: 'power3.out', duration: 0.22 }, 0.05);
+-    tl.add(placeWipe, 0.38);
++    tl.add(placeWipe, 0.2);
+     // grow the vector circle slowly and LINEARLY over most of the scroll — the satisfying part
+     tl.fromTo(wipe, { '--wr': '0px' },
+-      { '--wr': () => Math.hypot(window.innerWidth, window.innerHeight) * 1.2 + 'px', ease: 'none', duration: 0.56 }, 0.4);
++      { '--wr': () => wipeRadius + 'px', ease: 'none', duration: 0.65 }, 0.2);
+   });
+ 
+   /* ---- MAKE THE SHIFT: pin + horizontal ghost words + fg crossfade ---- */
+
+diff --git a/src/pages/v5.astro b/src/pages/v5.astro
+index 8499575b0fc566d13aa3bf7cfcec0ba7a3df45d1..f04b8cd04b4d18d98b599cfa9811afa9184db068
+--- a/src/pages/v5.astro
++++ b/src/pages/v5.astro
+@@ -213,7 +213,7 @@
+   .sk .gb.g1{width:42vw;height:42vw;background:var(--orange);opacity:.24;left:-16vw;top:-10vw;animation:skA 13s ease-in-out infinite}
+   .sk .gb.g2{width:38vw;height:38vw;background:var(--yellow);opacity:.48;left:-2vw;bottom:-16vw;animation:skB 16s ease-in-out infinite}
+   .sk .gb.g3{width:30vw;height:30vw;background:var(--lavender);opacity:.4;left:-6vw;top:34vh;animation:skC 15s ease-in-out infinite}
+-  .sk .wrap{position:relative;z-index:1;width:100%}
++  .sk .wrap{position:relative;width:100%}
+   .sk .grid{display:grid;grid-template-columns:.92fr 1.08fr;gap:clamp(30px,5vw,80px);align-items:center}
+   .sk .txt{position:relative;padding-left:clamp(20px,3vw,40px);min-height:46vh}
+   .sk .fill{position:absolute;left:0;top:6px;bottom:6px;width:2px;background:var(--line);overflow:hidden}
+@@ -246,7 +246,8 @@
+   .shiftcard .pin{position:sticky;top:0;height:100svh;overflow:hidden;display:flex;align-items:center;
+     justify-content:center;background:var(--paper)}
+   .shiftcard .card{position:relative;z-index:2;width:min(1120px,92%);min-height:min(74vh,620px);border-radius:26px;
+-    padding:clamp(38px,5.5vw,80px);display:flex;flex-direction:column;justify-content:center;overflow:hidden;
++    padding:clamp(38px,5.5vw,80px);display:flex;flex-direction:column;justify-content:center;align-items:center;
++    text-align:center;overflow:hidden;
+     background:radial-gradient(130% 130% at 72% 24%, #E7E2D8 0%, #D2CCC0 78%);
+     box-shadow:0 1px 2px rgba(20,19,17,.05),0 44px 100px rgba(20,19,17,.16)}
+   .shiftcard .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;
+@@ -413,23 +414,30 @@
+     const words = gsap.utils.toArray('[data-shiftcard] .w, [data-shiftcard] .period');
+     const pdot = sec.querySelector('.pdot');
+     const wipe = sec.querySelector('[data-wipe]');
++    let wipeRadius = 0;
+     // centre the clip-path circle on the period (stable during the pin)
+     function placeWipe() {
+       const pr = pin.getBoundingClientRect();
+       const dr = pdot.getBoundingClientRect();
+-      gsap.set(wipe, { '--wx': (dr.left - pr.left + dr.width / 2) + 'px', '--wy': (dr.top - pr.top + dr.height / 2) + 'px' });
++      const x = dr.left - pr.left + dr.width / 2;
++      const y = dr.top - pr.top + dr.height / 2;
++      wipeRadius = Math.max(
++        Math.hypot(x, y), Math.hypot(pr.width - x, y),
++        Math.hypot(x, pr.height - y), Math.hypot(pr.width - x, pr.height - y)
++      ) + 2;
++      gsap.set(wipe, { '--wx': x + 'px', '--wy': y + 'px' });
+     }
+     const tl = gsap.timeline({
+       scrollTrigger: {
+         trigger: sec, start: 'top top', end: 'bottom bottom', pin: pin, scrub: true,
+-        onRefresh: placeWipe,
++        onRefresh: placeWipe, invalidateOnRefresh: true,
+       },
+     });
+     tl.from(words, { opacity: 0, yPercent: 60, stagger: 0.06, ease: 'power3.out', duration: 0.22 }, 0.05);
+-    tl.add(placeWipe, 0.38);
++    tl.add(placeWipe, 0.2);
+     // grow the vector circle slowly and LINEARLY over most of the scroll — the satisfying part
+     tl.fromTo(wipe, { '--wr': '0px' },
+-      { '--wr': () => Math.hypot(window.innerWidth, window.innerHeight) * 1.2 + 'px', ease: 'none', duration: 0.56 }, 0.4);
++      { '--wr': () => wipeRadius + 'px', ease: 'none', duration: 0.65 }, 0.2);
+   });
+ 
+   /* ---- MAKE THE SHIFT: pin + horizontal ghost words + fg crossfade ---- */
+
+ succeeded in 27848ms:
+
+> alpha-shift@1.0.0 build
+> astro build
+
+[2m14:27:42[22m [34m[content][39m Syncing content
+[2m14:27:42[22m [34m[content][39m Synced content
+[2m14:27:42[22m [34m[types][39m Generated [2m60ms[22m
+[2m14:27:42[22m [34m[build][39m output: [34m"static"[39m
+[2m14:27:42[22m [34m[build][39m mode: [34m"static"[39m
+[2m14:27:42[22m [34m[build][39m directory: [34mC:\Users\asus\Desktop\lab\alpha\dist\[39m
+[2m14:27:42[22m [34m[build][39m Collecting build info...
+[2m14:27:42[22m [34m[build][39m [32m✓ Completed in 80ms.[39m
+[2m14:27:42[22m [34m[build][39m Building static entrypoints...
+[2m14:27:43[22m [34m[vite][39m [32m✓ built in 1.02s[39m
+[2m14:27:43[22m [34m[build][39m [32m✓ Completed in 1.06s.[39m
+
+[42m[30m building client (vite) [39m[49m
+[2m14:27:43[22m [34m[vite][39m transforming...
+[2m14:27:44[22m [34m[vite][39m [32m✓[39m 8 modules transformed.
+[2m14:27:44[22m [34m[vite][39m rendering chunks...
+[2m14:27:44[22m [34m[vite][39m computing gzip size...
+[2m14:27:44[22m [34m[vite][39m [2mdist/[22m[36m_astro/index.astro_astro_type_script_index_0_lang.CKCxkUZc.js  [39m[1m[2m  3.81 kB[22m[1m[22m[2m │ gzip:  1.46 kB[22m
+[2m14:27:44[22m [34m[vite][39m [2mdist/[22m[36m_astro/v5.astro_astro_type_script_index_0_lang.CXHSV8_s.js     [39m[1m[2m  5.05 kB[22m[1m[22m[2m │ gzip:  1.93 kB[22m
+[2m14:27:44[22m [34m[vite][39m [2mdist/[22m[36m_astro/ScrollTrigger.C8IefbVz.js                               [39m[1m[2m114.87 kB[22m[1m[22m[2m │ gzip: 45.46 kB[22m
+[2m14:27:44[22m [34m[vite][39m [32m✓ built in 884ms[39m
+
+[42m[30m generating static routes [39m[49m
+[2m14:27:44[22m [32m▶[39m src/pages/index.astro
+[2m14:27:44[22m   [34m└─[39m [2m/index.html[22m [2m(+23ms)[22m 
+[2m14:27:44[22m [32m▶[39m src/pages/sketch-variants.astro
+[2m14:27:44[22m   [34m└─[39m [2m/sketch-variants/index.html[22m [2m(+5ms)[22m 
+[2m14:27:44[22m [32m▶[39m src/pages/v5.astro
+[2m14:27:44[22m   [34m└─[39m [2m/v5/index.html[22m [2m(+13ms)[22m 
+[2m14:27:44[22m [32m✓ Completed in 77ms.
+[39m
+[2m14:27:44[22m [34m[build][39m 3 page(s) built in [1m2.16s[22m
+[2m14:27:44[22m [34m[build][39m [1mComplete![22m
+shiftcard top 3060 height 2880
+previewPid=1988
+
+diff --git a/src/pages/v5.astro b/src/pages/v5.astro
+index 8499575b0fc566d13aa3bf7cfcec0ba7a3df45d1..f04b8cd04b4d18d98b599cfa9811afa9184db068
+--- a/src/pages/v5.astro
++++ b/src/pages/v5.astro
+@@ -213,7 +213,7 @@
+   .sk .gb.g1{width:42vw;height:42vw;background:var(--orange);opacity:.24;left:-16vw;top:-10vw;animation:skA 13s ease-in-out infinite}
+   .sk .gb.g2{width:38vw;height:38vw;background:var(--yellow);opacity:.48;left:-2vw;bottom:-16vw;animation:skB 16s ease-in-out infinite}
+   .sk .gb.g3{width:30vw;height:30vw;background:var(--lavender);opacity:.4;left:-6vw;top:34vh;animation:skC 15s ease-in-out infinite}
+-  .sk .wrap{position:relative;z-index:1;width:100%}
++  .sk .wrap{position:relative;width:100%}
+   .sk .grid{display:grid;grid-template-columns:.92fr 1.08fr;gap:clamp(30px,5vw,80px);align-items:center}
+   .sk .txt{position:relative;padding-left:clamp(20px,3vw,40px);min-height:46vh}
+   .sk .fill{position:absolute;left:0;top:6px;bottom:6px;width:2px;background:var(--line);overflow:hidden}
+@@ -246,7 +246,8 @@
+   .shiftcard .pin{position:sticky;top:0;height:100svh;overflow:hidden;display:flex;align-items:center;
+     justify-content:center;background:var(--paper)}
+   .shiftcard .card{position:relative;z-index:2;width:min(1120px,92%);min-height:min(74vh,620px);border-radius:26px;
+-    padding:clamp(38px,5.5vw,80px);display:flex;flex-direction:column;justify-content:center;overflow:hidden;
++    padding:clamp(38px,5.5vw,80px);display:flex;flex-direction:column;justify-content:center;align-items:center;
++    text-align:center;overflow:hidden;
+     background:radial-gradient(130% 130% at 72% 24%, #E7E2D8 0%, #D2CCC0 78%);
+     box-shadow:0 1px 2px rgba(20,19,17,.05),0 44px 100px rgba(20,19,17,.16)}
+   .shiftcard .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;
+@@ -413,23 +414,30 @@
+     const words = gsap.utils.toArray('[data-shiftcard] .w, [data-shiftcard] .period');
+     const pdot = sec.querySelector('.pdot');
+     const wipe = sec.querySelector('[data-wipe]');
++    let wipeRadius = 0;
+     // centre the clip-path circle on the period (stable during the pin)
+     function placeWipe() {
+       const pr = pin.getBoundingClientRect();
+       const dr = pdot.getBoundingClientRect();
+-      gsap.set(wipe, { '--wx': (dr.left - pr.left + dr.width / 2) + 'px', '--wy': (dr.top - pr.top + dr.height / 2) + 'px' });
++      const x = dr.left - pr.left + dr.width / 2;
++      const y = dr.top - pr.top + dr.height / 2;
++      wipeRadius = Math.max(
++        Math.hypot(x, y), Math.hypot(pr.width - x, y),
++        Math.hypot(x, pr.height - y), Math.hypot(pr.width - x, pr.height - y)
++      ) + 2;
++      gsap.set(wipe, { '--wx': x + 'px', '--wy': y + 'px' });
+     }
+     const tl = gsap.timeline({
+       scrollTrigger: {
+         trigger: sec, start: 'top top', end: 'bottom bottom', pin: pin, scrub: true,
+-        onRefresh: placeWipe,
++        onRefresh: placeWipe, invalidateOnRefresh: true,
+       },
+     });
+     tl.from(words, { opacity: 0, yPercent: 60, stagger: 0.06, ease: 'power3.out', duration: 0.22 }, 0.05);
+-    tl.add(placeWipe, 0.38);
++    tl.add(placeWipe, 0.2);
+     // grow the vector circle slowly and LINEARLY over most of the scroll — the satisfying part
+     tl.fromTo(wipe, { '--wr': '0px' },
+-      { '--wr': () => Math.hypot(window.innerWidth, window.innerHeight) * 1.2 + 'px', ease: 'none', duration: 0.56 }, 0.4);
++      { '--wr': () => wipeRadius + 'px', ease: 'none', duration: 0.65 }, 0.2);
+   });
+ 
+   /* ---- MAKE THE SHIFT: pin + horizontal ghost words + fg crossfade ---- */
+
+diff --git a/src/pages/v5.astro b/src/pages/v5.astro
+index 8499575b0fc566d13aa3bf7cfcec0ba7a3df45d1..f04b8cd04b4d18d98b599cfa9811afa9184db068
+--- a/src/pages/v5.astro
++++ b/src/pages/v5.astro
+@@ -213,7 +213,7 @@
+   .sk .gb.g1{width:42vw;height:42vw;background:var(--orange);opacity:.24;left:-16vw;top:-10vw;animation:skA 13s ease-in-out infinite}
+   .sk .gb.g2{width:38vw;height:38vw;background:var(--yellow);opacity:.48;left:-2vw;bottom:-16vw;animation:skB 16s ease-in-out infinite}
+   .sk .gb.g3{width:30vw;height:30vw;background:var(--lavender);opacity:.4;left:-6vw;top:34vh;animation:skC 15s ease-in-out infinite}
+-  .sk .wrap{position:relative;z-index:1;width:100%}
++  .sk .wrap{position:relative;width:100%}
+   .sk .grid{display:grid;grid-template-columns:.92fr 1.08fr;gap:clamp(30px,5vw,80px);align-items:center}
+   .sk .txt{position:relative;padding-left:clamp(20px,3vw,40px);min-height:46vh}
+   .sk .fill{position:absolute;left:0;top:6px;bottom:6px;width:2px;background:var(--line);overflow:hidden}
+@@ -246,7 +246,8 @@
+   .shiftcard .pin{position:sticky;top:0;height:100svh;overflow:hidden;display:flex;align-items:center;
+     justify-content:center;background:var(--paper)}
+   .shiftcard .card{position:relative;z-index:2;width:min(1120px,92%);min-height:min(74vh,620px);border-radius:26px;
+-    padding:clamp(38px,5.5vw,80px);display:flex;flex-direction:column;justify-content:center;overflow:hidden;
++    padding:clamp(38px,5.5vw,80px);display:flex;flex-direction:column;justify-content:center;align-items:center;
++    text-align:center;overflow:hidden;
+     background:radial-gradient(130% 130% at 72% 24%, #E7E2D8 0%, #D2CCC0 78%);
+     box-shadow:0 1px 2px rgba(20,19,17,.05),0 44px 100px rgba(20,19,17,.16)}
+   .shiftcard .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;
+@@ -413,23 +414,30 @@
+     const words = gsap.utils.toArray('[data-shiftcard] .w, [data-shiftcard] .period');
+     const pdot = sec.querySelector('.pdot');
+     const wipe = sec.querySelector('[data-wipe]');
++    let wipeRadius = 0;
+     // centre the clip-path circle on the period (stable during the pin)
+     function placeWipe() {
+       const pr = pin.getBoundingClientRect();
+       const dr = pdot.getBoundingClientRect();
+-      gsap.set(wipe, { '--wx': (dr.left - pr.left + dr.width / 2) + 'px', '--wy': (dr.top - pr.top + dr.height / 2) + 'px' });
++      const x = dr.left - pr.left + dr.width / 2;
++      const y = dr.top - pr.top + dr.height / 2;
++      wipeRadius = Math.max(
++        Math.hypot(x, y), Math.hypot(pr.width - x, y),
++        Math.hypot(x, pr.height - y), Math.hypot(pr.width - x, pr.height - y)
++      ) + 2;
++      gsap.set(wipe, { '--wx': x + 'px', '--wy': y + 'px' });
+     }
+     const tl = gsap.timeline({
+       scrollTrigger: {
+         trigger: sec, start: 'top top', end: 'bottom bottom', pin: pin, scrub: true,
+-        onRefresh: placeWipe,
++        onRefresh: placeWipe, invalidateOnRefresh: true,
+       },
+     });
+     tl.from(words, { opacity: 0, yPercent: 60, stagger: 0.06, ease: 'power3.out', duration: 0.22 }, 0.05);
+-    tl.add(placeWipe, 0.38);
++    tl.add(placeWipe, 0.2);
+     // grow the vector circle slowly and LINEARLY over most of the scroll — the satisfying part
+     tl.fromTo(wipe, { '--wr': '0px' },
+-      { '--wr': () => Math.hypot(window.innerWidth, window.innerHeight) * 1.2 + 'px', ease: 'none', duration: 0.56 }, 0.4);
++      { '--wr': () => wipeRadius + 'px', ease: 'none', duration: 0.65 }, 0.2);
+   });
+ 
+   /* ---- MAKE THE SHIFT: pin + horizontal ghost words + fg crossfade ---- */
+
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'git diff -- src/pages/v5.astro; git status --short src/pages/v5.astro src/styles/global.css src/pages/index.astro' in C:\Users\asus\Desktop\lab\alpha
+ succeeded in 663ms:
+ M src/pages/index.astro
+ M src/styles/global.css
+?? src/pages/v5.astro
+warning: unable to access 'C:\Users\asus/.config/git/ignore': Permission denied
+warning: unable to access 'C:\Users\asus/.config/git/ignore': Permission denied
+
+diff --git a/src/pages/v5.astro b/src/pages/v5.astro
+index 8499575b0fc566d13aa3bf7cfcec0ba7a3df45d1..f04b8cd04b4d18d98b599cfa9811afa9184db068
+--- a/src/pages/v5.astro
++++ b/src/pages/v5.astro
+@@ -213,7 +213,7 @@
+   .sk .gb.g1{width:42vw;height:42vw;background:var(--orange);opacity:.24;left:-16vw;top:-10vw;animation:skA 13s ease-in-out infinite}
+   .sk .gb.g2{width:38vw;height:38vw;background:var(--yellow);opacity:.48;left:-2vw;bottom:-16vw;animation:skB 16s ease-in-out infinite}
+   .sk .gb.g3{width:30vw;height:30vw;background:var(--lavender);opacity:.4;left:-6vw;top:34vh;animation:skC 15s ease-in-out infinite}
+-  .sk .wrap{position:relative;z-index:1;width:100%}
++  .sk .wrap{position:relative;width:100%}
+   .sk .grid{display:grid;grid-template-columns:.92fr 1.08fr;gap:clamp(30px,5vw,80px);align-items:center}
+   .sk .txt{position:relative;padding-left:clamp(20px,3vw,40px);min-height:46vh}
+   .sk .fill{position:absolute;left:0;top:6px;bottom:6px;width:2px;background:var(--line);overflow:hidden}
+@@ -246,7 +246,8 @@
+   .shiftcard .pin{position:sticky;top:0;height:100svh;overflow:hidden;display:flex;align-items:center;
+     justify-content:center;background:var(--paper)}
+   .shiftcard .card{position:relative;z-index:2;width:min(1120px,92%);min-height:min(74vh,620px);border-radius:26px;
+-    padding:clamp(38px,5.5vw,80px);display:flex;flex-direction:column;justify-content:center;overflow:hidden;
++    padding:clamp(38px,5.5vw,80px);display:flex;flex-direction:column;justify-content:center;align-items:center;
++    text-align:center;overflow:hidden;
+     background:radial-gradient(130% 130% at 72% 24%, #E7E2D8 0%, #D2CCC0 78%);
+     box-shadow:0 1px 2px rgba(20,19,17,.05),0 44px 100px rgba(20,19,17,.16)}
+   .shiftcard .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;
+@@ -413,23 +414,30 @@
+     const words = gsap.utils.toArray('[data-shiftcard] .w, [data-shiftcard] .period');
+     const pdot = sec.querySelector('.pdot');
+     const wipe = sec.querySelector('[data-wipe]');
++    let wipeRadius = 0;
+     // centre the clip-path circle on the period (stable during the pin)
+     function placeWipe() {
+       const pr = pin.getBoundingClientRect();
+       const dr = pdot.getBoundingClientRect();
+-      gsap.set(wipe, { '--wx': (dr.left - pr.left + dr.width / 2) + 'px', '--wy': (dr.top - pr.top + dr.height / 2) + 'px' });
++      const x = dr.left - pr.left + dr.width / 2;
++      const y = dr.top - pr.top + dr.height / 2;
++      wipeRadius = Math.max(
++        Math.hypot(x, y), Math.hypot(pr.width - x, y),
++        Math.hypot(x, pr.height - y), Math.hypot(pr.width - x, pr.height - y)
++      ) + 2;
++      gsap.set(wipe, { '--wx': x + 'px', '--wy': y + 'px' });
+     }
+     const tl = gsap.timeline({
+       scrollTrigger: {
+         trigger: sec, start: 'top top', end: 'bottom bottom', pin: pin, scrub: true,
+-        onRefresh: placeWipe,
++        onRefresh: placeWipe, invalidateOnRefresh: true,
+       },
+     });
+     tl.from(words, { opacity: 0, yPercent: 60, stagger: 0.06, ease: 'power3.out', duration: 0.22 }, 0.05);
+-    tl.add(placeWipe, 0.38);
++    tl.add(placeWipe, 0.2);
+     // grow the vector circle slowly and LINEARLY over most of the scroll — the satisfying part
+     tl.fromTo(wipe, { '--wr': '0px' },
+-      { '--wr': () => Math.hypot(window.innerWidth, window.innerHeight) * 1.2 + 'px', ease: 'none', duration: 0.56 }, 0.4);
++      { '--wr': () => wipeRadius + 'px', ease: 'none', duration: 0.65 }, 0.2);
+   });
+ 
+   /* ---- MAKE THE SHIFT: pin + horizontal ghost words + fg crossfade ---- */
+
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Select-String -Path src/pages/v5.astro -Pattern 'let wipeRadius|wipeRadius =|invalidateOnRefresh|duration: 0.65'" in C:\Users\asus\Desktop\lab\alpha
+ succeeded in 860ms:
+
+src\pages\v5.astro:417:    let wipeRadius = 0;
+src\pages\v5.astro:424:      wipeRadius = Math.max(
+src\pages\v5.astro:433:        onRefresh: placeWipe, invalidateOnRefresh: true,
+src\pages\v5.astro:440:      { '--wr': () => wipeRadius + 'px', ease: 'none', duration: 0.65 }, 0.2);
+
+
+
+diff --git a/src/pages/v5.astro b/src/pages/v5.astro
+index 8499575b0fc566d13aa3bf7cfcec0ba7a3df45d1..f04b8cd04b4d18d98b599cfa9811afa9184db068
+--- a/src/pages/v5.astro
++++ b/src/pages/v5.astro
+@@ -213,7 +213,7 @@
+   .sk .gb.g1{width:42vw;height:42vw;background:var(--orange);opacity:.24;left:-16vw;top:-10vw;animation:skA 13s ease-in-out infinite}
+   .sk .gb.g2{width:38vw;height:38vw;background:var(--yellow);opacity:.48;left:-2vw;bottom:-16vw;animation:skB 16s ease-in-out infinite}
+   .sk .gb.g3{width:30vw;height:30vw;background:var(--lavender);opacity:.4;left:-6vw;top:34vh;animation:skC 15s ease-in-out infinite}
+-  .sk .wrap{position:relative;z-index:1;width:100%}
++  .sk .wrap{position:relative;width:100%}
+   .sk .grid{display:grid;grid-template-columns:.92fr 1.08fr;gap:clamp(30px,5vw,80px);align-items:center}
+   .sk .txt{position:relative;padding-left:clamp(20px,3vw,40px);min-height:46vh}
+   .sk .fill{position:absolute;left:0;top:6px;bottom:6px;width:2px;background:var(--line);overflow:hidden}
+@@ -246,7 +246,8 @@
+   .shiftcard .pin{position:sticky;top:0;height:100svh;overflow:hidden;display:flex;align-items:center;
+     justify-content:center;background:var(--paper)}
+   .shiftcard .card{position:relative;z-index:2;width:min(1120px,92%);min-height:min(74vh,620px);border-radius:26px;
+-    padding:clamp(38px,5.5vw,80px);display:flex;flex-direction:column;justify-content:center;overflow:hidden;
++    padding:clamp(38px,5.5vw,80px);display:flex;flex-direction:column;justify-content:center;align-items:center;
++    text-align:center;overflow:hidden;
+     background:radial-gradient(130% 130% at 72% 24%, #E7E2D8 0%, #D2CCC0 78%);
+     box-shadow:0 1px 2px rgba(20,19,17,.05),0 44px 100px rgba(20,19,17,.16)}
+   .shiftcard .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;
+@@ -413,23 +414,30 @@
+     const words = gsap.utils.toArray('[data-shiftcard] .w, [data-shiftcard] .period');
+     const pdot = sec.querySelector('.pdot');
+     const wipe = sec.querySelector('[data-wipe]');
++    let wipeRadius = 0;
+     // centre the clip-path circle on the period (stable during the pin)
+     function placeWipe() {
+       const pr = pin.getBoundingClientRect();
+       const dr = pdot.getBoundingClientRect();
+-      gsap.set(wipe, { '--wx': (dr.left - pr.left + dr.width / 2) + 'px', '--wy': (dr.top - pr.top + dr.height / 2) + 'px' });
++      const x = dr.left - pr.left + dr.width / 2;
++      const y = dr.top - pr.top + dr.height / 2;
++      wipeRadius = Math.max(
++        Math.hypot(x, y), Math.hypot(pr.width - x, y),
++        Math.hypot(x, pr.height - y), Math.hypot(pr.width - x, pr.height - y)
++      ) + 2;
++      gsap.set(wipe, { '--wx': x + 'px', '--wy': y + 'px' });
+     }
+     const tl = gsap.timeline({
+       scrollTrigger: {
+         trigger: sec, start: 'top top', end: 'bottom bottom', pin: pin, scrub: true,
+-        onRefresh: placeWipe,
++        onRefresh: placeWipe, invalidateOnRefresh: true,
+       },
+     });
+     tl.from(words, { opacity: 0, yPercent: 60, stagger: 0.06, ease: 'power3.out', duration: 0.22 }, 0.05);
+-    tl.add(placeWipe, 0.38);
++    tl.add(placeWipe, 0.2);
+     // grow the vector circle slowly and LINEARLY over most of the scroll — the satisfying part
+     tl.fromTo(wipe, { '--wr': '0px' },
+-      { '--wr': () => Math.hypot(window.innerWidth, window.innerHeight) * 1.2 + 'px', ease: 'none', duration: 0.56 }, 0.4);
++      { '--wr': () => wipeRadius + 'px', ease: 'none', duration: 0.65 }, 0.2);
+   });
+ 
+   /* ---- MAKE THE SHIFT: pin + horizontal ghost words + fg crossfade ---- */
+
+codex
+Re-verified `/v5/` at multiple scroll depths.
+
+- SKETCH: both text beats and sketches crossfade correctly; beat 2 is fully visible. The 86vh unboxed artwork, left-side gradient, and rAF-throttled scrolling behave smoothly.
+- MAKE THE SHIFT: fixed premature wipe coverage by calculating the exact radius from the period to the farthest viewport corner. Growth is now crisp, linear, slower, responsive after resize, fully covers before transition, and reverses with scrubbed scroll.
+- Build passes successfully with `npm run build`.
+- Only [v5.astro](C:/Users/asus/Desktop/lab/alpha/src/pages/v5.astro:417) was changed. `index.astro`, `global.css`, and hero copy were untouched.
+diff --git a/src/pages/v5.astro b/src/pages/v5.astro
+index 8499575b0fc566d13aa3bf7cfcec0ba7a3df45d1..f04b8cd04b4d18d98b599cfa9811afa9184db068
+--- a/src/pages/v5.astro
++++ b/src/pages/v5.astro
+@@ -213,7 +213,7 @@
+   .sk .gb.g1{width:42vw;height:42vw;background:var(--orange);opacity:.24;left:-16vw;top:-10vw;animation:skA 13s ease-in-out infinite}
+   .sk .gb.g2{width:38vw;height:38vw;background:var(--yellow);opacity:.48;left:-2vw;bottom:-16vw;animation:skB 16s ease-in-out infinite}
+   .sk .gb.g3{width:30vw;height:30vw;background:var(--lavender);opacity:.4;left:-6vw;top:34vh;animation:skC 15s ease-in-out infinite}
+-  .sk .wrap{position:relative;z-index:1;width:100%}
++  .sk .wrap{position:relative;width:100%}
+   .sk .grid{display:grid;grid-template-columns:.92fr 1.08fr;gap:clamp(30px,5vw,80px);align-items:center}
+   .sk .txt{position:relative;padding-left:clamp(20px,3vw,40px);min-height:46vh}
+   .sk .fill{position:absolute;left:0;top:6px;bottom:6px;width:2px;background:var(--line);overflow:hidden}
+@@ -246,7 +246,8 @@
+   .shiftcard .pin{position:sticky;top:0;height:100svh;overflow:hidden;display:flex;align-items:center;
+     justify-content:center;background:var(--paper)}
+   .shiftcard .card{position:relative;z-index:2;width:min(1120px,92%);min-height:min(74vh,620px);border-radius:26px;
+-    padding:clamp(38px,5.5vw,80px);display:flex;flex-direction:column;justify-content:center;overflow:hidden;
++    padding:clamp(38px,5.5vw,80px);display:flex;flex-direction:column;justify-content:center;align-items:center;
++    text-align:center;overflow:hidden;
+     background:radial-gradient(130% 130% at 72% 24%, #E7E2D8 0%, #D2CCC0 78%);
+     box-shadow:0 1px 2px rgba(20,19,17,.05),0 44px 100px rgba(20,19,17,.16)}
+   .shiftcard .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;
+@@ -413,23 +414,30 @@
+     const words = gsap.utils.toArray('[data-shiftcard] .w, [data-shiftcard] .period');
+     const pdot = sec.querySelector('.pdot');
+     const wipe = sec.querySelector('[data-wipe]');
++    let wipeRadius = 0;
+     // centre the clip-path circle on the period (stable during the pin)
+     function placeWipe() {
+       const pr = pin.getBoundingClientRect();
+       const dr = pdot.getBoundingClientRect();
+-      gsap.set(wipe, { '--wx': (dr.left - pr.left + dr.width / 2) + 'px', '--wy': (dr.top - pr.top + dr.height / 2) + 'px' });
++      const x = dr.left - pr.left + dr.width / 2;
++      const y = dr.top - pr.top + dr.height / 2;
++      wipeRadius = Math.max(
++        Math.hypot(x, y), Math.hypot(pr.width - x, y),
++        Math.hypot(x, pr.height - y), Math.hypot(pr.width - x, pr.height - y)
++      ) + 2;
++      gsap.set(wipe, { '--wx': x + 'px', '--wy': y + 'px' });
+     }
+     const tl = gsap.timeline({
+       scrollTrigger: {
+         trigger: sec, start: 'top top', end: 'bottom bottom', pin: pin, scrub: true,
+-        onRefresh: placeWipe,
++        onRefresh: placeWipe, invalidateOnRefresh: true,
+       },
+     });
+     tl.from(words, { opacity: 0, yPercent: 60, stagger: 0.06, ease: 'power3.out', duration: 0.22 }, 0.05);
+-    tl.add(placeWipe, 0.38);
++    tl.add(placeWipe, 0.2);
+     // grow the vector circle slowly and LINEARLY over most of the scroll — the satisfying part
+     tl.fromTo(wipe, { '--wr': '0px' },
+-      { '--wr': () => Math.hypot(window.innerWidth, window.innerHeight) * 1.2 + 'px', ease: 'none', duration: 0.56 }, 0.4);
++      { '--wr': () => wipeRadius + 'px', ease: 'none', duration: 0.65 }, 0.2);
+   });
+ 
+   /* ---- MAKE THE SHIFT: pin + horizontal ghost words + fg crossfade ---- */
+
+tokens used
+73,679
+Re-verified `/v5/` at multiple scroll depths.
+
+- SKETCH: both text beats and sketches crossfade correctly; beat 2 is fully visible. The 86vh unboxed artwork, left-side gradient, and rAF-throttled scrolling behave smoothly.
+- MAKE THE SHIFT: fixed premature wipe coverage by calculating the exact radius from the period to the farthest viewport corner. Growth is now crisp, linear, slower, responsive after resize, fully covers before transition, and reverses with scrubbed scroll.
+- Build passes successfully with `npm run build`.
+- Only [v5.astro](C:/Users/asus/Desktop/lab/alpha/src/pages/v5.astro:417) was changed. `index.astro`, `global.css`, and hero copy were untouched.

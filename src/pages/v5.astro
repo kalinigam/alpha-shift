@@ -1,0 +1,747 @@
+---
+// v5 — hero variant: the "Thoughts in motion" animation on top, then
+// "Something on your mind?" (large, left) + the lede & CTA (smaller, right).
+// This is a SEPARATE page; the current design (index.astro) is untouched.
+import Base from '../layouts/Base.astro';
+import { brand, hero, look, shift, manifesto, work, chetan, closing, footer } from '../data/home.ts';
+---
+
+<Base>
+  <!-- ============ NAV ============ -->
+  <header class="nav" id="nav">
+    <div class="wrap">
+      <a class="brand" href="#top"><span class="mark"></span>{brand.name}</a>
+      <nav class="nav-links">
+        <a href="#work">How we work</a>
+        <a href="#chetan">Meet Chetan</a>
+        <a class="cta" href="#explore">Let’s explore <span class="arr">→</span></a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- Travelling balls: the 4 sorted balls from the hero, choreographed across the sections -->
+    <div class="balls" aria-hidden="true">
+      <img src={`${import.meta.env.BASE_URL}sketches/ball-orange.svg`} alt="" />
+      <img src={`${import.meta.env.BASE_URL}sketches/ball-yellow.svg`} alt="" />
+      <img src={`${import.meta.env.BASE_URL}sketches/ball-sage.svg`} alt="" />
+      <img src={`${import.meta.env.BASE_URL}sketches/ball-lavender.svg`} alt="" />
+    </div>
+    <!-- ============ HERO (animation + split copy) ============ -->
+    <section class="hero-a">
+      <div class="wrap">
+        <div class="anim">
+          <iframe id="heroAnim" src={`${import.meta.env.BASE_URL}sketches/Thoughts-Animation-hero.html`} title="A hand-drawn journey from tangled thoughts to clarity." loading="eager" scrolling="no"></iframe>
+        </div>
+        <div class="grid">
+          <div class="head">
+            <p class="kicker">{hero.kickerLine}</p>
+            <h1>{hero.headBefore}<span class="accent">{hero.headAccent}{hero.headAfter}</span></h1>
+          </div>
+          <div class="side">
+            <p class="lede" set:html={hero.ledeHtml} />
+            <div class="cta">
+              <a class="btn" href="#explore">Let’s explore <span class="arr">→</span></a>
+              <a class="ghost" href="#work">How we work</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SKETCH SCENE — big unboxed sketch, two text beats, ambient gradient ============ -->
+    <section class="sk" id="look" data-sketch>
+      <div class="pin">
+        <div class="ambient" aria-hidden="true">
+          <span class="gb g1"></span><span class="gb g2"></span><span class="gb g3"></span>
+        </div>
+        <div class="wrap">
+          <div class="grid">
+            <div class="txt">
+              <div class="fill"><i data-fill></i></div>
+              <div class="beat b1" data-beat1>
+                <h2>Sometimes, you already know enough. Yet there’s still <em>a missing piece.</em></h2>
+                <p>Something you can’t quite put your finger on.</p>
+              </div>
+              <div class="beat b2" data-beat2>
+                <h2>It could be a conversation. A different perspective. <em>A small decision.</em></h2>
+                <p>Or simply seeing something you thought you knew in a different way.</p>
+              </div>
+            </div>
+            <div class="art">
+              <img src={look.sketch.src} alt={look.sketch.alt} data-img1 />
+              <img src={shift.row.sketch.src} alt={shift.row.sketch.alt} data-img2 />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ MAKE THE SHIFT — grey card, black text + circular growing period ============ -->
+    <section class="shiftcard" data-shiftcard>
+      <div class="pin">
+        <div class="card">
+          <span class="eyebrow">Where the shift begins</span>
+          <h2 class="line"><span class="w">Make</span> <span class="w">the</span> <span class="w serif">shift</span><span class="period"><span class="pdot"></span></span></h2>
+          <p class="sub">Maybe it starts with a better question. Or a clearer observation. Perhaps you see a possibility you hadn’t considered — <span class="serif">and that’s where the shift begins.</span></p>
+        </div>
+        <div class="wipe" data-wipe aria-hidden="true"></div>
+      </div>
+    </section>
+
+    <!-- ============ MAKE THE SHIFT (horizontal; bg black→grey when "A possibility" centres) ============ -->
+    <section class="mts" data-mts>
+      <div class="pin">
+        <div class="ghost" data-ghost>
+          <b class="w">A thought</b>
+          <span class="arw"><em>becomes</em><i aria-hidden="true">→</i></span>
+          <b class="w" data-poss>A possibility</b>
+          <span class="arw"><em>becomes</em><i aria-hidden="true">→</i></span>
+          <b class="w">A decision</b>
+          <span class="arw"><em>becomes</em><i aria-hidden="true">→</i></span>
+          <b class="w">Action</b>
+        </div>
+        <div class="fg">
+          <p class="intro" data-mts-intro>Not everything needs a new plan. Sometimes, it needs <span class="serif">a new way of looking</span> at the old one.</p>
+          <p class="outro" data-mts-outro>Small shifts can change <span class="serif">what happens next.</span></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ ABOUT / MANIFESTO — warm gradient card (no circles) ============ -->
+    <section class="aboutcard">
+      <div class="wrap">
+        <div class="acard rise" data-rise>
+          <h2 class="head" set:html={manifesto.headHtml} />
+          <p class="sub">{manifesto.para}</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ HOW WE WORK — container box: scrolling items (left) + sticky heading/CTA (right) ============ -->
+    <!-- TODO (later, per user): animate small orange balls travelling along the .box border -->
+    <section class="hww" id="work">
+      <div class="wrap">
+        <div class="box">
+          <aside class="side">
+            <div class="side-in">
+              <span class="tag">{work.eyebrow}</span>
+              <h2 set:html={work.headHtml} />
+              <a class="cta" href="#explore">Let’s explore <span class="arr">→</span></a>
+            </div>
+          </aside>
+          <div class="items">
+            {work.items.map((item, i) => (
+              <div class="item">
+                <span class="no">0{i + 1}</span>
+                <p>{item}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ MEET CHETAN — text (left) + portrait placeholder & ghost CTA (right) ============ -->
+    <section class="chetan2" id="chetan">
+      <div class="wrap">
+        <div class="grid">
+          <div class="col-l rise" data-rise>
+            <span class="tag">{chetan.heading}</span>
+            <p class="intro">{chetan.para} {chetan.constant}</p>
+            <blockquote class="quote" set:html={chetan.portrait.quoteHtml} />
+          </div>
+          <div class="col-r rise" data-rise>
+            <div class="portrait"><span class="ph">Portrait — to come</span></div>
+            <p class="sub">{chetan.soft}</p>
+            <a class="meet" href={chetan.link.href}>{chetan.link.label} <span class="arr">→</span></a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ CLOSING — dark, centred ============ -->
+    <section class="closing2 is-dark" id="explore">
+      <div class="wrap">
+        <span class="tag">Ready to explore?</span>
+        <h2>You don’t need to <span class="serif">have it figured out.</span></h2>
+        <p>Bring the question. Bring the challenge. Bring the half-formed thought. We’ll start there.</p>
+        <div class="ctas">
+          <a class="btn" href="#explore">Let’s explore <span class="arr">→</span></a>
+          <a class="ghost" href="#chetan">Meet Chetan</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ FOOTER ============ -->
+    <footer>
+      <div class="wrap">
+        <p class="say" set:html={footer.copyHtml} />
+        <div class="row">
+          <a class="brand" href="#top"><span class="mark"></span>{brand.name}</a>
+          <nav class="flinks">
+            {footer.links.map((l) => (<a href={l.href}>{l.label}</a>))}
+          </nav>
+          <span class="cr">{footer.copyright}</span>
+        </div>
+      </div>
+    </footer>
+  </main>
+</Base>
+
+<style>
+  /* Hero variant — scoped to this page only (does not affect the current design). */
+  .hero-a{min-height:100svh;display:flex;flex-direction:column;justify-content:center;
+    padding:calc(var(--nav-h) + clamp(8px,1.6vh,18px)) 0 clamp(18px,2.6vh,34px)}
+  .hero-a .wrap{width:100%}
+  /* full content width; crop the animation's empty vertical margins so it isn't overly tall */
+  .hero-a .anim{width:100%;aspect-ratio:1672/620;position:relative;overflow:hidden;
+    margin:0 auto clamp(4px,1vh,14px)}
+  .hero-a .anim iframe{position:absolute;left:0;top:50%;transform:translateY(-50%);
+    width:100%;aspect-ratio:1672/941;height:auto;border:0;display:block;background:transparent}
+  .hero-a .grid{display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(24px,5vw,64px);align-items:start}
+  .hero-a .kicker{font-family:var(--mono);font-size:12.5px;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--muted);display:flex;align-items:center;gap:14px;margin:0 0 clamp(12px,2vh,20px)}
+  .hero-a .kicker i{width:32px;height:1px;background:var(--line)}
+  .hero-a h1{font-size:clamp(2.4rem,5.4vw,4.8rem);font-weight:600;letter-spacing:-.05em;line-height:.94;margin:0}
+  .hero-a h1 .accent{color:var(--orange)}
+  .hero-a .side{padding-bottom:.35em}
+  .hero-a .lede{font-size:clamp(1.05rem,1.5vw,1.3rem);color:var(--muted);line-height:1.55;max-width:46ch;
+    margin:0 0 clamp(22px,3vh,32px)}
+  .hero-a .cta{display:flex;flex-wrap:wrap;gap:18px;align-items:center}
+  .hero-a .btn{display:inline-flex;align-items:center;gap:.5em;background:var(--orange);color:#141311;font-weight:600;
+    font-size:1.02rem;padding:15px 30px;border-radius:999px;box-shadow:0 10px 28px rgba(232,85,26,.26);
+    transition:transform .2s,box-shadow .2s}
+  .hero-a .btn:hover{transform:translateY(-2px);box-shadow:0 16px 38px rgba(232,85,26,.34)}
+  .hero-a .btn .arr{transition:transform .2s}
+  .hero-a .btn:hover .arr{transform:translateX(4px)}
+  .hero-a .ghost{font-weight:500;color:var(--ink);border-bottom:1px solid var(--line);padding-bottom:2px}
+  .hero-a .ghost:hover{border-color:var(--ink)}
+  @media(max-width:860px){
+    .hero-a{min-height:auto;padding-top:calc(var(--nav-h) + 20px)}
+    .hero-a .anim{aspect-ratio:1672/720}
+    .hero-a .grid{grid-template-columns:1fr;gap:22px;align-items:start}
+    .hero-a h1{font-size:clamp(2.4rem,10vw,3.6rem)}
+  }
+
+  /* ===== SKETCH SCENE — big unboxed sketch + two text beats + ambient gradient (kept off the sketch) ===== */
+  .sk{position:relative;height:240vh}
+  .sk .pin{position:sticky;top:0;height:100svh;overflow:hidden;display:flex;align-items:center;background:var(--paper)}
+  /* ambient flowing gradient — concentrated on the LEFT behind the text, not around the sketch */
+  .sk .ambient{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+  .sk .ambient .gb{position:absolute;border-radius:50%;filter:blur(74px);animation-play-state:paused}
+  .sk.live .ambient .gb{animation-play-state:running}
+  .sk .gb.g1{width:42vw;height:42vw;background:var(--orange);opacity:.24;left:-16vw;top:-10vw;animation:skA 13s ease-in-out infinite}
+  .sk .gb.g2{width:38vw;height:38vw;background:var(--yellow);opacity:.48;left:-2vw;bottom:-16vw;animation:skB 16s ease-in-out infinite}
+  .sk .gb.g3{width:30vw;height:30vw;background:var(--lavender);opacity:.4;left:-6vw;top:34vh;animation:skC 15s ease-in-out infinite}
+  .sk .wrap{position:relative;width:100%}
+  .sk .grid{display:grid;grid-template-columns:.92fr 1.08fr;gap:clamp(30px,5vw,80px);align-items:center}
+  .sk .txt{position:relative;padding-left:clamp(20px,3vw,40px);min-height:46vh}
+  .sk .fill{position:absolute;left:0;top:6px;bottom:6px;width:2px;background:var(--line);overflow:hidden}
+  .sk .fill i{position:absolute;inset:0;background:var(--orange);transform:scaleY(0);transform-origin:top}
+  .sk .beat{position:absolute;top:50%;transform:translateY(-50%);max-width:26ch}
+  .sk .beat h2{font-size:clamp(1.9rem,4vw,3rem);font-weight:600;letter-spacing:-.03em;line-height:1.08;margin:0 0 .45em}
+  .sk .beat p{font-size:clamp(1.05rem,1.7vw,1.3rem);color:var(--muted);line-height:1.5;margin:0;max-width:40ch}
+  .sk .b2{opacity:0}
+  .sk .art{position:relative;height:min(86vh,780px);display:flex;align-items:center;justify-content:center}
+  .sk .art img{position:absolute;height:100%;width:auto;max-width:100%;object-fit:contain;mix-blend-mode:multiply;filter:saturate(1.03) contrast(1.02)}
+  .sk .art [data-img2]{opacity:0}
+  @keyframes skA{50%{transform:translate(26%,22%) scale(1.18)}}
+  @keyframes skB{50%{transform:translate(20%,-18%) scale(1.14)}}
+  @keyframes skC{50%{transform:translate(16%,18%) scale(1.2)}}
+  @media(max-width:880px){
+    .sk{height:auto}
+    .sk .pin{position:static;height:auto;padding:12vh 0}
+    .sk .grid{grid-template-columns:1fr;gap:6vh}
+    .sk .txt{min-height:auto}
+    .sk .beat{position:static;transform:none!important;max-width:none;opacity:1!important}
+    .sk .b2{margin-top:4vh}
+    .sk .art{height:auto}
+    .sk .art img{position:static;height:auto;max-height:66vh}
+    .sk .art [data-img2]{display:none}
+  }
+  @media(prefers-reduced-motion:reduce){.sk .ambient .gb{animation:none!important}}
+
+  /* ===== MAKE THE SHIFT — grey card, black text, black circular growing period ===== */
+  .shiftcard{position:relative;height:320vh;background:var(--paper)}
+  .shiftcard .pin{position:sticky;top:0;height:100svh;overflow:hidden;display:flex;align-items:center;
+    justify-content:center;background:var(--paper)}
+  .shiftcard .card{position:relative;z-index:2;width:min(1120px,92%);min-height:min(74vh,620px);border-radius:26px;
+    padding:clamp(38px,5.5vw,80px);display:flex;flex-direction:column;justify-content:center;align-items:center;
+    text-align:center;overflow:hidden;
+    background:radial-gradient(130% 130% at 72% 24%, #E7E2D8 0%, #D2CCC0 78%);
+    box-shadow:0 1px 2px rgba(20,19,17,.05),0 44px 100px rgba(20,19,17,.16)}
+  .shiftcard .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--muted);margin:0 0 clamp(18px,3vh,30px)}
+  .shiftcard .line{margin:0;font-weight:700;letter-spacing:-.05em;line-height:.9;color:var(--ink);
+    font-size:clamp(3rem,9vw,7.6rem)}
+  .shiftcard .line .serif{font-weight:400}
+  .shiftcard .line .period{display:inline-block;width:.15em;height:.15em;position:relative;vertical-align:baseline;margin-left:.03em}
+  .shiftcard .line .pdot{position:absolute;inset:0;border-radius:50%;background:var(--ink)}
+  .shiftcard .sub{font-size:clamp(1.1rem,1.9vw,1.45rem);color:var(--muted);line-height:1.4;max-width:46ch;
+    margin:clamp(20px,3vh,34px) 0 0}
+  .shiftcard .sub .serif{font-family:var(--serif);font-style:italic;color:var(--orange-deep)}
+  /* vector clip-path wipe — razor-sharp at any size, grows from the period */
+  .shiftcard .wipe{position:absolute;inset:0;background:var(--ink);z-index:20;pointer-events:none;
+    --wr:0px;--wx:50%;--wy:50%;clip-path:circle(var(--wr) at var(--wx) var(--wy));will-change:clip-path}
+  @media(max-width:880px){
+    .shiftcard{height:auto}
+    .shiftcard .pin{position:static;height:auto;padding:10vh 0}
+    .shiftcard .card{min-height:auto}
+    .shiftcard .wipe{display:none}
+  }
+
+  /* ===== MAKE THE SHIFT horizontal — v5 overrides: chain of orange words + "becomes →", spotlight opacity, black→grey bg ===== */
+  .mts,.mts .pin{background:var(--mtsbg,#141311)}
+  .mts .ghost{top:44%;display:flex;align-items:center;gap:clamp(2.2rem,4.5vw,5.5rem);color:var(--orange);
+    font-size:clamp(4rem,10vw,9rem);font-weight:700;letter-spacing:-.03em;white-space:nowrap;text-transform:uppercase}
+  .mts .ghost .w{flex:none;opacity:0}               /* start invisible → JS fades in then spotlights */
+  .mts .ghost .arw{flex:none;display:inline-flex;flex-direction:column;align-items:center;gap:.1em;
+    color:var(--orange);opacity:0}
+  .mts .ghost .arw em{font-family:var(--mono);font-style:normal;font-size:.14em;letter-spacing:.14em;
+    text-transform:uppercase;font-weight:600;color:var(--orange)}
+  .mts .ghost .arw i{font-style:normal;font-size:.5em;line-height:.7;color:var(--orange)}
+  .mts .fg .intro,.mts .fg .outro{opacity:0}
+  .mts .fg .intro{color:rgba(247,245,240,.72)}      /* caption on the black phase */
+  .mts .fg .outro{color:var(--ink)}                 /* caption once it turns grey */
+  .mts .fg .outro .serif{color:var(--orange-deep)}
+  @media(max-width:880px){.mts .ghost .w,.mts .ghost .arw,.mts .fg .intro,.mts .fg .outro{opacity:1}}
+  /* ===== ABOUT / MANIFESTO — warm gradient card, centred, no circles ===== */
+  .aboutcard{background:#fff;min-height:100svh;display:flex;align-items:center;justify-content:center;
+    padding-block:clamp(40px,8vh,90px)}
+  .aboutcard .acard{width:min(900px,92%);margin:0 auto;text-align:center;padding:0}
+  .aboutcard .head{font-size:clamp(2.2rem,5.4vw,4.4rem);font-weight:600;letter-spacing:-.035em;line-height:1.05;
+    margin:0 auto;max-width:16ch;color:var(--ink)}
+  /* use the brand orange (.o = #E8551A), consistent with the rest of the build */
+  .aboutcard .sub{font-size:clamp(1.1rem,1.9vw,1.45rem);color:var(--muted);line-height:1.55;
+    max-width:52ch;margin:clamp(24px,4vh,40px) auto 0}
+  /* travelling balls overlay — choreographed across the sections */
+  .balls{position:fixed;inset:0;z-index:70;pointer-events:none;contain:layout style}
+  .balls img{position:absolute;top:0;left:0;width:26px;height:26px;opacity:0;
+    will-change:transform,opacity;filter:drop-shadow(0 3px 6px rgba(30,24,16,.18))}
+  @media (prefers-reduced-motion: reduce){ .balls{display:none} }
+
+  /* ===== HOW WE WORK — rounded container: scrolling items (left) + sticky heading/CTA (right) ===== */
+  .hww{padding-block:clamp(60px,12vh,140px);background:var(--paper)}
+  .hww .box{position:relative;border:1.5px solid var(--orange);border-radius:28px;background:transparent;
+    display:grid;grid-template-columns:.8fr 1.2fr}
+  .hww .item{min-height:clamp(160px,24vh,240px);display:flex;flex-direction:column;justify-content:center;
+    padding:clamp(28px,3.6vw,52px) clamp(26px,3.4vw,50px);border-top:1px solid var(--line)}
+  .hww .items .item:first-child{border-top:0}
+  .hww .item .no{font-family:var(--mono);font-size:13px;color:var(--orange-deep);letter-spacing:.08em}
+  .hww .item p{margin:.5em 0 0;font-size:clamp(1.3rem,2.4vw,1.95rem);font-weight:500;letter-spacing:-.02em;
+    line-height:1.2;color:var(--ink);max-width:24ch}
+  .hww .side{border-right:1px solid var(--line)}
+  .hww .side-in{position:sticky;top:calc(var(--nav-h) + 34px);padding:clamp(34px,4vw,60px)}
+  .hww .side h2{font-size:clamp(2.5rem,4.6vw,4rem);font-weight:600;letter-spacing:-.035em;line-height:1.04;
+    margin:clamp(18px,3vh,28px) 0 clamp(24px,4vh,38px);max-width:12ch;color:var(--orange)}
+  .hww .side h2 .serif{color:var(--orange)}
+  .hww .cta{display:inline-flex;align-items:center;gap:.5em;background:var(--ink);color:var(--paper);font-weight:600;
+    padding:14px 28px;border-radius:999px;box-shadow:0 10px 28px rgba(20,19,17,.2);transition:transform .2s,box-shadow .2s}
+  .hww .cta:hover{transform:translateY(-2px);box-shadow:0 16px 36px rgba(20,19,17,.26)}
+  .hww .cta .arr{transition:transform .2s;color:var(--orange)}
+  .hww .cta:hover .arr{transform:translateX(4px)}
+  @media(max-width:860px){
+    .hww .box{grid-template-columns:1fr}
+    .hww .side{border-right:0;border-bottom:1px solid var(--line)}
+    .hww .side-in{position:static}
+    .hww .item{min-height:auto}
+  }
+
+  /* ===== MEET CHETAN — text left, portrait placeholder + ghost CTA right ===== */
+  .chetan2{padding-block:clamp(70px,14vh,170px)}
+  .chetan2 .grid{display:grid;grid-template-columns:1.08fr .92fr;gap:clamp(40px,6vw,88px);align-items:start}
+  .chetan2 .intro{font-size:clamp(1.05rem,1.7vw,1.25rem);color:var(--muted);line-height:1.6;max-width:46ch;
+    margin:clamp(18px,3vh,26px) 0 clamp(30px,5vh,46px)}
+  .chetan2 .quote{margin:0;font-size:clamp(1.5rem,3vw,2.4rem);font-weight:600;letter-spacing:-.03em;line-height:1.18;
+    color:var(--ink);max-width:22ch}
+  .chetan2 .quote .serif{color:var(--ink);font-weight:400}
+  .chetan2 .portrait{position:relative;aspect-ratio:4/3;background:var(--paper-2);border:1px solid var(--line);border-radius:18px}
+  .chetan2 .portrait .ph{position:absolute;left:22px;bottom:20px;font-family:var(--mono);font-size:11px;
+    letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+  .chetan2 .sub{font-size:clamp(1.05rem,1.7vw,1.2rem);color:var(--muted);margin:clamp(20px,3vh,28px) 0 clamp(20px,3vh,26px)}
+  .chetan2 .meet{display:inline-flex;align-items:center;gap:.5em;border:1px solid var(--line);border-radius:999px;
+    padding:13px 26px;font-weight:600;color:var(--ink);transition:border-color .2s,background .2s}
+  .chetan2 .meet:hover{border-color:var(--ink);background:#fff}
+  .chetan2 .meet .arr{color:var(--orange)}
+  @media(max-width:860px){.chetan2 .grid{grid-template-columns:1fr;gap:44px}}
+
+  /* ===== CLOSING — dark, centred ===== */
+  .closing2{background:var(--ink);color:var(--paper);padding-block:clamp(90px,17vh,190px);text-align:center}
+  .closing2 .tag{color:rgba(247,245,240,.6)}
+  .closing2 h2{text-transform:uppercase;font-size:clamp(2.6rem,7vw,5.2rem);font-weight:700;letter-spacing:-.03em;
+    line-height:1.02;color:var(--paper);max-width:15ch;margin:clamp(20px,3vh,30px) auto clamp(26px,4vh,38px)}
+  .closing2 h2 .serif{display:block;text-transform:none;font-weight:400;color:var(--orange);font-size:1.04em;
+    letter-spacing:-.01em;margin-top:.08em}
+  .closing2 p{font-size:clamp(1.15rem,2.2vw,1.55rem);color:rgba(247,245,240,.66);line-height:1.5;
+    max-width:34ch;margin:0 auto clamp(30px,5vh,44px)}
+  .closing2 .ctas{display:flex;justify-content:center;gap:16px;flex-wrap:wrap}
+  .closing2 .btn{display:inline-flex;align-items:center;gap:.5em;background:var(--orange);color:#141311;font-weight:600;
+    padding:16px 34px;border-radius:999px;box-shadow:0 10px 30px rgba(232,85,26,.28);transition:transform .2s,box-shadow .2s}
+  .closing2 .btn:hover{transform:translateY(-2px)}
+  .closing2 .btn .arr{transition:transform .2s}
+  .closing2 .btn:hover .arr{transform:translateX(4px)}
+  .closing2 .ghost{display:inline-flex;align-items:center;border:1px solid rgba(247,245,240,.32);border-radius:999px;
+    padding:16px 30px;font-weight:600;color:var(--paper);transition:border-color .2s,background .2s}
+  .closing2 .ghost:hover{border-color:var(--paper);background:rgba(247,245,240,.06)}
+
+  /* ===== FOOTER — white ===== */
+  footer{background:#fff;color:var(--ink)}
+  footer .say{color:var(--ink)}
+  footer .brand{color:var(--ink)}
+  footer .row{border-top:1px solid var(--line)}
+  footer .flinks{color:var(--muted)}
+  footer .flinks a:hover{color:var(--ink)}
+  footer .cr{color:var(--muted)}
+</style>
+
+<script>
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+  gsap.registerPlugin(ScrollTrigger);
+
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---- preloader ---- */
+  const pre = document.getElementById('preloader');
+  function hidePre() {
+    document.body.classList.add('loaded');
+    if (pre) { pre.classList.add('done'); setTimeout(() => pre.remove(), 700); }
+    ScrollTrigger.refresh();
+  }
+  window.addEventListener('load', () => setTimeout(hidePre, 900));
+  setTimeout(hidePre, 2600);
+
+  /* ---- nav: solid on scroll + invert over dark sections ---- */
+  let mtsGrey = false; // set by the horizontal run: true once its bg has turned grey
+  const nav = document.getElementById('nav');
+  const darkSections = [...document.querySelectorAll('.is-dark')];
+  const shiftSection = document.querySelector('[data-shiftcard]');
+  function updateNav() {
+    const navLine = Math.min(64, window.innerHeight - 1);
+    const overDark = darkSections.some((sec) => {
+      const r = sec.getBoundingClientRect();
+      return r.top <= navLine && r.bottom > navLine;
+    });
+    // The period wipe turns the pinned shift scene dark before the next section arrives.
+    let overWipe = false;
+    if (shiftSection && window.innerWidth > 880 && !reduce) {
+      const r = shiftSection.getBoundingClientRect();
+      const travel = shiftSection.offsetHeight - window.innerHeight;
+      const progress = travel > 0 ? Math.max(0, Math.min(1, -r.top / travel)) : 0;
+      overWipe = r.top <= navLine && r.bottom > navLine && progress > 0.8;
+    }
+    // The horizontal run starts black then turns grey; nav is white only during the black phase.
+    let overMtsBlack = false;
+    const mtsSec = document.querySelector('[data-mts]');
+    if (mtsSec && window.innerWidth > 880 && !reduce) {
+      const r = mtsSec.getBoundingClientRect();
+      overMtsBlack = r.top <= navLine && r.bottom > navLine && !mtsGrey;
+    }
+    nav.classList.toggle('solid', window.scrollY > 40);
+    nav.classList.toggle('on-dark', overDark || overWipe || overMtsBlack);
+  }
+  let navTicking = false;
+  const onScroll = () => {
+    if (navTicking) return;
+    navTicking = true;
+    requestAnimationFrame(() => { updateNav(); navTicking = false; });
+  };
+  updateNav();
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  /* ---- generic rise reveals ---- */
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: 0.18, rootMargin: '0px 0px -6% 0px' });
+  document.querySelectorAll('[data-rise]').forEach((el) => io.observe(el));
+
+  /* ---- animation: hide the Pause/Replay controls and auto-loop it (file untouched) ----
+     The animation plays for 22s then stops on its final frame. We hide its controls
+     (keeping #replay in the DOM) and click the hidden Replay whenever it finishes,
+     so it loops forever with no buttons visible. */
+  const af = document.getElementById('heroAnim');
+  let animLooping = false;
+  function initAnim() {
+    try {
+      const d = af && af.contentDocument;
+      if (!d) return;
+      const controls = d.querySelector('.controls');
+      if (controls) controls.style.display = 'none';         // hide buttons, keep them in DOM
+      const replay = d.querySelector('#replay');
+      const pauseBtn = d.querySelector('#pause');
+      if (replay && pauseBtn && !animLooping && !reduce) {
+        animLooping = true;
+        setInterval(() => {
+          try { if (/finished/i.test(pauseBtn.textContent || '')) replay.click(); } catch (e) {}
+        }, 400);
+      }
+    } catch (e) {}
+  }
+  if (af) {
+    af.addEventListener('load', () => { initAnim(); ScrollTrigger.refresh(); });
+    initAnim(); setTimeout(initAnim, 800); setTimeout(initAnim, 1800);
+  }
+  // keep pinned scenes aligned when layout shifts (heavy iframe, fonts, resize)
+  window.addEventListener('load', () => ScrollTrigger.refresh());
+  let rt; window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => ScrollTrigger.refresh(), 200); });
+
+  // PERF: halt the hero canvas loop entirely when it's scrolled off-screen,
+  // so it doesn't fight the pinned scroll scenes below.
+  const animBox = document.querySelector('.hero-a .anim');
+  if (af && animBox) {
+    const post = (m) => { try { af.contentWindow && af.contentWindow.postMessage(m, '*'); } catch (e) {} };
+    new IntersectionObserver((es) => es.forEach((e) => post(e.isIntersecting ? 'as-play' : 'as-pause')),
+      { rootMargin: '120px' }).observe(animBox);
+  }
+  // PERF: only run the ambient gradient while the sketch scene is on-screen
+  const skSec = document.querySelector('[data-sketch]');
+  if (skSec) new IntersectionObserver((es) => es.forEach((e) => skSec.classList.toggle('live', e.isIntersecting)),
+    { rootMargin: '80px' }).observe(skSec);
+
+  /* ---- hero intro fade-ins ---- */
+  if (!reduce) {
+    gsap.from('.hero-a .anim', { opacity: 0, y: 24, duration: 1.1, ease: 'power2.out', delay: 0.15 });
+    gsap.from('.hero-a h1', { opacity: 0, y: 30, duration: 1, ease: 'power3.out', delay: 0.32 });
+    gsap.from('.hero-a .side', { opacity: 0, y: 20, duration: 0.9, ease: 'power2.out', delay: 0.5 });
+  }
+
+  const mm = gsap.matchMedia();
+
+  /* ---- SKETCH scene: pinned; two text beats + big sketch crossfade ---- */
+  (function () {
+    const sec = document.querySelector('[data-sketch]');
+    if (!sec) return;
+    const b1 = sec.querySelector('[data-beat1]');
+    const b2 = sec.querySelector('[data-beat2]');
+    const img1 = sec.querySelector('[data-img1]');
+    const img2 = sec.querySelector('[data-img2]');
+    const fill = sec.querySelector('[data-fill]');
+    const cl = (v) => (v < 0 ? 0 : v > 1 ? 1 : v);
+    function upd() {
+      const mob = window.matchMedia('(max-width:880px)').matches || reduce;
+      if (mob) { [b1, b2, img1, img2].forEach((e) => e && (e.style.opacity = '', e.style.transform = '')); if (fill) fill.style.transform = 'scaleY(1)'; return; }
+      const vh = window.innerHeight;
+      const total = sec.offsetHeight - vh;
+      const p = cl(-sec.getBoundingClientRect().top / (total || 1));
+      if (fill) fill.style.transform = 'scaleY(' + p + ')';
+      // hold beat 1, crossfade to beat 2 mid-scroll, hold beat 2
+      const t = cl((p - 0.42) / 0.2);
+      if (b1) { b1.style.opacity = String(1 - t); b1.style.transform = 'translateY(calc(-50% + ' + (-t * 26) + 'px))'; }
+      if (b2) { b2.style.opacity = String(t); b2.style.transform = 'translateY(calc(-50% + ' + ((1 - t) * 26) + 'px))'; }
+      if (img1) img1.style.opacity = String(1 - t);
+      if (img2) img2.style.opacity = String(t);
+    }
+    let ticking = false;
+    const onScrollSketch = () => { if (!ticking) { ticking = true; requestAnimationFrame(() => { upd(); ticking = false; }); } };
+    window.addEventListener('scroll', onScrollSketch, { passive: true });
+    window.addEventListener('resize', upd);
+    upd();
+  })();
+
+  /* ---- MAKE THE SHIFT card: assemble, then the black circular period grows to wipe to black ---- */
+  mm.add('(min-width: 881px) and (prefers-reduced-motion: no-preference)', () => {
+    const sec = document.querySelector('[data-shiftcard]');
+    const pin = sec.querySelector('.pin');
+    const words = gsap.utils.toArray('[data-shiftcard] .w, [data-shiftcard] .period');
+    const pdot = sec.querySelector('.pdot');
+    const wipe = sec.querySelector('[data-wipe]');
+    let wipeRadius = 0;
+    // centre the clip-path circle on the period (stable during the pin)
+    function placeWipe() {
+      const pr = pin.getBoundingClientRect();
+      const dr = pdot.getBoundingClientRect();
+      const x = dr.left - pr.left + dr.width / 2;
+      const y = dr.top - pr.top + dr.height / 2;
+      wipeRadius = Math.max(
+        Math.hypot(x, y), Math.hypot(pr.width - x, y),
+        Math.hypot(x, pr.height - y), Math.hypot(pr.width - x, pr.height - y)
+      ) + 2;
+      gsap.set(wipe, { '--wx': x + 'px', '--wy': y + 'px' });
+    }
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: sec, start: 'top top', end: 'bottom bottom', pin: pin, scrub: true,
+        onRefresh: placeWipe, invalidateOnRefresh: true,
+      },
+    });
+    tl.from(words, { opacity: 0, yPercent: 60, stagger: 0.06, ease: 'power3.out', duration: 0.22 }, 0.05);
+    tl.add(placeWipe, 0.2);
+    // grow the vector circle slowly and LINEARLY over most of the scroll — the satisfying part
+    tl.fromTo(wipe, { '--wr': '0px' },
+      { '--wr': () => wipeRadius + 'px', ease: 'none', duration: 0.65 }, 0.2);
+  });
+
+  /* ---- MAKE THE SHIFT horizontal: chain slides word-by-word to centre; centred word = 100%, others ~10%;
+         "A thought" holds readable at the start; bg black→grey when "A possibility" is the centred word ---- */
+  mm.add('(min-width: 881px) and (prefers-reduced-motion: no-preference)', () => {
+    const sec = document.querySelector('[data-mts]');
+    const pin = sec.querySelector('.pin');
+    const ghost = sec.querySelector('[data-ghost]');
+    const words = gsap.utils.toArray('[data-ghost] .w');       // A thought, A possibility, A decision, Action
+    const items = gsap.utils.toArray('[data-ghost] .w, [data-ghost] .arw'); // everything to spotlight
+    const intro = sec.querySelector('[data-mts-intro]');
+    const outro = sec.querySelector('[data-mts-outro]');
+    const bar = sec.querySelector('[data-mts-bar]');
+    const black = [20, 19, 17], grey = [210, 204, 192];
+    const cl = (v) => (v < 0 ? 0 : v > 1 ? 1 : v);
+    const ss = (t) => t * t * (3 - 2 * t);
+    let natW = [], natI = [];   // natural centre of each word / item within the strip (transform-independent)
+    function measure() {
+      natW = words.map((w) => w.offsetLeft + w.offsetWidth / 2);
+      natI = items.map((el) => el.offsetLeft + el.offsetWidth / 2);
+    }
+    ScrollTrigger.create({
+      trigger: sec, start: 'top top', end: 'bottom bottom', pin: pin, scrub: 0.6, invalidateOnRefresh: true,
+      onRefresh: measure,
+      onUpdate: (self) => {
+        if (!natW.length) measure();
+        const p = self.progress;
+        const vc = window.innerWidth / 2;
+        // focus travels word0 → wordN; an initial hold keeps "A thought" centred & readable before the slide
+        const held = cl((p - 0.12) / 0.84);
+        const seg = held * (natW.length - 1);
+        const i = Math.min(natW.length - 2, Math.floor(seg));
+        const f = ss(seg - i);
+        const focus = natW[i] + (natW[i + 1] - natW[i]) * f;
+        const tx = vc - focus;
+        ghost.style.transform = 'translate(' + tx + 'px, -50%)';
+        // entrance: black screen, then everything fades in IN PLACE once pinned (no upward motion)
+        const enter = cl(p / 0.06);
+        // spotlight: 100% at centre, floor 10%
+        const spot = window.innerWidth * 0.42;
+        items.forEach((el, k) => {
+          const d = Math.abs(tx + natI[k] - vc);
+          el.style.opacity = String(Math.max(0.1, 1 - d / spot) * enter);
+        });
+        // bg black → grey once "A possibility" (word 1) is the centred word; stays grey
+        const possC = tx + natW[1];
+        const gT = ss(cl(0.5 + (vc - possC) / 14));   // near-instant snap black→grey at centre
+        const c = black.map((b, j) => Math.round(b + (grey[j] - b) * gT));
+        sec.style.setProperty('--mtsbg', 'rgb(' + c[0] + ',' + c[1] + ',' + c[2] + ')');
+        mtsGrey = gT > 0.5;
+        // captions fade only (no motion): intro early, outro at the end
+        if (intro) intro.style.opacity = String(cl((p - 0.02) / 0.08) * (1 - cl((p - 0.2) / 0.12)) * enter);
+        if (outro) outro.style.opacity = String(cl((p - 0.64) / 0.14));
+        if (bar) bar.style.width = (p * 100) + '%';
+      },
+    });
+  });
+
+  /* ---- TRAVELLING BALLS: the four sorted balls float a choreographed path across the page ----
+     Each section is a "stop" (4 ball positions in viewport coords + an opacity). As you scroll
+     between two stops the balls glide (curved arc). Hidden through the horizontal run, then they
+     emerge at About, then orbit the How-we-work box (top/left/right; invisible across the bottom),
+     then gather + gently drift at the closing. */
+  (function () {
+    const layer = document.querySelector('.balls');
+    if (!layer) return;
+    const balls = [...layer.querySelectorAll('img')];
+    if (balls.length < 4) return;
+    const q = (s) => document.querySelector(s);
+    const S = {
+      hero: q('.hero-a'), sketch: q('[data-sketch]'), shift: q('[data-shiftcard]'),
+      run: q('[data-mts]'), about: q('.aboutcard'), hww: q('.hww .box'),
+      chetan: q('.chetan2'), closing: q('.closing2'), footer: q('footer'),
+    };
+    const SIZE = 26, R = 26;
+    const HOLD = 0.24; // dwell fraction at each end of a segment — a "beat" before the balls move
+    const cl = (v, a, b) => (v < a ? a : v > b ? b : v);
+    const ss = (t) => t * t * (3 - 2 * t);
+    let top = {}, hgt = {};
+    function measure() {
+      for (const k in S) if (S[k]) { const r = S[k].getBoundingClientRect(); top[k] = r.top + window.scrollY; hgt[k] = r.height; }
+    }
+    function row(cx, cy, gap) { return [[cx - 1.5 * gap, cy], [cx - 0.5 * gap, cy], [cx + 0.5 * gap, cy], [cx + 1.5 * gap, cy]]; }
+    function clus(cx, cy, r) { return [[cx - r, cy - r * 0.9], [cx + r, cy - r * 0.9], [cx - r, cy + r * 0.9], [cx + r, cy + r * 0.9]]; }
+    function stops() {
+      const w = window.innerWidth, h = window.innerHeight;
+      const c = (v) => v - h / 2; // scrollY where the given page-Y sits at viewport centre
+      return [
+        // 1. hero — row BELOW the sorted stack (fixed px under the cluster; held until first scroll)
+        { at: c(top.hero + hgt.hero * 0.72), pos: row(w * 0.63, 372, Math.min(74, w * 0.042)), op: 1 },
+        // 2. sketch — row BELOW the text area (left column)
+        { at: c(top.sketch + hgt.sketch * 0.5), pos: row(w * 0.27, h * 0.76, Math.min(72, w * 0.04)), op: 1 },
+        // 3. make-the-shift card — sit at the BOTTOM of the card
+        { at: c(top.shift + hgt.shift * 0.5), pos: row(w * 0.5, h * 0.8, Math.min(86, w * 0.048)), op: 1 },
+        // 4. horizontal run — hidden (faded out on the way in, invisible through it)
+        { at: c(top.run + hgt.run * 0.5), pos: row(w * 0.5, h * 0.5, 70), op: 0 },
+        // 5. about — emerge, settle below the text (dead still)
+        { at: c(top.about + hgt.about * 0.5), pos: row(w * 0.5, h * 0.74, Math.min(74, w * 0.042)), op: 1 },
+        // 6. meet chetan — row BELOW the portrait image, clear of the CTA (right column)
+        { at: c(top.chetan + hgt.chetan * 0.5), pos: row(w * 0.72, h * 0.85, Math.min(68, w * 0.038)), op: 1 },
+        // 7. closing — buffering spinner below the CTAs (the override rotates them into a ring)
+        { at: c(top.closing + hgt.closing * 0.5), pos: clus(w * 0.5, h * 0.83, 20), op: 1 },
+        // 8. footer — row at the very bottom of the screen
+        { at: c(top.footer + hgt.footer * 0.5), pos: row(w * 0.5, h * 0.9, Math.min(80, w * 0.045)), op: 1 },
+      ];
+    }
+    // full-perimeter point on the box border; flags the bottom run so we can hide it there
+    function orbit(d, W, H, ox, oy) {
+      const sx = Math.max(0, W - 2 * R), sy = Math.max(0, H - 2 * R), c = Math.PI * R / 2;
+      const total = 2 * sx + 2 * sy + 2 * Math.PI * R;
+      let k = ((d % total) + total) % total, x, y, bottom = false;
+      if (k < sx) { x = R + k; y = 0; }
+      else if ((k -= sx) < c) { const a = -Math.PI / 2 + k / c * (Math.PI / 2); x = W - R + R * Math.cos(a); y = R + R * Math.sin(a); }
+      else if ((k -= c) < sy) { x = W; y = R + k; }
+      else if ((k -= sy) < c) { const a = k / c * (Math.PI / 2); x = W - R + R * Math.cos(a); y = H - R + R * Math.sin(a); bottom = true; }
+      else if ((k -= c) < sx) { x = W - R - k; y = H; bottom = true; }
+      else if ((k -= sx) < c) { const a = Math.PI / 2 + k / c * (Math.PI / 2); x = R + R * Math.cos(a); y = H - R + R * Math.sin(a); bottom = true; }
+      else { k -= c; const a = Math.PI + k / c * (Math.PI / 2); x = R + R * Math.cos(a); y = R + R * Math.sin(a); }
+      return [ox + x, oy + y, bottom, total];
+    }
+    let startT = 0;
+    function draw(now) {
+      if (!startT) startT = now;
+      const tm = (now - startT) / 1000;
+      const y = window.scrollY, list = stops();
+      let i = 0; for (let k = 0; k < list.length; k++) if (list[k].at <= y) i = k;
+      const A = list[i], B = list[i + 1] || A;
+      // raw progress through the segment, then hold at each end (a beat before/after moving)
+      const raw = B.at > A.at ? cl((y - A.at) / (B.at - A.at), 0, 1) : (B === A ? 0 : 1);
+      const t = ss(cl((raw - HOLD) / (1 - 2 * HOLD), 0, 1));
+      const h = window.innerHeight;
+      const vfac = (r) => cl((Math.min(r.bottom, h) - Math.max(r.top, 0)) / Math.min(r.height, h), 0, 1);
+      // how-we-work orbit factor (0 outside → 1 when the box is well in view)
+      let orbF = 0, br = null;
+      if (S.hww) { const r = S.hww.getBoundingClientRect(); orbF = ss(cl((vfac(r) - 0.45) / 0.35, 0, 1)); br = r; }
+      const total = br ? 2 * Math.max(0, br.width - 2 * R) + 2 * Math.max(0, br.height - 2 * R) + 2 * Math.PI * R : 0;
+      // closing "buffering" spin factor
+      let spinF = 0;
+      if (S.closing) { const r = S.closing.getBoundingClientRect(); spinF = ss(cl((vfac(r) - 0.5) / 0.3, 0, 1)); }
+      balls.forEach((b, n) => {
+        // per-ball trailing stagger — the swarm strings out mid-flight, regroups at each stop
+        const tn = ss(cl((raw - HOLD - n * 0.045) / (1 - 2 * HOLD), 0, 1));
+        let px = A.pos[n][0] + (B.pos[n][0] - A.pos[n][0]) * tn;
+        let py = A.pos[n][1] + (B.pos[n][1] - A.pos[n][1]) * tn;
+        // gentle curved arc between stops (perpendicular bulge, peaks mid-transition)
+        const dx = B.pos[n][0] - A.pos[n][0], dy = B.pos[n][1] - A.pos[n][1], len = Math.hypot(dx, dy) || 1;
+        const arc = Math.sin(Math.PI * tn) * Math.min(56, len * 0.13) * (n % 2 ? 1 : -1);
+        px += (-dy / len) * arc; py += (dx / len) * arc;
+        let op = A.op + (B.op - A.op) * t;
+        // orbit override at how-we-work
+        if (orbF > 0 && br) {
+          const [ox, oy, bottom] = orbit(tm * 66 + n * total / 4, br.width, br.height, br.left, br.top);
+          px += (ox - px) * orbF; py += (oy - py) * orbF;
+          if (bottom) op *= (1 - orbF); // vanish across the bottom edge
+        }
+        // closing override — the four balls spin like a thinking / buffering ring
+        if (spinF > 0) {
+          const cx = window.innerWidth * 0.5, cy = h * 0.83, rad = 21;
+          const a = tm * 2.1 + n * (Math.PI / 2);
+          px += (cx + Math.cos(a) * rad - px) * spinF;
+          py += (cy + Math.sin(a) * rad - py) * spinF;
+          op = Math.max(op, spinF);
+        }
+        b.style.opacity = op.toFixed(3);
+        b.style.transform = 'translate(' + (px - SIZE / 2).toFixed(1) + 'px,' + (py - SIZE / 2).toFixed(1) + 'px)';
+      });
+      requestAnimationFrame(draw);
+    }
+    measure();
+    window.addEventListener('resize', measure, { passive: true });
+    window.addEventListener('load', () => { measure(); });
+    requestAnimationFrame(draw);
+  })();
+
+</script>

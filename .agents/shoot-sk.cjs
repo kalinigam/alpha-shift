@@ -1,0 +1,10 @@
+const puppeteer=require('puppeteer-core');
+const EDGE='C:'+String.fromCharCode(92)+'Program Files (x86)'+String.fromCharCode(92)+'Microsoft'+String.fromCharCode(92)+'Edge'+String.fromCharCode(92)+'Application'+String.fromCharCode(92)+'msedge.exe';
+(async()=>{const b=await puppeteer.launch({executablePath:EDGE,headless:'new',args:['--no-sandbox','--hide-scrollbars']});
+const p=await b.newPage();await p.setViewport({width:1440,height:900});
+await p.goto('http://localhost:4321/v5/',{waitUntil:'networkidle0'});await new Promise(r=>setTimeout(r,3000));
+const el=await p.$('[data-sketch]');const box=await el.boundingBox();
+await p.evaluate(y=>window.scrollTo(0,y),Math.round(box.y+box.height*0.15));
+await new Promise(r=>setTimeout(r,700));
+await p.screenshot({path:process.argv[2]});
+await b.close();console.log('ok');})();

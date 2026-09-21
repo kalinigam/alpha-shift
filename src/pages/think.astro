@@ -1,0 +1,199 @@
+---
+// think — Page 2: "A different way of looking / think differently".
+// Copy is verbatim from src/data/think.ts. Chrome (nav/footer/reveals) comes
+// from the shared Internal layout; only sections + scoped styles live here.
+import Internal from '../layouts/Internal.astro';
+import { think } from '../data/think.ts';
+
+const showUpLead = think.showUp.lines.slice(0, 4);      // statements
+const showUpQuestions = think.showUp.lines.slice(4, 7); // the three questions
+const showUpClose = think.showUp.lines[7];              // "We shape the work around that."
+---
+
+<Internal
+  title="Think — Alpha Shift"
+  description="A different way of looking. Think differently — show up, take charge, and give the shift time to stick."
+>
+  <!-- ============ HERO ============ -->
+  <section class="th-hero">
+    <div class="wrap">
+      <div class="th-hero-in rise" data-rise>
+        <span class="tag">Think · Show up · Stay</span>
+        <p class="lead-in">{think.intro[0]}</p>
+        <h1>What if there’s <em>another way</em> of looking at this?</h1>
+        <p class="lede">{think.intro[2]}</p>
+      </div>
+    </div>
+    <span class="cue" aria-hidden="true"><i></i>Scroll</span>
+  </section>
+
+  <!-- ============ WHAT BRINGS YOU HERE ============ -->
+  <section class="th-here">
+    <div class="wrap">
+      <div class="here-head rise" data-rise>
+        <span class="tag">Why you’re here</span>
+        <h2>{think.bringYouHere.heading}</h2>
+      </div>
+      <ul class="here-grid">
+        {think.bringYouHere.items.map((item, i) => (
+          <li class="rise" data-rise>
+            <span class="no">{String(i + 1).padStart(2, '0')}</span>
+            <p>{item}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ SHOW UP (dark) ============ -->
+  <section class="th-show is-dark">
+    <div class="wrap">
+      <div class="show-grid">
+        <div class="show-l rise" data-rise>
+          <span class="tag">Where we start</span>
+          <h2>{think.showUp.heading.replace('.', '')}<em>.</em></h2>
+          <div class="show-lines">
+            {showUpLead.map((line) => (<p>{line}</p>))}
+          </div>
+        </div>
+        <div class="show-r rise" data-rise>
+          <span class="q-label">We start with you.</span>
+          <ul class="questions">
+            {showUpQuestions.map((q) => (<li><span class="serif">{q}</span></li>))}
+          </ul>
+          <p class="show-close">{showUpClose}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ STAY (calm band) ============ -->
+  <section class="th-stay">
+    <div class="wrap">
+      <div class="stay-band rise" data-rise>
+        <span class="tag">Give it time</span>
+        <h2>{think.stay.heading.replace('.', '')}<em>.</em></h2>
+        <div class="stay-lines">
+          {think.stay.lines.map((line, i) => (
+            <p class={i === think.stay.lines.length - 1 ? 'accent' : ''}>{line}</p>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CLOSING (dark CTA) ============ -->
+  <section class="th-close is-dark">
+    <div class="wrap">
+      <div class="close-in rise" data-rise>
+        <span class="tag">Ready when you are</span>
+        <h2>So, what could we <span class="serif">work on together?</span></h2>
+        <div class="ctas">
+          <a class="btn" href={`${import.meta.env.BASE_URL}explore/`}>Let’s explore <span class="arr">→</span></a>
+          <a class="ghost" href={`${import.meta.env.BASE_URL}programmes/`}>{think.next.replace('→ ', '')} <span class="arr">→</span></a>
+        </div>
+      </div>
+    </div>
+  </section>
+</Internal>
+
+<style>
+  /* ===== HERO ===== */
+  .th-hero{position:relative;min-height:82svh;display:flex;align-items:center;
+    padding:clamp(50px,10vh,120px) 0 clamp(50px,9vh,100px);overflow:hidden}
+  .th-hero .th-hero-in{max-width:60rem}
+  .th-hero .tag{margin-bottom:clamp(20px,3.5vh,34px)}
+  .th-hero .lead-in{font-family:var(--serif);font-style:italic;font-size:clamp(1.4rem,2.8vw,2.2rem);
+    color:var(--muted);margin:0 0 .25em;line-height:1}
+  .th-hero h1{font-size:clamp(2.5rem,5.6vw,4.9rem);font-weight:600;letter-spacing:-.045em;line-height:.98;
+    margin:0;max-width:15ch}
+  .th-hero h1 em{color:var(--orange)}
+  .th-hero .lede{font-size:clamp(1.15rem,1.9vw,1.45rem);color:var(--muted);line-height:1.5;
+    max-width:38ch;margin:clamp(24px,3.5vh,38px) 0 0}
+  .th-hero .cue{position:absolute;bottom:26px;left:var(--gutter);font-family:var(--mono);font-size:11px;
+    letter-spacing:.18em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:10px}
+  .th-hero .cue i{width:1px;height:30px;background:linear-gradient(var(--muted),transparent);
+    animation:thcue 2.4s ease-in-out infinite}
+  @keyframes thcue{0%,100%{opacity:.3;transform:scaleY(.7);transform-origin:top}50%{opacity:1;transform:scaleY(1);transform-origin:top}}
+
+  /* ===== WHAT BRINGS YOU HERE ===== */
+  .th-here{padding-block:clamp(60px,12vh,140px)}
+  .th-here .here-head{margin-bottom:clamp(30px,5vh,56px)}
+  .th-here .here-head h2{font-size:clamp(2.1rem,5vw,3.6rem);font-weight:600;letter-spacing:-.04em;
+    line-height:1.02;margin:clamp(16px,2.5vh,24px) 0 0}
+  .th-here .here-grid{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,1fr);
+    gap:clamp(14px,1.6vw,22px)}
+  .th-here .here-grid li{display:flex;align-items:baseline;gap:clamp(14px,1.6vw,22px);
+    background:#fff;border:1px solid var(--line);border-radius:18px;
+    padding:clamp(22px,2.8vw,34px) clamp(22px,3vw,38px);
+    transition:border-color .25s ease,transform .25s ease}
+  .th-here .here-grid li:hover{border-color:var(--orange);transform:translateY(-2px)}
+  .th-here .here-grid .no{font-family:var(--mono);font-size:13px;color:var(--orange-deep);
+    letter-spacing:.06em;flex:none}
+  .th-here .here-grid p{margin:0;font-size:clamp(1.25rem,2.4vw,1.85rem);font-weight:500;
+    letter-spacing:-.025em;line-height:1.14;color:var(--ink)}
+
+  /* ===== SHOW UP (dark) ===== */
+  .th-show{background:var(--ink);color:var(--paper);padding-block:clamp(70px,14vh,160px)}
+  .th-show .tag{color:rgba(247,245,240,.6)}
+  .th-show .show-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(36px,6vw,90px);
+    align-items:start}
+  .th-show h2{font-size:clamp(3.4rem,9vw,7rem);font-weight:700;letter-spacing:-.04em;line-height:.92;
+    text-transform:uppercase;margin:clamp(18px,3vh,30px) 0 clamp(26px,4vh,44px);color:var(--paper)}
+  .th-show h2 em{font-family:var(--serif);font-style:italic;font-weight:400;color:var(--orange)}
+  .th-show .show-lines p{font-size:clamp(1.2rem,2.1vw,1.55rem);font-weight:500;letter-spacing:-.02em;
+    line-height:1.32;margin:0 0 .35em;color:rgba(247,245,240,.9);max-width:26ch}
+  .th-show .show-r{border-left:1px solid rgba(247,245,240,.14);padding-left:clamp(24px,3vw,48px)}
+  .th-show .q-label{font-family:var(--mono);font-size:12px;letter-spacing:.18em;text-transform:uppercase;
+    color:rgba(247,245,240,.5);display:block;margin-bottom:clamp(20px,3vh,30px)}
+  .th-show .questions{list-style:none;margin:0 0 clamp(28px,4vh,44px);padding:0}
+  .th-show .questions li{font-size:clamp(1.6rem,3.4vw,2.6rem);letter-spacing:-.02em;line-height:1.18;
+    padding:clamp(14px,2vh,20px) 0;border-bottom:1px solid rgba(247,245,240,.12)}
+  .th-show .questions li:first-child{border-top:1px solid rgba(247,245,240,.12)}
+  .th-show .questions .serif{color:var(--paper)}
+  .th-show .show-close{font-size:clamp(1.15rem,1.9vw,1.4rem);color:var(--orange);font-weight:500;
+    letter-spacing:-.02em;margin:0}
+
+  /* ===== STAY (calm band) ===== */
+  .th-stay{padding-block:clamp(60px,12vh,140px)}
+  .th-stay .stay-band{background:radial-gradient(130% 130% at 50% 0%,#FBEEDD 0%,#F6E4CF 58%,#F2DCC0 100%);
+    border-radius:26px;padding:clamp(48px,9vw,110px) clamp(28px,6vw,80px);text-align:center;
+    box-shadow:0 1px 2px rgba(20,19,17,.06)}
+  .th-stay .tag{color:#8a5a2c}
+  .th-stay h2{font-size:clamp(3rem,8vw,6rem);font-weight:700;letter-spacing:-.04em;line-height:.94;
+    text-transform:uppercase;color:var(--ink);margin:clamp(18px,3vh,28px) 0 clamp(28px,5vh,46px)}
+  .th-stay h2 em{font-family:var(--serif);font-style:italic;font-weight:400;color:var(--orange-deep)}
+  .th-stay .stay-lines{display:flex;flex-direction:column;gap:.2em}
+  .th-stay .stay-lines p{margin:0;font-size:clamp(1.3rem,2.8vw,2rem);font-weight:500;letter-spacing:-.025em;
+    line-height:1.24;color:#5a4a35}
+  .th-stay .stay-lines p.accent{font-family:var(--serif);font-style:italic;font-weight:400;color:var(--orange-deep);
+    font-size:clamp(1.5rem,3.2vw,2.4rem);margin-top:.25em}
+
+  /* ===== CLOSING (dark CTA) ===== */
+  .th-close{background:var(--ink);color:var(--paper);padding-block:clamp(90px,17vh,190px);text-align:center}
+  .th-close .close-in{max-width:70rem;margin:0 auto}
+  .th-close .tag{color:rgba(247,245,240,.6);justify-content:center}
+  .th-close h2{font-size:clamp(2.6rem,6vw,4.8rem);font-weight:600;letter-spacing:-.04em;line-height:1;
+    color:var(--paper);margin:clamp(20px,3vh,32px) auto clamp(32px,5vh,48px);max-width:18ch}
+  .th-close h2 .serif{color:var(--orange)}
+  .th-close .ctas{display:flex;justify-content:center;gap:16px;flex-wrap:wrap}
+  .th-close .btn{display:inline-flex;align-items:center;gap:.5em;background:var(--orange);color:#141311;
+    font-weight:600;font-size:1.05rem;padding:16px 36px;border-radius:999px;
+    box-shadow:0 10px 30px rgba(232,85,26,.28);transition:transform .2s,box-shadow .2s}
+  .th-close .btn:hover{transform:translateY(-2px);box-shadow:0 16px 40px rgba(232,85,26,.34)}
+  .th-close .btn .arr{transition:transform .2s}
+  .th-close .btn:hover .arr{transform:translateX(4px)}
+  .th-close .ghost{display:inline-flex;align-items:center;gap:.5em;border:1px solid rgba(247,245,240,.32);
+    border-radius:999px;padding:16px 30px;font-weight:600;color:var(--paper);
+    transition:border-color .2s,background .2s}
+  .th-close .ghost:hover{border-color:var(--paper);background:rgba(247,245,240,.06)}
+  .th-close .ghost .arr{color:var(--orange)}
+
+  /* ===== responsive ===== */
+  @media(max-width:860px){
+    .th-here .here-grid{grid-template-columns:1fr}
+    .th-show .show-grid{grid-template-columns:1fr;gap:clamp(30px,6vh,50px)}
+    .th-show .show-r{border-left:0;border-top:1px solid rgba(247,245,240,.14);
+      padding-left:0;padding-top:clamp(26px,4vh,40px)}
+  }
+</style>

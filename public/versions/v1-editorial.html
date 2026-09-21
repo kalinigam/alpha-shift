@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Alpha Shift — Something on your mind?</title>
+<meta name="description" content="Shift thinking. Shape success. Small shifts can change what happens next." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    /* neutrals */
+    --paper:#F7F5F0; --paper-2:#EFECE4; --paper-3:#F3F0E8; --surface:#FFFFFF;
+    --ink:#141311; --muted:#6F6A60; --line:rgba(20,19,17,.14); --line-soft:rgba(20,19,17,.08);
+    /* signal */
+    --orange:#E8551A; --orange-deep:#B23F10;
+    /* pastels — pale fill / deep text */
+    --yellow:#F3DE9B;   --yellow-deep:#7A5A0F;
+    --green:#B9CFB0;    --green-deep:#3F5B3B;
+    --lavender:#CFC6E6; --lavender-deep:#4B3F72;
+    --sans:"Geist",system-ui,-apple-system,sans-serif;
+    --mono:"Geist Mono",ui-monospace,monospace;
+    --serif:"Instrument Serif",Georgia,serif;
+    --maxw:1080px; --readw:640px;
+    --shadow:0 1px 2px rgba(20,19,17,.05),0 22px 50px rgba(20,19,17,.09);
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-weight:400;
+    line-height:1.6;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:hidden}
+  /* paper grain, consistent with the brand kit */
+  body::after{content:"";position:fixed;inset:0;z-index:200;pointer-events:none;opacity:.045;mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+  ::selection{background:rgba(232,85,26,.20)}
+  .serif{font-family:var(--serif);font-style:italic;font-weight:400}
+  .mono{font-family:var(--mono)}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 clamp(22px,5vw,48px)}
+  .read{max-width:var(--readw);margin:0 auto;padding:0 clamp(22px,5vw,48px)}
+  a{color:var(--orange-deep);text-decoration:none}
+
+  /* ============ NAV ============ */
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;
+    padding:18px clamp(22px,5vw,48px);
+    background:linear-gradient(var(--paper),rgba(247,245,240,0));
+    transition:background .3s,box-shadow .3s,padding .3s}
+  nav.solid{background:rgba(247,245,240,.86);backdrop-filter:blur(10px);box-shadow:0 1px 0 var(--line-soft);padding-top:14px;padding-bottom:14px}
+  nav .wm{font-weight:600;letter-spacing:-.03em;font-size:1.15rem}
+  nav .wm .dot{color:var(--orange)}
+  nav .nav-cta{display:inline-flex;align-items:center;gap:.5em;font-weight:500;font-size:.9rem;color:var(--ink);
+    border:1px solid var(--line);border-radius:999px;padding:9px 18px;transition:border-color .2s,background .2s}
+  nav .nav-cta:hover{border-color:var(--ink);background:var(--surface)}
+  nav .nav-cta .dot{color:var(--orange);font-weight:700}
+
+  /* ============ HERO ============ */
+  .hero{min-height:100svh;display:flex;flex-direction:column;justify-content:center;position:relative;
+    padding:120px 0 80px;overflow:hidden}
+  .hero .kick{font-family:var(--mono);font-size:12.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);
+    margin:0 0 clamp(24px,5vh,44px);display:flex;align-items:center;gap:14px}
+  .hero .kick i{width:26px;height:1px;background:var(--line);display:inline-block}
+  .wordmark{font-weight:600;letter-spacing:-.05em;line-height:.86;font-size:clamp(3.6rem,15.5vw,12rem);margin:0}
+  .wordmark .dot{color:var(--orange)}
+  .hero .tag{font-size:clamp(1.15rem,2.4vw,1.9rem);letter-spacing:-.01em;margin:.7em 0 0;color:var(--muted);font-weight:400}
+  .hero .tag .serif{color:var(--ink)}
+  .hero .ask{margin-top:clamp(40px,7vh,80px);font-size:clamp(2rem,5.2vw,3.6rem);font-weight:600;letter-spacing:-.035em;
+    line-height:1.02;max-width:16ch}
+  .hero .ask .serif{color:var(--ink)}
+  .hero .scrollcue{position:absolute;bottom:30px;left:50%;transform:translateX(-50%);
+    font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);
+    display:flex;flex-direction:column;align-items:center;gap:8px}
+  .hero .scrollcue span{width:1px;height:34px;background:linear-gradient(var(--line),transparent);animation:cue 2.4s ease-in-out infinite}
+  @keyframes cue{0%,100%{opacity:.3;transform:scaleY(.7);transform-origin:top}50%{opacity:1;transform:scaleY(1);transform-origin:top}}
+  .hero .swatchdots{position:absolute;right:clamp(22px,5vw,48px);top:50%;transform:translateY(-50%);
+    display:flex;flex-direction:column;gap:12px}
+  .hero .swatchdots i{width:12px;height:12px;border-radius:50%;opacity:.9}
+  @media(max-width:760px){.hero .swatchdots{display:none}}
+
+  /* ============ NARRATIVE (the slow read) ============ */
+  .verse{padding:clamp(64px,12vh,140px) 0}
+  .verse p{font-size:clamp(1.5rem,3.6vw,2.5rem);font-weight:400;letter-spacing:-.02em;line-height:1.28;
+    margin:0 0 .55em;color:var(--ink)}
+  .verse p.soft{color:var(--muted)}
+  .verse p .serif{color:var(--ink)}
+  .verse .lift{margin-top:1.2em;font-size:clamp(1.6rem,4vw,2.9rem);font-weight:500}
+  .verse .lift .serif{color:var(--orange-deep)}
+  /* line-list — each phrase on its own line, reveal on scroll */
+  .lines p{opacity:0;transform:translateY(14px);transition:opacity .7s ease,transform .7s ease}
+  .lines.in p{opacity:1;transform:none}
+  .lines.in p:nth-child(2){transition-delay:.08s}
+  .lines.in p:nth-child(3){transition-delay:.16s}
+  .lines.in p:nth-child(4){transition-delay:.24s}
+  .lines.in p:nth-child(5){transition-delay:.32s}
+  .lines.in p:nth-child(6){transition-delay:.40s}
+  .lines.in p:nth-child(7){transition-delay:.48s}
+
+  /* thin rule with an orange stop — the recurring "landing" mark */
+  .thread{display:flex;align-items:center;gap:14px;margin:clamp(40px,8vh,90px) auto;max-width:var(--readw);
+    padding:0 clamp(22px,5vw,48px)}
+  .thread i{flex:1;height:1px;background:var(--line)}
+  .thread b{width:9px;height:9px;border-radius:50%;background:var(--orange);flex:none}
+
+  /* ============ SKETCHNOTE PANELS ============ */
+  .sketch{padding:clamp(48px,9vh,110px) 0}
+  .sketch .panel{position:relative;border-radius:22px;overflow:hidden;padding:clamp(28px,5vw,60px);
+    display:grid;grid-template-columns:1fr 1.1fr;align-items:center;gap:clamp(20px,4vw,48px);box-shadow:var(--shadow)}
+  .sketch .panel.rev{grid-template-columns:1.1fr 1fr}
+  .sketch .panel.rev .figure{order:-1}
+  .sketch.p-yellow .panel{background:var(--yellow)}
+  .sketch.p-green  .panel{background:var(--green)}
+  .sketch.p-lav    .panel{background:var(--lavender)}
+  .sketch .note{max-width:34ch}
+  .sketch .note .cap{font-family:var(--mono);font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;margin:0 0 16px;opacity:.7}
+  .sketch.p-yellow .note .cap{color:var(--yellow-deep)}
+  .sketch.p-green  .note .cap{color:var(--green-deep)}
+  .sketch.p-lav    .note .cap{color:var(--lavender-deep)}
+  .sketch .note p{font-size:clamp(1.35rem,2.6vw,2rem);line-height:1.25;letter-spacing:-.02em;margin:0;font-weight:500;color:var(--ink)}
+  .sketch .note p .serif{font-weight:400}
+  .sketch.p-yellow .note p .serif{color:var(--yellow-deep)}
+  .sketch.p-green  .note p .serif{color:var(--green-deep)}
+  .sketch.p-lav    .note p .serif{color:var(--lavender-deep)}
+  .figure{display:flex;align-items:center;justify-content:center}
+  .figure img{width:100%;max-width:460px;height:auto;mix-blend-mode:multiply;
+    filter:saturate(1.02) contrast(1.02)}
+  @media(max-width:760px){
+    .sketch .panel,.sketch .panel.rev{grid-template-columns:1fr;text-align:left}
+    .sketch .panel.rev .figure{order:0}
+    .figure img{max-width:min(360px,80%)}
+  }
+
+  /* ============ THE CHAIN (thought → action) ============ */
+  .make{padding:clamp(72px,13vh,160px) 0;text-align:center;background:var(--paper-2);
+    border-top:1px solid var(--line-soft);border-bottom:1px solid var(--line-soft)}
+  .make .big{font-size:clamp(2.6rem,8vw,5.5rem);font-weight:600;letter-spacing:-.045em;line-height:.98;margin:0 0 .5em}
+  .make .big .serif{color:var(--orange)}
+  .make .sub{font-size:clamp(1.15rem,2.2vw,1.5rem);color:var(--muted);max-width:34ch;margin:0 auto 2.4em;line-height:1.4}
+  .chain{display:flex;flex-wrap:wrap;align-items:stretch;justify-content:center;gap:12px;max-width:920px;margin:0 auto}
+  .chain .node{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px 26px;
+    display:flex;flex-direction:column;gap:6px;min-width:170px;flex:1;box-shadow:0 1px 2px rgba(20,19,17,.04)}
+  .chain .node .n{font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--muted)}
+  .chain .node .w{font-size:1.35rem;font-weight:600;letter-spacing:-.02em}
+  .chain .node.a .w{color:var(--yellow-deep)}
+  .chain .node.b .w{color:var(--lavender-deep)}
+  .chain .node.c .w{color:var(--green-deep)}
+  .chain .node.d{background:var(--ink)}
+  .chain .node.d .n{color:rgba(247,245,240,.55)}
+  .chain .node.d .w{color:var(--paper)}
+  .chain .arrow{display:flex;align-items:center;color:var(--orange);font-size:1.3rem;font-weight:600}
+  @media(max-width:680px){.chain{flex-direction:column}.chain .arrow{transform:rotate(90deg);justify-content:center}}
+  .make .close{margin-top:2.6em;font-size:clamp(1.3rem,2.8vw,2rem);font-weight:500;letter-spacing:-.02em}
+  .make .close .serif{color:var(--orange-deep)}
+
+  /* ============ ABOUT / MANIFESTO ============ */
+  .about{padding:clamp(72px,13vh,160px) 0}
+  .about .lede{font-size:clamp(1.7rem,3.6vw,2.7rem);font-weight:400;letter-spacing:-.025em;line-height:1.2;
+    max-width:20ch;margin:0 0 1.4em}
+  .about .lede .serif{color:var(--orange-deep)}
+  .about .body{font-size:clamp(1.05rem,1.7vw,1.25rem);color:var(--muted);max-width:52ch;line-height:1.6}
+  .about .body b{color:var(--ink);font-weight:500}
+
+  /* ============ HOW WE WORK ============ */
+  .work{padding:clamp(64px,11vh,140px) 0;background:var(--ink);color:var(--paper);
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");}
+  .work .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:rgba(247,245,240,.5);margin:0 0 20px}
+  .work h2{font-size:clamp(2rem,4.6vw,3.4rem);font-weight:600;letter-spacing:-.035em;line-height:1.02;margin:0 0 .6em}
+  .work h2 .serif{color:var(--yellow)}
+  .work .intro{font-size:clamp(1.1rem,1.9vw,1.35rem);color:rgba(247,245,240,.72);max-width:44ch;margin:0 0 clamp(40px,6vh,64px)}
+  .ways{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+  @media(max-width:860px){.ways{grid-template-columns:1fr 1fr}}
+  @media(max-width:520px){.ways{grid-template-columns:1fr}}
+  .way{border:1px solid rgba(247,245,240,.16);border-radius:16px;padding:26px 24px 30px;
+    display:flex;flex-direction:column;gap:14px;min-height:210px;transition:border-color .25s,transform .25s}
+  .way:hover{border-color:rgba(247,245,240,.4);transform:translateY(-3px)}
+  .way .no{font-family:var(--mono);font-size:12px;letter-spacing:.1em;color:var(--orange)}
+  .way h3{font-size:1.35rem;font-weight:600;letter-spacing:-.02em;margin:auto 0 0}
+  .way p{font-size:.98rem;color:rgba(247,245,240,.68);margin:0;line-height:1.5}
+  .work .start{margin-top:clamp(40px,6vh,64px);font-size:clamp(1.4rem,3vw,2.2rem);font-weight:500;letter-spacing:-.025em}
+  .work .start .serif{color:var(--yellow)}
+
+  /* ============ MEET CHETAN ============ */
+  .chetan{padding:clamp(72px,13vh,160px) 0}
+  .chetan-grid{display:grid;grid-template-columns:.85fr 1.15fr;gap:clamp(28px,5vw,64px);align-items:center}
+  @media(max-width:820px){.chetan-grid{grid-template-columns:1fr;gap:36px}}
+  .portrait{aspect-ratio:4/5;border-radius:20px;overflow:hidden;position:relative;
+    background:linear-gradient(150deg,var(--lavender),var(--green) 60%,var(--yellow));box-shadow:var(--shadow);
+    display:flex;align-items:flex-end;justify-content:center}
+  .portrait .ph{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+    color:rgba(20,19,17,.5);position:absolute;top:20px;left:22px}
+  .portrait .glyph{font-family:var(--serif);font-style:italic;font-size:clamp(5rem,14vw,9rem);color:rgba(20,19,17,.16);
+    margin-bottom:.1em;user-select:none}
+  .chetan .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin:0 0 20px}
+  .chetan h2{font-size:clamp(1.8rem,3.6vw,2.6rem);font-weight:600;letter-spacing:-.03em;line-height:1.05;margin:0 0 .7em}
+  .chetan p{font-size:clamp(1.05rem,1.7vw,1.2rem);color:var(--muted);line-height:1.6;margin:0 0 1em;max-width:48ch}
+  .chetan p.pull{font-size:clamp(1.4rem,2.8vw,1.9rem);color:var(--ink);font-weight:400;letter-spacing:-.02em;line-height:1.3;margin:1em 0}
+  .chetan p.pull .serif{color:var(--orange-deep)}
+  .chetan .diff{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 1.4em}
+  .chetan .diff span{font-family:var(--mono);font-size:12px;letter-spacing:.06em;color:var(--muted);
+    border:1px solid var(--line);border-radius:999px;padding:6px 14px}
+  .chetan .meet{display:inline-flex;align-items:center;gap:.5em;font-weight:500;color:var(--ink);border-bottom:1px solid var(--orange);
+    padding-bottom:2px}
+  .chetan .meet:hover{color:var(--orange-deep)}
+
+  /* ============ CTA ============ */
+  .cta{padding:clamp(80px,15vh,180px) 0;text-align:center;position:relative;overflow:hidden}
+  .cta .chips{display:flex;justify-content:center;gap:10px;margin:0 0 clamp(30px,5vh,48px)}
+  .cta .chips i{width:14px;height:14px;border-radius:50%}
+  .cta h2{font-size:clamp(2.6rem,7vw,5rem);font-weight:600;letter-spacing:-.045em;line-height:1;margin:0 0 .5em}
+  .cta h2 .serif{color:var(--orange)}
+  .cta .lines2{font-size:clamp(1.2rem,2.4vw,1.6rem);color:var(--muted);line-height:1.5;margin:0 auto 2.6em;max-width:30ch}
+  .cta .lines2 b{color:var(--ink);font-weight:500}
+  .cta .btn{display:inline-flex;align-items:center;gap:.6em;background:var(--orange);color:#141311;font-weight:600;font-size:1.1rem;
+    padding:18px 38px;border-radius:999px;box-shadow:0 10px 30px rgba(232,85,26,.28);transition:transform .2s,box-shadow .2s}
+  .cta .btn:hover{transform:translateY(-2px);box-shadow:0 16px 40px rgba(232,85,26,.36)}
+
+  /* ============ FOOTER ============ */
+  footer{padding:56px 0 72px;border-top:1px solid var(--line);color:var(--muted);font-size:.92rem}
+  footer .frow{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:20px}
+  footer .wm{font-weight:600;color:var(--ink);letter-spacing:-.02em;font-size:1.2rem}
+  footer .wm .dot{color:var(--orange)}
+  footer .tagline{font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase}
+  footer a{color:var(--muted)}
+  footer a:hover{color:var(--ink)}
+
+  /* reveal utility */
+  .rise{opacity:0;transform:translateY(20px);transition:opacity .8s ease,transform .8s ease}
+  .rise.in{opacity:1;transform:none}
+  @media(prefers-reduced-motion:reduce){
+    .rise,.lines p,.hero .scrollcue span{opacity:1!important;transform:none!important;animation:none!important;transition:none!important}
+  }
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <a class="wm" href="#top">Alpha Shift<span class="dot">.</span></a>
+  <a class="nav-cta" href="#explore">Let's explore <span class="dot">→</span></a>
+</nav>
+
+<!-- ============ HERO ============ -->
+<header class="hero" id="top">
+  <div class="wrap">
+    <p class="kick"><i></i> Shift Thinking · Shape Success</p>
+    <h1 class="wordmark">Alpha Shift<span class="dot">.</span></h1>
+    <p class="tag">A quieter kind of consulting. <span class="serif">We start with the question.</span></p>
+    <p class="ask">Something on your <span class="serif">mind</span>?</p>
+  </div>
+  <div class="swatchdots" aria-hidden="true">
+    <i style="background:#F3DE9B"></i>
+    <i style="background:#B9CFB0"></i>
+    <i style="background:#CFC6E6"></i>
+    <i style="background:#E8551A"></i>
+  </div>
+  <div class="scrollcue" aria-hidden="true"><span></span>Read on</div>
+</header>
+
+<!-- ============ VERSE 1 — the opening ============ -->
+<section class="verse">
+  <div class="read lines" data-reveal>
+    <p>Something you're thinking about.</p>
+    <p>A problem you're trying to solve.</p>
+    <p>A conversation you're not quite sure how to have.</p>
+    <p class="soft">Or perhaps just a feeling that something needs to move.</p>
+  </div>
+</section>
+
+<div class="thread" aria-hidden="true"><i></i><b></b><i></i></div>
+
+<section class="verse">
+  <div class="read lines" data-reveal>
+    <p>You don't necessarily know what it is.</p>
+    <p class="lift">And that's <span class="serif">okay</span>.</p>
+  </div>
+</section>
+
+<section class="verse">
+  <div class="read lines" data-reveal>
+    <p class="soft">Sometimes, you already know enough.</p>
+    <p>Yet there's still a missing piece —</p>
+    <p>something you can't quite put your finger on.</p>
+  </div>
+</section>
+
+<!-- ============ SKETCHNOTE 1 — the crossroads / possibilities ============ -->
+<section class="sketch p-lav">
+  <div class="wrap">
+    <div class="panel rise" data-reveal>
+      <div class="note">
+        <p class="cap">The possibilities</p>
+        <p>It could be a conversation. A different perspective. A small decision. Or simply <span class="serif">seeing something you thought you knew</span> in a different way.</p>
+      </div>
+      <div class="figure">
+        <img src="../Media/Sketches/1.jpeg" alt="A figure pausing at a fork in the path, colourful stepping stones ahead marking different possibilities." loading="lazy" />
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ VERSE 2 — the shift begins ============ -->
+<section class="verse">
+  <div class="read lines" data-reveal>
+    <p>Maybe it starts with a better <span class="serif">question</span>.</p>
+    <p>Or a clearer observation.</p>
+    <p class="soft">Perhaps you see a possibility you hadn't considered.</p>
+    <p class="soft">Perhaps you decide to do something differently.</p>
+    <p class="lift">And that's where the <span class="serif">shift</span> begins.</p>
+  </div>
+</section>
+
+<!-- ============ SKETCHNOTE 2 — from question to spark to motion ============ -->
+<section class="sketch p-yellow">
+  <div class="wrap">
+    <div class="panel rise" data-reveal>
+      <div class="note">
+        <p class="cap">The spark</p>
+        <p>A thought clouds over. Then it catches. Then it moves — <span class="serif">the moment an idea gets up and walks</span>.</p>
+      </div>
+      <div class="figure">
+        <img src="../Media/Sketches/2.jpeg" alt="Three figures — one puzzled with a thought cloud, one delighted as a lightbulb lights up, one running off holding the idea." loading="lazy" />
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MAKE THE SHIFT — the chain ============ -->
+<section class="make">
+  <div class="wrap rise" data-reveal>
+    <h2 class="big">Make the <span class="serif">shift</span>.</h2>
+    <p class="sub">Not everything needs a new plan. Sometimes, it needs a new way of looking at the old one.</p>
+    <div class="chain">
+      <div class="node a"><span class="n">01</span><span class="w">A thought</span></div>
+      <div class="arrow" aria-hidden="true">→</div>
+      <div class="node b"><span class="n">02</span><span class="w">A possibility</span></div>
+      <div class="arrow" aria-hidden="true">→</div>
+      <div class="node c"><span class="n">03</span><span class="w">A decision</span></div>
+      <div class="arrow" aria-hidden="true">→</div>
+      <div class="node d"><span class="n">04</span><span class="w">Action</span></div>
+    </div>
+    <p class="close">Small shifts can change <span class="serif">what happens next</span>.</p>
+  </div>
+</section>
+
+<!-- ============ ABOUT ============ -->
+<section class="about">
+  <div class="read rise" data-reveal>
+    <p class="lede">That's what <span class="serif">Alpha Shift</span> is about.</p>
+    <p class="body"><b>Creating the space to explore.</b> To think differently. To see more clearly. To find what matters — and then to do something about it.</p>
+  </div>
+</section>
+
+<!-- ============ HOW WE WORK ============ -->
+<section class="work">
+  <div class="wrap">
+    <p class="eyebrow rise" data-reveal>How we work</p>
+    <h2 class="rise" data-reveal>We start <span class="serif">where you are</span>.</h2>
+    <p class="intro rise" data-reveal>There's no fixed package. It takes the shape the thinking needs.</p>
+    <div class="ways">
+      <div class="way rise" data-reveal>
+        <span class="no">01</span>
+        <p>A single, honest exchange to find the real question.</p>
+        <h3>A conversation</h3>
+      </div>
+      <div class="way rise" data-reveal style="transition-delay:.08s">
+        <span class="no">02</span>
+        <p>A session that gets people thinking — and doing.</p>
+        <h3>A workshop</h3>
+      </div>
+      <div class="way rise" data-reveal style="transition-delay:.16s">
+        <span class="no">03</span>
+        <p>A deeper journey with a leader, a team or an organisation.</p>
+        <h3>A journey</h3>
+      </div>
+      <div class="way rise" data-reveal style="transition-delay:.24s">
+        <span class="no">04</span>
+        <p>Or something we haven't put into a box yet.</p>
+        <h3>Something else</h3>
+      </div>
+    </div>
+    <p class="start rise" data-reveal>However it begins, <span class="serif">we start where you are</span>.</p>
+  </div>
+</section>
+
+<!-- ============ MEET CHETAN ============ -->
+<section class="chetan">
+  <div class="wrap">
+    <div class="chetan-grid">
+      <div class="portrait rise" data-reveal>
+        <span class="ph">Chetan · Founder</span>
+        <span class="glyph" aria-hidden="true">C.</span>
+      </div>
+      <div class="rise" data-reveal>
+        <p class="eyebrow">I'm Chetan</p>
+        <h2>A career spent moving between worlds.</h2>
+        <div class="diff">
+          <span>Banking</span><span>Fintech</span><span>Marketing</span><span>Education</span><span>Business</span>
+        </div>
+        <p>Different industries. Different challenges. Different people. One thing has stayed constant:</p>
+        <p class="pull">Good answers don't always come from knowing more. <span class="serif">Sometimes they come from looking differently.</span></p>
+        <p>That's the thinking behind Alpha Shift.</p>
+        <a class="meet" href="#">Meet Chetan <span aria-hidden="true">→</span></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CTA ============ -->
+<section class="cta" id="explore">
+  <div class="wrap rise" data-reveal>
+    <div class="chips" aria-hidden="true">
+      <i style="background:#F3DE9B"></i><i style="background:#B9CFB0"></i><i style="background:#CFC6E6"></i>
+    </div>
+    <h2>Ready to <span class="serif">explore</span>?</h2>
+    <p class="lines2">You don't need to have it figured out. <b>Bring the question. Bring the challenge. Bring the half-formed thought.</b> We'll start there.</p>
+    <a class="btn" href="mailto:hello@alphashift.co">Let's explore <span aria-hidden="true">→</span></a>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="wrap">
+    <div class="frow">
+      <span class="wm">Alpha Shift<span class="dot">.</span></span>
+      <span class="tagline">Shift Thinking · Shape Success</span>
+      <span>© 2026 Alpha Shift · <a href="mailto:hello@alphashift.co">hello@alphashift.co</a></span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // sticky nav state
+  const nav = document.getElementById('nav');
+  const onScroll = () => nav.classList.toggle('solid', window.scrollY > 40);
+  onScroll(); window.addEventListener('scroll', onScroll, {passive:true});
+
+  // scroll reveal
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      }
+    });
+  },{threshold:0.18, rootMargin:'0px 0px -8% 0px'});
+  document.querySelectorAll('[data-reveal]').forEach(el=>io.observe(el));
+</script>
+
+</body>
+</html>

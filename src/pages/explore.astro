@@ -1,0 +1,182 @@
+---
+// Page 5 — Let's explore. The invitation / contact / next-step page.
+// Same chrome as the homepage (Internal layout: nav, white footer, preloader
+// reveal, [data-rise] observer). All copy is verbatim from ../data/explore.ts.
+// Two easy routes (tell us what's on your mind, or book a conversation) plus a
+// direct reach-out. No programme selection required; the form stays short.
+import Internal from '../layouts/Internal.astro';
+import { explore } from '../data/explore.ts';
+
+const [headline, subline, ...intwhich] = explore.intro; // 1st = headline, 2nd = serif line, rest = soft stack
+---
+
+<Internal
+  title="Let's explore — Alpha Shift"
+  description="Bring the question, the challenge, or the half-formed thought. Start with a conversation, or find a time that works — we'll start where you are."
+>
+  <!-- ============ HERO — dark, centred invitation ============ -->
+  <section class="ex-hero is-dark">
+    <div class="wrap">
+      <span class="tag">Let’s explore</span>
+      <h1>{headline}</h1>
+      <p class="serif-lead"><span class="serif o">{subline}</span></p>
+      <ul class="stack" aria-hidden="false">
+        {intwhich.map((line) => (<li>{line}</li>))}
+      </ul>
+      <span class="cue" aria-hidden="true"><i></i> Two easy routes below</span>
+    </div>
+  </section>
+
+  <!-- ============ TWO ROUTES — write a note (form) · or book a time ============ -->
+  <section class="ex-routes">
+    <div class="wrap">
+      <div class="routes">
+
+        <!-- Route 1 — the short note -->
+        <div class="route form-route rise" data-rise>
+          <span class="tag">Route one</span>
+          <h2>{explore.form.heading}</h2>
+          <p class="lead">{explore.form.lead}</p>
+          <form class="note" action="#" method="post" novalidate>
+            {explore.form.fields.map((field) => (
+              <label class={field.type === 'textarea' ? 'field field--wide' : 'field'}>
+                <span class="flab">{field.label}</span>
+                {field.type === 'textarea'
+                  ? <textarea name={field.label} rows="4" placeholder=""></textarea>
+                  : <input type={field.type} name={field.label} placeholder="" />}
+              </label>
+            ))}
+            <button type="submit" class="btn">{explore.form.submit.replace('→', '')}<span class="arr">→</span></button>
+          </form>
+        </div>
+
+        <!-- Route 2 — book a time -->
+        <div class="route book-route rise" data-rise>
+          <span class="tag">Route two</span>
+          <h2>{explore.booking.heading}</h2>
+          <p class="lead">{explore.booking.lead}</p>
+          <a class="ghost-btn" href="#">{explore.booking.cta.replace('→', '')}<span class="arr">→</span></a>
+          <span class="note-int">{explore.booking.integration}</span>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ DIRECT — prefer to reach out directly ============ -->
+  <section class="ex-direct">
+    <div class="wrap">
+      <div class="direct rise" data-rise>
+        <h2>{explore.direct.heading}</h2>
+        <div class="channels">
+          <a class="channel" href="#">
+            <span class="ch-k">Email</span>
+            <span class="ch-v">{explore.direct.email}</span>
+          </a>
+          <a class="channel" href="#">
+            <span class="ch-k">LinkedIn</span>
+            <span class="ch-v">{explore.direct.linkedin}</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ REASSURANCE — calm closing ============ -->
+  <section class="ex-reassure">
+    <div class="wrap">
+      <div class="reassure rise" data-rise>
+        {explore.reassurance.map((line, i) => (
+          <p class={i === 0 ? 'r-lead' : 'r-line'}>{line}</p>
+        ))}
+      </div>
+    </div>
+  </section>
+</Internal>
+
+<style>
+  /* ============ HERO — dark, centred ============ */
+  .ex-hero{background:var(--ink);color:var(--paper);text-align:center;
+    padding:clamp(96px,20vh,190px) 0 clamp(80px,15vh,150px)}
+  .ex-hero .wrap{max-width:880px}
+  .ex-hero .tag{color:rgba(247,245,240,.6);justify-content:center;margin:0 0 clamp(22px,4vh,34px)}
+  .ex-hero h1{font-size:clamp(2.9rem,8vw,6rem);font-weight:700;letter-spacing:-.045em;line-height:.98;
+    margin:0;color:var(--paper)}
+  .ex-hero .serif-lead{margin:clamp(14px,2.4vh,22px) 0 0;font-size:clamp(1.7rem,4.4vw,3rem);line-height:1.12}
+  .ex-hero .serif-lead .serif{color:var(--orange)}
+  .ex-hero .stack{list-style:none;margin:clamp(34px,6vh,54px) auto 0;padding:0;max-width:44ch;
+    display:flex;flex-direction:column;gap:.35em}
+  .ex-hero .stack li{font-size:clamp(1.1rem,2vw,1.45rem);line-height:1.4;color:rgba(247,245,240,.72)}
+  .ex-hero .stack li:last-child{color:var(--paper);font-family:var(--serif);font-style:italic;
+    font-size:1.12em;margin-top:.3em}
+  .ex-hero .cue{display:inline-flex;align-items:center;gap:10px;margin-top:clamp(40px,7vh,64px);
+    font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:rgba(247,245,240,.5)}
+  .ex-hero .cue i{width:26px;height:1px;background:rgba(247,245,240,.4)}
+
+  /* ============ TWO ROUTES ============ */
+  .ex-routes{padding-block:clamp(70px,13vh,140px);background:var(--paper)}
+  .ex-routes .routes{display:grid;grid-template-columns:1.15fr .85fr;gap:clamp(28px,4vw,56px);align-items:stretch}
+  .route{background:var(--panel);border:1px solid var(--line);border-radius:22px;
+    padding:clamp(28px,3.4vw,48px);display:flex;flex-direction:column;
+    box-shadow:0 1px 2px rgba(20,19,17,.04),0 24px 60px rgba(20,19,17,.06)}
+  .route h2{font-size:clamp(1.7rem,3.2vw,2.5rem);font-weight:600;letter-spacing:-.03em;line-height:1.06;
+    margin:clamp(16px,2.6vh,22px) 0 .5em;max-width:16ch;color:var(--ink)}
+  .route .lead{font-size:clamp(1.02rem,1.5vw,1.18rem);color:var(--muted);line-height:1.55;margin:0;max-width:40ch}
+
+  /* form */
+  .note{margin-top:clamp(24px,4vh,34px);display:flex;flex-direction:column;gap:clamp(16px,2.4vh,20px)}
+  .field{display:flex;flex-direction:column;gap:8px}
+  .flab{font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+  .field input,.field textarea{font-family:var(--sans);font-size:1rem;color:var(--ink);background:#fff;
+    border:1px solid var(--line);border-radius:12px;padding:13px 15px;width:100%;line-height:1.5;
+    transition:border-color .2s,box-shadow .2s;resize:vertical}
+  .field input::placeholder,.field textarea::placeholder{color:var(--faint)}
+  .field input:focus,.field textarea:focus{outline:none;border-color:var(--orange);
+    box-shadow:0 0 0 3px rgba(232,85,26,.14)}
+  .note .btn{align-self:flex-start;margin-top:clamp(6px,1.4vh,12px);display:inline-flex;align-items:center;gap:.5em;
+    background:var(--orange);color:#141311;font-weight:600;font-size:1.02rem;padding:15px 34px;border-radius:999px;
+    border:0;cursor:pointer;box-shadow:0 10px 28px rgba(232,85,26,.26);transition:transform .2s,box-shadow .2s}
+  .note .btn:hover{transform:translateY(-2px);box-shadow:0 16px 38px rgba(232,85,26,.34)}
+  .note .btn .arr{transition:transform .2s}
+  .note .btn:hover .arr{transform:translateX(4px)}
+
+  /* booking */
+  .book-route{background:#fff}
+  .ghost-btn{align-self:flex-start;margin-top:clamp(24px,4vh,34px);display:inline-flex;align-items:center;gap:.5em;
+    font-weight:600;color:var(--ink);border:1px solid var(--line);border-radius:999px;padding:15px 30px;
+    transition:border-color .2s,background .2s}
+  .ghost-btn:hover{border-color:var(--ink);background:var(--panel)}
+  .ghost-btn .arr{color:var(--orange);transition:transform .2s}
+  .ghost-btn:hover .arr{transform:translateX(4px)}
+  .note-int{margin-top:auto;padding-top:clamp(20px,3vh,28px);font-family:var(--mono);font-size:11.5px;
+    letter-spacing:.06em;color:var(--faint)}
+
+  /* ============ DIRECT ============ */
+  .ex-direct{padding-block:clamp(20px,4vh,40px) clamp(60px,11vh,120px);background:var(--paper)}
+  .direct{border-top:1px solid var(--line);padding-top:clamp(40px,7vh,64px)}
+  .direct h2{font-size:clamp(1.4rem,2.4vw,1.9rem);font-weight:600;letter-spacing:-.025em;line-height:1.1;
+    margin:0 0 clamp(24px,4vh,36px);color:var(--ink)}
+  .channels{display:grid;grid-template-columns:1fr 1fr;gap:clamp(16px,3vw,32px);max-width:720px}
+  .channel{display:flex;flex-direction:column;gap:6px;padding:clamp(18px,2.4vw,26px) 0;
+    border-top:1px solid var(--line)}
+  .channel .ch-k{font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+  .channel .ch-v{font-size:clamp(1.1rem,2vw,1.35rem);font-weight:500;letter-spacing:-.02em;color:var(--orange-deep);
+    transition:color .2s}
+  .channel:hover .ch-v{color:var(--orange)}
+
+  /* ============ REASSURANCE ============ */
+  .ex-reassure{padding-block:clamp(70px,14vh,150px);background:#fff;text-align:center}
+  .reassure{max-width:32ch;margin:0 auto}
+  .reassure .r-lead{font-family:var(--serif);font-style:italic;font-size:clamp(2rem,5vw,3.4rem);
+    letter-spacing:-.01em;line-height:1.06;color:var(--orange);margin:0 0 clamp(20px,3.5vh,30px)}
+  .reassure .r-line{font-size:clamp(1.15rem,2vw,1.5rem);font-weight:500;letter-spacing:-.02em;line-height:1.32;
+    color:var(--ink);margin:.2em 0}
+  .reassure .r-line:last-child{color:var(--muted)}
+
+  /* ============ RESPONSIVE ============ */
+  @media(max-width:860px){
+    .ex-routes .routes{grid-template-columns:1fr}
+    .channels{grid-template-columns:1fr}
+    .note .btn,.ghost-btn{align-self:stretch;justify-content:center}
+  }
+</style>

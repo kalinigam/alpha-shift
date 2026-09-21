@@ -1,0 +1,77 @@
+---
+// Shared layout for internal pages — same chrome as the v5 homepage so every
+// internal page is consistent: nav, white footer, preloader-reveal, scroll reveals.
+import Base from './Base.astro';
+import { brand, footer } from '../data/home.ts';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+const { title, description } = Astro.props;
+---
+
+<Base title={title} description={description}>
+  <header class="nav" id="nav">
+    <div class="wrap">
+      <a class="brand" href={`${import.meta.env.BASE_URL}v5/`}><span class="mark"></span>{brand.name}</a>
+      <nav class="nav-links">
+        <a href={`${import.meta.env.BASE_URL}programmes/`}>Programmes</a>
+        <a href={`${import.meta.env.BASE_URL}meet-chetan/`}>Meet Chetan</a>
+        <a class="cta" href={`${import.meta.env.BASE_URL}explore/`}>Let’s explore <span class="arr">→</span></a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <slot />
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <p class="say" set:html={footer.copyHtml} />
+      <div class="row">
+        <a class="brand" href={`${import.meta.env.BASE_URL}v5/`}><span class="mark"></span>{brand.name}</a>
+        <nav class="flinks">
+          {footer.links.map((l) => (<a href={l.href}>{l.label}</a>))}
+        </nav>
+        <span class="cr">{footer.copyright}</span>
+      </div>
+    </div>
+  </footer>
+</Base>
+
+<style>
+  main{padding-top:var(--nav-h)}
+  /* white footer (matches the homepage) */
+  footer{background:#fff;color:var(--ink)}
+  footer .say{color:var(--ink)}
+  footer .brand{color:var(--ink)}
+  footer .row{border-top:1px solid var(--line)}
+  footer .flinks{color:var(--muted)}
+  footer .flinks a:hover{color:var(--ink)}
+  footer .cr{color:var(--muted)}
+</style>
+
+<script>
+  // reveal main (Base hides it until .loaded) + clear the preloader
+  document.body.classList.add('loaded');
+  const pre = document.getElementById('preloader');
+  if (pre) { pre.classList.add('done'); setTimeout(() => pre.remove(), 700); }
+
+  // nav: solid on scroll + invert (white) over any .is-dark section
+  const nav = document.getElementById('nav');
+  const darks = [...document.querySelectorAll('.is-dark')];
+  function updNav() {
+    const line = Math.min(64, window.innerHeight - 1);
+    const dark = darks.some((s) => { const r = s.getBoundingClientRect(); return r.top <= line && r.bottom > line; });
+    nav.classList.toggle('solid', window.scrollY > 40);
+    nav.classList.toggle('on-dark', dark);
+  }
+  updNav();
+  window.addEventListener('scroll', () => requestAnimationFrame(updNav), { passive: true });
+
+  // scroll reveals for [data-rise]
+  const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: 0.15, rootMargin: '0px 0px -6% 0px' });
+  document.querySelectorAll('[data-rise]').forEach((el) => io.observe(el));
+</script>

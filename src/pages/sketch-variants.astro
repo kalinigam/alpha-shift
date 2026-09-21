@@ -1,0 +1,165 @@
+---
+// Comparison page — three animation treatments for the sketchnotes section,
+// inspired by the Clockout recording (animated warm gradient + floating chips).
+// Separate page; current design untouched. CSS-only ambient animations.
+import Base from '../layouts/Base.astro';
+const sketch = '/sketches/river-crossing.jpeg';
+const alt = 'A person crosses a river on boulders — three coloured ones mark the possible next moves.';
+---
+
+<Base>
+  <header class="nav solid" id="nav">
+    <div class="wrap">
+      <a class="brand" href={`${import.meta.env.BASE_URL}v5/`}><span class="mark"></span>Alpha Shift</a>
+      <nav class="nav-links"><a class="cta" href={`${import.meta.env.BASE_URL}v5/`}>Back to site <span class="arr">→</span></a></nav>
+    </div>
+  </header>
+
+  <main class="cmp">
+    <section class="intro">
+      <div class="wrap">
+        <span class="tag">Sketchnotes · animation options</span>
+        <h1>Three ways to <span class="serif">animate</span> it.</h1>
+        <p>Same section, three treatments of the Clockout-style motion. Scroll through — each card animates on its own.</p>
+      </div>
+    </section>
+
+    <!-- OPTION 1 — gradient card + floating sketch -->
+    <section class="opt">
+      <div class="wrap grid">
+        <div class="copy">
+          <span class="num">Option 01</span>
+          <h2>Gradient card <span class="serif">+ floating sketch</span></h2>
+          <p class="lede">Sometimes, you already know enough. Yet there’s still <em>a missing piece.</em></p>
+          <p class="note">A soft warm mesh-gradient drifts behind the card; the hand-drawn sketch floats gently on top. On-brand, no pink.</p>
+        </div>
+        <div class="card v1">
+          <span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span>
+          <img class="sketch" src={sketch} alt={alt} />
+        </div>
+      </div>
+    </section>
+
+    <!-- OPTION 2 — floating possibility pills -->
+    <section class="opt">
+      <div class="wrap grid">
+        <div class="copy">
+          <span class="num">Option 02</span>
+          <h2>Floating <span class="serif">possibility pills</span></h2>
+          <p class="lede">It could be a conversation. A different perspective. A small decision.</p>
+          <p class="note">The verbatim possibilities bob around the sketch like Clockout’s avatar / name chips, over a quiet gradient.</p>
+        </div>
+        <div class="card v2">
+          <span class="blob b1"></span><span class="blob b2"></span>
+          <img class="sketch" src={sketch} alt={alt} />
+          <span class="pill p1"><i style="background:#4B3F72"></i>a conversation</span>
+          <span class="pill p2"><i style="background:#7A5A0F"></i>a different perspective</span>
+          <span class="pill p3"><i style="background:#3F5B3B"></i>a small decision</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- OPTION 3 — Clockout-style, most literal -->
+    <section class="opt">
+      <div class="wrap grid">
+        <div class="copy">
+          <span class="num">Option 03</span>
+          <h2>Match <span class="serif">Clockout</span></h2>
+          <p class="lede">Or simply seeing something you thought you knew <em>in a different way.</em></p>
+          <p class="note">Closest to the recording: a livelier animated mesh gradient with floating UI chips — a stacked-dot cluster, a “+”, and a name-style chip.</p>
+        </div>
+        <div class="card v3">
+          <span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span><span class="blob b4"></span>
+          <img class="sketch" src={sketch} alt={alt} />
+          <span class="stack s-top">
+            <i style="background:#F3DE9B"></i><i style="background:#B9CFB0"></i><i style="background:#CFC6E6"></i><b>+</b>
+          </span>
+          <span class="chip"><i style="background:#E8551A"></i>a different perspective <em class="x">✕</em></span>
+        </div>
+      </div>
+    </section>
+  </main>
+</Base>
+
+<style>
+  .cmp .wrap{max-width:1180px;margin:0 auto;padding-inline:clamp(22px,5vw,56px)}
+  .cmp .tag{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:12px;
+    letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+  .cmp .tag::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--orange)}
+  .cmp .serif{font-family:var(--serif);font-style:italic;color:var(--orange-deep)}
+
+  .intro{padding:clamp(110px,16vh,180px) 0 clamp(30px,6vh,60px)}
+  .intro h1{font-size:clamp(2.4rem,6vw,4rem);font-weight:600;letter-spacing:-.04em;line-height:1;margin:.5em 0 .4em}
+  .intro p{font-size:clamp(1.05rem,1.6vw,1.25rem);color:var(--muted);max-width:52ch;margin:0}
+
+  .opt{padding:clamp(40px,7vh,80px) 0;border-top:1px solid var(--line)}
+  .opt .grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:clamp(30px,5vw,72px);align-items:center}
+  @media(max-width:860px){.opt .grid{grid-template-columns:1fr;gap:32px}}
+  .opt .num{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--orange-deep)}
+  .opt h2{font-size:clamp(1.7rem,3.4vw,2.6rem);font-weight:600;letter-spacing:-.03em;line-height:1.05;margin:.5em 0 .5em}
+  .opt .lede{font-size:clamp(1.15rem,2vw,1.5rem);color:var(--ink);line-height:1.3;margin:0 0 .7em;max-width:22ch}
+  .opt .note{font-size:1rem;color:var(--muted);line-height:1.55;max-width:42ch;margin:0}
+
+  /* shared card */
+  .card{position:relative;aspect-ratio:5/4;border-radius:24px;overflow:hidden;
+    display:flex;align-items:center;justify-content:center;background:#F1EEE7;
+    box-shadow:0 1px 2px rgba(20,19,17,.04),0 26px 60px rgba(20,19,17,.10)}
+  .card .sketch{position:relative;z-index:3;width:78%;height:auto;mix-blend-mode:multiply;
+    filter:saturate(1.03) contrast(1.02)}
+  .blob{position:absolute;border-radius:50%;filter:blur(46px);mix-blend-mode:multiply;z-index:1}
+
+  /* OPTION 1 — soft warm mesh + bobbing sketch */
+  .v1 .b1{width:60%;height:60%;background:var(--yellow);opacity:.75;left:-12%;top:-10%;animation:drift1 15s ease-in-out infinite}
+  .v1 .b2{width:66%;height:66%;background:var(--lavender);opacity:.7;right:-14%;top:6%;animation:drift2 19s ease-in-out infinite}
+  .v1 .b3{width:56%;height:56%;background:var(--green);opacity:.7;left:16%;bottom:-18%;animation:drift3 17s ease-in-out infinite}
+  .v1 .sketch{animation:bob 6.5s ease-in-out infinite}
+
+  /* OPTION 2 — quiet gradient + floating pills */
+  .v2 .b1{width:70%;height:70%;background:var(--yellow);opacity:.5;left:-16%;top:-12%;animation:drift1 18s ease-in-out infinite}
+  .v2 .b2{width:64%;height:64%;background:var(--lavender);opacity:.5;right:-14%;bottom:-14%;animation:drift2 20s ease-in-out infinite}
+  .v2 .sketch{width:64%}
+  .v2 .pill{position:absolute;z-index:4;display:inline-flex;align-items:center;gap:9px;background:#fff;
+    border:1px solid var(--line);border-radius:999px;padding:9px 16px;font-size:.92rem;font-weight:500;color:var(--ink);
+    white-space:nowrap;box-shadow:0 8px 24px rgba(20,19,17,.12)}
+  .v2 .pill i{width:10px;height:10px;border-radius:50%;flex:none}
+  .v2 .p1{top:11%;left:6%;animation:floatA 5.4s ease-in-out infinite}
+  .v2 .p2{top:24%;right:4%;animation:floatB 6.2s ease-in-out infinite}
+  .v2 .p3{bottom:12%;left:12%;animation:floatA 5.8s ease-in-out infinite .4s}
+
+  /* OPTION 3 — livelier mesh + product-style chips (closest to Clockout) */
+  .v3 .card, .card.v3{background:#F0E7DE}
+  .v3 .b1{width:70%;height:70%;background:var(--orange);opacity:.34;left:-14%;top:-16%;animation:drift1 12s ease-in-out infinite}
+  .v3 .b2{width:66%;height:66%;background:var(--yellow);opacity:.75;right:-16%;top:-6%;animation:drift2 15s ease-in-out infinite}
+  .v3 .b3{width:60%;height:60%;background:var(--lavender);opacity:.7;left:-10%;bottom:-18%;animation:drift3 17s ease-in-out infinite}
+  .v3 .b4{width:64%;height:64%;background:var(--green);opacity:.6;right:-8%;bottom:-16%;animation:drift4 19s ease-in-out infinite}
+  .v3 .sketch{width:60%;animation:bob 7s ease-in-out infinite}
+  .v3 .stack{position:absolute;z-index:4;top:12%;right:8%;display:inline-flex;align-items:center;background:#fff;
+    border-radius:999px;padding:6px 10px 6px 8px;box-shadow:0 8px 24px rgba(20,19,17,.14);animation:floatB 6s ease-in-out infinite}
+  .v3 .stack i{width:26px;height:26px;border-radius:50%;border:2px solid #fff;margin-right:-8px}
+  .v3 .stack b{width:26px;height:26px;border-radius:50%;background:var(--paper);border:2px solid #fff;color:var(--orange);
+    display:grid;place-items:center;font-weight:700;font-size:15px;margin-left:2px}
+  .v3 .chip{position:absolute;z-index:4;bottom:12%;left:7%;display:inline-flex;align-items:center;gap:9px;background:#fff;
+    border-radius:12px;padding:9px 12px;font-size:.92rem;font-weight:500;color:var(--ink);white-space:nowrap;
+    box-shadow:0 8px 24px rgba(20,19,17,.14);animation:floatA 5.6s ease-in-out infinite .3s}
+  .v3 .chip i{width:10px;height:10px;border-radius:50%}
+  .v3 .chip .x{font-style:normal;color:var(--muted);margin-left:4px}
+
+  @keyframes drift1{50%{transform:translate(22%,18%) scale(1.12)}}
+  @keyframes drift2{50%{transform:translate(-18%,14%) scale(1.06)}}
+  @keyframes drift3{50%{transform:translate(16%,-18%) scale(1.12)}}
+  @keyframes drift4{50%{transform:translate(-14%,-12%) scale(1.08)}}
+  @keyframes bob{50%{transform:translateY(-14px)}}
+  @keyframes floatA{50%{transform:translateY(-12px)}}
+  @keyframes floatB{50%{transform:translateY(-16px) translateX(-6px)}}
+
+  @media(prefers-reduced-motion:reduce){
+    .blob,.sketch,.pill,.stack,.chip{animation:none!important}
+  }
+</style>
+
+<script>
+  // Reveal main (the shared layout hides it until .loaded) and clear the preloader.
+  document.body.classList.add('loaded');
+  const pre = document.getElementById('preloader');
+  if (pre) pre.remove();
+</script>
