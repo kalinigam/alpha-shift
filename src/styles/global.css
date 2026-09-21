@@ -137,32 +137,54 @@ main{opacity:1;transition:opacity .6s ease .1s}
   aspect-ratio:1/1;display:flex;align-items:center;justify-content:center}
 .sketch .card img{position:absolute;width:82%;height:auto;mix-blend-mode:multiply;filter:saturate(1.03) contrast(1.02)}
 
+/* ============ MAKE THE SHIFT — grey headline + expanding period wipe ============ */
+.shiftcut{position:relative;height:300vh}
+.shiftcut .pin{position:sticky;top:0;height:100svh;overflow:hidden;display:flex;align-items:center;justify-content:center;background:var(--paper)}
+.shiftline{position:relative;z-index:2;margin:0;display:flex;align-items:baseline;gap:.26em;white-space:nowrap;
+  font-size:clamp(2.8rem,10vw,8rem);font-weight:700;letter-spacing:-.05em;line-height:1;color:var(--ink)}
+.shiftline .serif{font-weight:400}
+.shiftline .period{position:relative;color:var(--ink)}
+.shiftline .period .expander{position:absolute;left:50%;top:64%;width:.5em;height:.5em;border-radius:50%;
+  background:var(--ink);transform:translate(-50%,-50%) scale(0);transform-origin:center;will-change:transform;z-index:5}
+@media(max-width:880px){
+  .shiftcut{height:auto}
+  .shiftcut .pin{position:static;height:auto;min-height:64vh;background:#D3D3D1}
+  .shiftline .period .expander{display:none}
+}
+
 /* ============ MAKE THE SHIFT (dark cinematic horizontal) ============ */
 .mts{position:relative;height:560vh;background:var(--ink);color:var(--paper)}
-.mts .pin{position:sticky;top:0;height:100svh;overflow:hidden;display:flex;flex-direction:column;justify-content:center}
-/* giant ghost words sliding horizontally behind */
-.mts .ghost{position:absolute;top:50%;left:0;transform:translateY(-50%);white-space:nowrap;display:flex;gap:8vw;
-  font-weight:700;letter-spacing:-.04em;font-size:clamp(7rem,22vw,20rem);line-height:1;color:rgba(232,85,26,.10);will-change:transform}
+.mts .pin{position:sticky;top:0;height:100svh;overflow:hidden}
+/* giant ghost words — a solid, visible strip that slides horizontally, sitting on the upper-middle band */
+.mts .ghost{position:absolute;top:42%;left:0;transform:translateY(-50%);white-space:nowrap;display:flex;gap:9vw;
+  font-weight:700;letter-spacing:-.045em;font-size:clamp(5.5rem,15vw,13rem);line-height:1;color:#4a2c17;will-change:transform}
 .mts .ghost b{font-weight:700}
-.mts .fg{position:relative;z-index:2}
-.mts .fg .intro{font-size:clamp(2.2rem,5.2vw,4rem);font-weight:500;letter-spacing:-.035em;line-height:1.1;
-  color:rgba(247,245,240,.42);max-width:18ch;margin:0}
-.mts .fg .intro .serif{color:rgba(247,245,240,.7)}
-.mts .fg .outro{position:absolute;top:50%;right:0;transform:translateY(-50%);text-align:right;
-  font-size:clamp(2.2rem,5.4vw,4.2rem);font-weight:600;letter-spacing:-.04em;line-height:1.05;max-width:18ch;
-  opacity:0}
+/* readable line — a centred block anchored BELOW the ghost strip; intro/outro crossfade in place */
+.mts .fg{position:absolute;left:50%;top:64%;transform:translateX(-50%);width:min(90vw,46ch);z-index:2;text-align:center}
+.mts .fg .intro,.mts .fg .outro{position:absolute;left:0;right:0;top:0;margin:0}
+.mts .fg .intro{font-size:clamp(1.5rem,3.2vw,2.4rem);font-weight:500;letter-spacing:-.03em;line-height:1.22;color:rgba(247,245,240,.62)}
+.mts .fg .intro .serif{color:rgba(247,245,240,.9)}
+.mts .fg .outro{font-size:clamp(1.8rem,3.8vw,2.9rem);font-weight:600;letter-spacing:-.035em;line-height:1.14;opacity:0}
 .mts .fg .outro .serif{color:var(--orange)}
 .mts .bar{position:absolute;left:0;bottom:0;height:3px;width:100%;background:rgba(247,245,240,.14)}
 .mts .bar i{display:block;height:100%;width:0;background:var(--orange)}
-@media(max-width:880px){.mts{height:auto}.mts .pin{position:static;height:auto;padding-block:16vh;gap:10vh}.mts .ghost{display:none}.mts .fg .outro{position:static;transform:none;text-align:left;opacity:1;margin-top:8vh}}
+@media(max-width:880px){
+  .mts{height:auto}
+  .mts .pin{position:static;height:auto;padding-block:16vh}
+  .mts .ghost{display:none}
+  .mts .fg{position:static;transform:none;width:auto;text-align:left}
+  .mts .fg .intro,.mts .fg .outro{position:static}
+  .mts .fg .outro{opacity:1;margin-top:8vh}
+}
 
 /* ============ MANIFESTO (dark tail) ============ */
-.manifesto{background:var(--ink);color:var(--paper);padding-block:clamp(70px,16vh,180px)}
-.manifesto .bullet{display:flex;align-items:center;gap:14px;font-size:clamp(1.6rem,3.6vw,2.6rem);font-weight:600;letter-spacing:-.03em;margin:0 0 clamp(30px,6vh,60px)}
-.manifesto .bullet::before{content:"";width:12px;height:12px;border-radius:50%;background:var(--orange);flex:none}
-.manifesto .big{font-size:clamp(2.4rem,7vw,5.4rem);font-weight:600;letter-spacing:-.045em;line-height:1;margin:0 0 .5em;max-width:15ch}
-.manifesto .big .serif{color:var(--orange)}
-.manifesto .say{font-size:clamp(1.2rem,2.2vw,1.6rem);color:rgba(247,245,240,.6);line-height:1.5;max-width:40ch;margin:0}
+.manifesto{padding-block:clamp(40px,8vh,96px)}
+.manifesto .band{background:radial-gradient(130% 130% at 50% 0%,#FBEEDD 0%,#F6E4CF 58%,#F2DCC0 100%);border-radius:24px;
+  padding:clamp(56px,10vw,120px) clamp(28px,6vw,80px);text-align:center;box-shadow:0 1px 2px rgba(20,19,17,.06)}
+.manifesto .band h2{font-weight:600;letter-spacing:-.04em;line-height:1.04;margin:0 auto .5em;
+  font-size:clamp(2.1rem,5.4vw,4rem);max-width:18ch;color:var(--ink)}
+.manifesto .band h2 .o{color:var(--orange)}
+.manifesto .band p{margin:0 auto;max-width:42ch;color:#5a4a35;font-size:clamp(1.06rem,1.6vw,1.28rem);line-height:1.5}
 
 /* ============ WORK ============ */
 .work{padding-block:clamp(70px,15vh,170px)}

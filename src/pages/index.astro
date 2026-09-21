@@ -82,13 +82,24 @@ const restWords = words(
       </div>
     </section>
 
+    <!-- ============ MAKE THE SHIFT — grey headline + expanding period wipe ============ -->
+    <section class="shiftcut" data-shiftcut>
+      <div class="pin">
+        <h2 class="shiftline">
+          <span class="w">Make</span>
+          <span class="w">the</span>
+          <span class="w serif">shift</span><span class="period">.<span class="expander" data-expander aria-hidden="true"></span></span>
+        </h2>
+      </div>
+    </section>
+
     <!-- ============ MAKE THE SHIFT (dark cinematic horizontal) ============ -->
     <section class="mts is-dark" data-mts>
       <div class="pin">
         <div class="ghost" data-ghost aria-hidden="true">
           <b>A thought</b><b>A possibility</b><b>A decision</b><b>Action</b>
         </div>
-        <div class="wrap fg">
+        <div class="fg">
           <p class="intro" data-mts-intro>Not everything needs a new plan. Sometimes, it needs <span class="serif">a new way of looking</span> at the old one.</p>
           <p class="outro" data-mts-outro>Small shifts can change <span class="serif">what happens next.</span></p>
         </div>
@@ -96,12 +107,13 @@ const restWords = words(
       </div>
     </section>
 
-    <!-- ============ MANIFESTO (dark tail) ============ -->
-    <section class="manifesto is-dark">
+    <!-- ============ MANIFESTO (warm cream panel · no dots) ============ -->
+    <section class="manifesto" id="about">
       <div class="wrap">
-        <p class="bullet rise" data-rise>That’s what Alpha Shift is about.</p>
-        <p class="big rise" data-rise>Creating the space <span class="serif">to explore.</span></p>
-        <p class="say rise" data-rise>To think differently. To see more clearly. To find what matters. And then to do something about it.</p>
+        <div class="band">
+          <h2 class="rise" data-rise>That’s what <span class="o">Alpha Shift</span> is about.</h2>
+          <p class="rise" data-rise>Creating the space to explore. To think differently. To see more clearly. To find what matters. And then to do something about it.</p>
+        </div>
       </div>
     </section>
 
@@ -254,6 +266,26 @@ const restWords = words(
     window.addEventListener('resize', upd);
     upd();
   })();
+
+  /* ---- MAKE THE SHIFT (headline): grey colour-change + expanding period wipe ---- */
+  mm.add('(min-width: 881px) and (prefers-reduced-motion: no-preference)', () => {
+    const pin = document.querySelector('[data-shiftcut] .pin');
+    const words = gsap.utils.toArray('[data-shiftcut] .w, [data-shiftcut] .period');
+    const exp = document.querySelector('[data-expander]');
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: '[data-shiftcut]', start: 'top top', end: 'bottom bottom',
+        pin: '[data-shiftcut] .pin', scrub: true,
+        onUpdate: (self) => nav.classList.toggle('on-dark', self.progress > 0.7),
+      },
+    });
+    // bg animates paper -> grey as you scroll in
+    tl.fromTo(pin, { backgroundColor: '#F7F5F0' }, { backgroundColor: '#D3D3D1', ease: 'none', duration: 0.28 }, 0);
+    // "Make the shift." assembles word by word
+    tl.from(words, { opacity: 0, yPercent: 70, stagger: 0.06, ease: 'power3.out', duration: 0.22 }, 0.05);
+    // hold, then the black period expands to fill the screen (circular wipe into the dark act)
+    tl.to(exp, { scale: 80, ease: 'power2.in', duration: 0.4 }, 0.58);
+  });
 
   /* ---- MAKE THE SHIFT: pin + horizontal ghost words + fg crossfade ---- */
   mm.add('(min-width: 881px) and (prefers-reduced-motion: no-preference)', () => {
