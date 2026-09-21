@@ -5,7 +5,7 @@ const OUT = process.argv[2] || 'balls';
   const b = await puppeteer.launch({ executablePath: EDGE, headless: 'new', args: ['--no-sandbox', '--hide-scrollbars'] });
   const p = await b.newPage();
   await p.setViewport({ width: 1440, height: 900, deviceScaleFactor: 1 });
-  await p.goto('http://localhost:4321/v5/', { waitUntil: 'networkidle0', timeout: 60000 });
+  await p.goto('http://localhost:4321/alpha-shift/v5/', { waitUntil: 'networkidle0', timeout: 60000 });
   await new Promise(r => setTimeout(r, 2500));
   const secs = await p.evaluate(() => {
     const q = s => document.querySelector(s);

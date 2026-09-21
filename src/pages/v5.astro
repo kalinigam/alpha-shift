@@ -33,12 +33,12 @@ import { brand, hero, look, shift, manifesto, work, chetan, closing, footer } fr
         <div class="anim">
           <iframe id="heroAnim" src={`${import.meta.env.BASE_URL}sketches/Thoughts-Animation-hero.html`} title="A hand-drawn journey from tangled thoughts to clarity." loading="eager" scrolling="no"></iframe>
         </div>
-        <div class="grid">
-          <div class="head">
+        <div class="grid rise" data-rise>
+          <div class="head rise-item">
             <p class="kicker">{hero.kickerLine}</p>
-            <h1>{hero.headBefore}<span class="accent">{hero.headAccent}{hero.headAfter}</span></h1>
+            <h1 data-text-rise>{hero.headBefore}<span class="accent">{hero.headAccent}{hero.headAfter}</span></h1>
           </div>
-          <div class="side">
+          <div class="side rise-item">
             <p class="lede" set:html={hero.ledeHtml} />
             <div class="cta">
               <a class="btn" href="#explore">Let’s explore <span class="arr">→</span></a>
@@ -56,7 +56,7 @@ import { brand, hero, look, shift, manifesto, work, chetan, closing, footer } fr
           <span class="gb g1"></span><span class="gb g2"></span><span class="gb g3"></span>
         </div>
         <div class="wrap">
-          <div class="grid">
+          <div class="grid rise" data-rise>
             <div class="txt">
               <div class="fill"><i data-fill></i></div>
               <div class="beat b1" data-beat1>
@@ -80,7 +80,7 @@ import { brand, hero, look, shift, manifesto, work, chetan, closing, footer } fr
     <!-- ============ MAKE THE SHIFT — grey card, black text + circular growing period ============ -->
     <section class="shiftcard" data-shiftcard>
       <div class="pin">
-        <div class="card">
+        <div class="card rise" data-rise>
           <span class="eyebrow">Where the shift begins</span>
           <h2 class="line"><span class="w">Make</span> <span class="w">the</span> <span class="w serif">shift</span><span class="period"><span class="pdot"></span></span></h2>
           <p class="sub">Maybe it starts with a better question. Or a clearer observation. Perhaps you see a possibility you hadn’t considered — <span class="serif">and that’s where the shift begins.</span></p>
@@ -112,7 +112,7 @@ import { brand, hero, look, shift, manifesto, work, chetan, closing, footer } fr
     <section class="aboutcard">
       <div class="wrap">
         <div class="acard rise" data-rise>
-          <h2 class="head" set:html={manifesto.headHtml} />
+          <h2 class="head" data-text-rise set:html={manifesto.headHtml} />
           <p class="sub">{manifesto.para}</p>
         </div>
       </div>
@@ -122,11 +122,11 @@ import { brand, hero, look, shift, manifesto, work, chetan, closing, footer } fr
     <!-- TODO (later, per user): animate small orange balls travelling along the .box border -->
     <section class="hww" id="work">
       <div class="wrap">
-        <div class="box">
+        <div class="box rise" data-rise>
           <aside class="side">
             <div class="side-in">
               <span class="tag">{work.eyebrow}</span>
-              <h2 set:html={work.headHtml} />
+              <h2 data-text-rise set:html={work.headHtml} />
               <a class="cta" href="#explore">Let’s explore <span class="arr">→</span></a>
             </div>
           </aside>
@@ -162,9 +162,9 @@ import { brand, hero, look, shift, manifesto, work, chetan, closing, footer } fr
 
     <!-- ============ CLOSING — dark, centred ============ -->
     <section class="closing2 is-dark" id="explore">
-      <div class="wrap">
+      <div class="wrap rise" data-rise>
         <span class="tag">Ready to explore?</span>
-        <h2>You don’t need to <span class="serif">have it figured out.</span></h2>
+        <h2 data-text-rise>You don’t need to <span class="serif">have it figured out.</span></h2>
         <p>Bring the question. Bring the challenge. Bring the half-formed thought. We’ll start there.</p>
         <div class="ctas">
           <a class="btn" href="#explore">Let’s explore <span class="arr">→</span></a>
@@ -175,7 +175,7 @@ import { brand, hero, look, shift, manifesto, work, chetan, closing, footer } fr
 
     <!-- ============ FOOTER ============ -->
     <footer>
-      <div class="wrap">
+      <div class="wrap rise" data-rise>
         <p class="say" set:html={footer.copyHtml} />
         <div class="row">
           <a class="brand" href="#top"><span class="mark"></span>{brand.name}</a>
@@ -206,6 +206,9 @@ import { brand, hero, look, shift, manifesto, work, chetan, closing, footer } fr
   .hero-a h1{font-size:clamp(2.4rem,5.4vw,4.8rem);font-weight:600;letter-spacing:-.05em;line-height:.94;margin:0}
   .hero-a h1 .accent{color:var(--orange)}
   .hero-a .side{padding-bottom:.35em}
+  .hero-a .grid .rise-item{transition:opacity .55s ease-out,transform .55s ease-out}
+  .hero-a .grid:not(.in) .rise-item{opacity:0;transform:translateY(20px)}
+  .hero-a .grid .rise-item:nth-child(2){transition-delay:.1s}
   .hero-a .lede{font-size:clamp(1.05rem,1.5vw,1.3rem);color:var(--muted);line-height:1.55;max-width:46ch;
     margin:0 0 clamp(22px,3vh,32px)}
   .hero-a .cta{display:flex;flex-wrap:wrap;gap:18px;align-items:center}
@@ -222,6 +225,9 @@ import { brand, hero, look, shift, manifesto, work, chetan, closing, footer } fr
     .hero-a .anim{aspect-ratio:1672/720}
     .hero-a .grid{grid-template-columns:1fr;gap:22px;align-items:start}
     .hero-a h1{font-size:clamp(2.4rem,10vw,3.6rem)}
+  }
+  @media(prefers-reduced-motion:reduce){
+    .hero-a .grid .rise-item{opacity:1!important;transform:none!important;transition:none!important}
   }
 
   /* ===== SKETCH SCENE — big unboxed sketch + two text beats + ambient gradient (kept off the sketch) ===== */
@@ -450,7 +456,26 @@ import { brand, hero, look, shift, manifesto, work, chetan, closing, footer } fr
   updateNav();
   window.addEventListener('scroll', onScroll, { passive: true });
 
-  /* ---- generic rise reveals ---- */
+  /* ---- generic rise reveals + restrained word reveals ---- */
+  document.querySelectorAll('[data-text-rise]').forEach((heading) => {
+    let wordIndex = 0;
+    const walker = document.createTreeWalker(heading, NodeFilter.SHOW_TEXT);
+    const nodes = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+    nodes.forEach((node) => {
+      const frag = document.createDocumentFragment();
+      (node.nodeValue || '').split(/(\s+)/).forEach((part) => {
+        if (!part) return;
+        if (/^\s+$/.test(part)) { frag.append(part); return; }
+        const word = document.createElement('span');
+        word.className = 'text-word';
+        word.style.setProperty('--word-index', String(wordIndex++));
+        word.textContent = part;
+        frag.append(word);
+      });
+      node.replaceWith(frag);
+    });
+  });
   const io = new IntersectionObserver((entries) => {
     entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
   }, { threshold: 0.18, rootMargin: '0px 0px -6% 0px' });
@@ -498,13 +523,6 @@ import { brand, hero, look, shift, manifesto, work, chetan, closing, footer } fr
   const skSec = document.querySelector('[data-sketch]');
   if (skSec) new IntersectionObserver((es) => es.forEach((e) => skSec.classList.toggle('live', e.isIntersecting)),
     { rootMargin: '80px' }).observe(skSec);
-
-  /* ---- hero intro fade-ins ---- */
-  if (!reduce) {
-    gsap.from('.hero-a .anim', { opacity: 0, y: 24, duration: 1.1, ease: 'power2.out', delay: 0.15 });
-    gsap.from('.hero-a h1', { opacity: 0, y: 30, duration: 1, ease: 'power3.out', delay: 0.32 });
-    gsap.from('.hero-a .side', { opacity: 0, y: 20, duration: 0.9, ease: 'power2.out', delay: 0.5 });
-  }
 
   const mm = gsap.matchMedia();
 
