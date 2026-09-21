@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Alpha Shift — v2 (bold / dot-cluster hero)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+<style>
+  :root{--paper:#F7F5F0;--ink:#141311;--muted:#6F6A60;--line:rgba(20,19,17,.14);--orange:#E8551A;--orange-deep:#B23F10;
+    --yellow:#D9B84E;--green:#7FA07A;--lavender:#8C7FB8;--sans:"Geist",system-ui,sans-serif;--mono:"Geist Mono",monospace;--serif:"Instrument Serif",Georgia,serif;--maxw:1180px}
+  *{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);line-height:1.6;-webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}.serif{font-family:var(--serif);font-style:italic}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding-inline:clamp(22px,5vw,56px)}
+  .vbadge{position:fixed;left:12px;bottom:12px;z-index:50;background:var(--ink);color:var(--paper);font-family:var(--mono);font-size:11px;letter-spacing:.1em;padding:7px 12px;border-radius:999px}
+  header.nav{position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--paper) 84%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .nav-in{display:flex;align-items:center;justify-content:space-between;height:70px}
+  .brand b{font-weight:600;letter-spacing:-.03em;font-size:1.08rem}.brand .dot{color:var(--orange)}
+  .menu{display:flex;align-items:center;gap:28px}.menu a.cta{background:var(--orange);color:#141311;font-weight:500;padding:10px 20px;border-radius:999px}
+  .menu .navlink{color:var(--muted);font-size:.9rem}@media(max-width:840px){.menu .navlink{display:none}}
+  .hero{min-height:92svh;display:grid;grid-template-columns:1.08fr .92fr;align-items:center;gap:clamp(20px,3vw,44px);padding-block:clamp(30px,6vh,72px)}
+  @media(max-width:900px){.hero{grid-template-columns:1fr}}
+  .kick{font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin:0 0 30px;display:flex;gap:12px;align-items:center}
+  .kick b{color:var(--ink);font-weight:500}.kick .sep{color:var(--orange)}
+  h1{font-weight:600;letter-spacing:-.05em;line-height:.9;margin:0;font-size:clamp(2.9rem,7.4vw,6.4rem)}h1 .q{color:var(--orange)}
+  .lede{font-size:clamp(1.08rem,1.4vw,1.35rem);color:var(--muted);max-width:44ch;margin:26px 0 0;line-height:1.5}.lede em{font-family:var(--serif);color:var(--ink)}
+  .chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+  .chip{display:inline-flex;align-items:center;gap:9px;padding:9px 16px 9px 13px;border:1px solid var(--line);border-radius:999px;background:#fff;font-size:.94rem}
+  .chip i{width:12px;height:12px;border-radius:50%}
+  .hint{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:12px 0 0}
+  .actions{display:flex;flex-wrap:wrap;gap:14px;margin-top:24px}
+  .btn{display:inline-flex;align-items:center;gap:.5em;padding:15px 28px;border-radius:999px;font-weight:500}
+  .btn-primary{background:var(--orange);color:#141311}.btn-ghost{border:1px solid var(--line)}
+  .cluster-wrap{width:100%;max-width:520px;aspect-ratio:1/1;justify-self:center}.cluster{width:100%;height:100%;overflow:visible}
+  .cluster .c-i{fill:var(--ink)}.cluster .c-o{fill:var(--orange)}.cluster .c-l{fill:var(--lavender)}.cluster .c-g{fill:var(--green)}.cluster .c-y{fill:var(--yellow)}
+  .cnote{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);opacity:.7;margin-top:8px}
+</style>
+</head>
+<body>
+<div class="vbadge">v2 · bold / dot-cluster hero</div>
+<header class="nav"><div class="wrap nav-in">
+  <a class="brand" href="#"><b>Alpha Shift<span class="dot">.</span></b></a>
+  <nav class="menu"><a class="navlink" href="#">About</a><a class="navlink" href="#">How we work</a><a class="navlink" href="#">Meet Chetan</a><a class="cta" href="#">Let’s Explore</a></nav>
+</div></header>
+<main class="hero wrap">
+  <div>
+    <p class="kick"><b>Alpha Shift</b><span class="sep">—</span>Shift Thinking. Shape Success.</p>
+    <h1>Something on<br>your <span class="q">mind</span>?</h1>
+    <p class="lede">Something you’re thinking about. A problem you’re trying to solve. A conversation you’re not quite sure how to have. Or perhaps just a feeling that <em>something needs to move.</em></p>
+    <div class="chips">
+      <span class="chip"><i style="background:var(--orange)"></i>a conversation</span>
+      <span class="chip"><i style="background:var(--lavender)"></i>a different perspective</span>
+      <span class="chip"><i style="background:var(--green)"></i>a small decision</span>
+    </div>
+    <p class="hint">There’s more than one possible next move →</p>
+    <div class="actions"><a class="btn btn-primary" href="#">Let’s explore →</a><a class="btn btn-ghost" href="#">How we work</a></div>
+  </div>
+  <div class="cluster-wrap">
+    <svg class="cluster" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
+      <circle class="c-i" cx="55" cy="30" r="3.2" opacity=".7"/><circle class="c-o" cx="66" cy="34" r="2.4"/><circle class="c-i" cx="48" cy="40" r="4" opacity=".5"/><circle class="c-l" cx="60" cy="44" r="2.7"/><circle class="c-i" cx="72" cy="42" r="3" opacity=".6"/><circle class="c-g" cx="40" cy="50" r="2.2"/><circle class="c-i" cx="52" cy="52" r="5" opacity=".85"/><circle class="c-o" cx="63" cy="55" r="3.4"/><circle class="c-i" cx="75" cy="52" r="2.4" opacity=".5"/><circle class="c-y" cx="46" cy="60" r="2.8"/><circle class="c-i" cx="58" cy="62" r="3" opacity=".6"/><circle class="c-i" cx="69" cy="63" r="4" opacity=".7"/><circle class="c-l" cx="80" cy="58" r="2.1"/><circle class="c-i" cx="36" cy="44" r="1.8" opacity=".4"/><circle class="c-i" cx="84" cy="48" r="2.2" opacity=".45"/><circle class="c-g" cx="50" cy="70" r="2.4"/><circle class="c-i" cx="62" cy="72" r="2" opacity=".5"/><circle class="c-o" cx="73" cy="73" r="3"/><circle class="c-i" cx="43" cy="34" r="1.6" opacity=".4"/><circle class="c-i" cx="30" cy="56" r="1.8" opacity=".35"/><circle class="c-i" cx="88" cy="64" r="1.8" opacity=".4"/><circle class="c-i" cx="57" cy="22" r="1.6" opacity=".4"/><circle class="c-y" cx="67" cy="26" r="1.6"/><circle class="c-i" cx="78" cy="34" r="2" opacity=".5"/><circle class="c-l" cx="34" cy="66" r="2.1"/><circle class="c-i" cx="45" cy="78" r="1.8" opacity=".45"/><circle class="c-i" cx="60" cy="82" r="2.2" opacity=".5"/><circle class="c-g" cx="71" cy="82" r="1.7"/><circle class="c-i" cx="82" cy="74" r="2" opacity=".45"/><circle class="c-i" cx="90" cy="54" r="1.4" opacity=".35"/><circle class="c-i" cx="26" cy="48" r="1.4" opacity=".3"/><circle class="c-o" cx="53" cy="46" r="1.8"/><circle class="c-i" cx="68" cy="48" r="1.8" opacity=".5"/><circle class="c-l" cx="55" cy="58" r="1.8"/><circle class="c-y" cx="48" cy="50" r="1.5"/><circle class="c-i" cx="64" cy="66" r="1.6" opacity=".5"/><circle class="c-i" cx="77" cy="62" r="1.6" opacity=".45"/><circle class="c-g" cx="42" cy="68" r="1.5"/><circle class="c-i" cx="59" cy="36" r="1.6" opacity=".45"/><circle class="c-i" cx="33" cy="38" r="1.3" opacity=".3"/>
+    </svg>
+    <p class="cnote">What’s already known · and the possibilities among it</p>
+  </div>
+</main>
+</body>
+</html>
