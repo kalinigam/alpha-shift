@@ -24,7 +24,60 @@
   --maxw:1280px;
   --gutter:clamp(22px,5vw,64px);
   --nav-h:74px;
+
+  /* ===================== DESIGN SYSTEM (locked v1) ===================== */
+  --surface:#FFFFFF;                 /* white cards */
+  --card:radial-gradient(130% 130% at 72% 24%, #DDDEDD 0%, #C7C9C8 82%); /* Slate — the shift card */
+
+  /* type scale */
+  --fs-display:clamp(2.5rem,5.5vw,4.8rem);
+  --fs-h1:clamp(2.1rem,4.4vw,3.4rem);
+  --fs-h2:clamp(1.75rem,3.2vw,2.5rem);
+  --fs-h3:clamp(1.3rem,2vw,1.65rem);
+  --fs-lede:clamp(1.1rem,1.5vw,1.3rem);
+  --fs-body:1.0625rem;
+  --fs-small:.9375rem;
+  --fs-label:.75rem;
+
+  /* spacing — 4px base */
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:24px;
+  --sp-6:32px; --sp-7:48px; --sp-8:64px; --sp-9:96px; --sp-10:128px;
+  --section:clamp(64px,10vw,140px);
+
+  /* radii */
+  --r-sm:10px; --r-md:18px; --r-lg:26px; --r-pill:999px;
+
+  /* shadows */
+  --sh-sm:0 1px 2px rgba(20,19,17,.05);
+  --sh-md:0 10px 30px rgba(20,19,17,.08);
+  --sh-lg:0 30px 80px rgba(20,19,17,.14);
 }
+
+/* ===================== DESIGN-SYSTEM UTILITIES =====================
+   Opt-in classes — the locked type/color/component primitives. Internal
+   pages build against these; existing v5/index rules are left untouched. */
+.ds-display{font-family:var(--sans);font-size:var(--fs-display);font-weight:600;line-height:.95;letter-spacing:-.045em;color:var(--ink);margin:0;text-wrap:balance}
+.ds-h1{font-family:var(--sans);font-size:var(--fs-h1);font-weight:600;line-height:1.0;letter-spacing:-.035em;color:var(--ink);margin:0;text-wrap:balance}
+.ds-h2{font-family:var(--sans);font-size:var(--fs-h2);font-weight:600;line-height:1.08;letter-spacing:-.03em;color:var(--ink);margin:0;text-wrap:balance}
+.ds-h3{font-family:var(--sans);font-size:var(--fs-h3);font-weight:600;line-height:1.2;letter-spacing:-.02em;color:var(--ink);margin:0}
+.ds-lede{font-family:var(--sans);font-size:var(--fs-lede);font-weight:400;line-height:1.5;color:var(--muted);margin:0}
+.ds-body{font-family:var(--sans);font-size:var(--fs-body);font-weight:400;line-height:1.6;color:var(--ink);margin:0}
+.ds-small{font-family:var(--sans);font-size:var(--fs-small);font-weight:400;line-height:1.5;color:var(--muted);margin:0}
+.ds-label{font-family:var(--mono);font-size:var(--fs-label);font-weight:500;text-transform:uppercase;letter-spacing:.16em;color:var(--muted);margin:0;display:inline-flex;align-items:center;gap:8px}
+.ds-label::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--orange);flex:none}
+.ds-serif{font-family:var(--serif);font-style:italic}
+.ds-accent{color:var(--orange-deep)}
+
+/* component primitives */
+.ds-btn{display:inline-flex;align-items:center;gap:.5em;font-family:var(--sans);font-weight:600;font-size:var(--fs-body);
+  border-radius:var(--r-pill);padding:.7em 1.25em;cursor:pointer;text-decoration:none;border:1px solid transparent;transition:.2s ease}
+.ds-btn--primary{background:var(--orange);color:#141311}
+.ds-btn--primary:hover{background:var(--orange-deep);color:#fff}
+.ds-btn--ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+.ds-btn--ghost:hover{border-color:var(--ink)}
+.ds-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--sh-md);padding:clamp(24px,3vw,40px)}
+.ds-link{color:var(--orange-deep);text-decoration:none;border-bottom:1px solid color-mix(in srgb,var(--orange-deep) 40%,transparent)}
+.ds-link:hover{color:var(--ink);border-color:var(--ink)}
 
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}

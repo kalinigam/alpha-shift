@@ -1,0 +1,191 @@
+---
+// Living design-system reference — renders the locked tokens/utilities from
+// global.css with the real fonts. Single source of truth for the build.
+import Base from '../layouts/Base.astro';
+
+const type = [
+  { cls: 'ds-display', name: 'Display', spec: '2.5→4.8rem · Geist 600 · 0.95 / −0.045em', use: 'Hero headline only', sample: 'Something on your mind?' },
+  { cls: 'ds-h1', name: 'H1', spec: '2.1→3.4rem · Geist 600 · 1.0 / −0.035em', use: 'Page title', sample: 'Make the shift' },
+  { cls: 'ds-h2', name: 'H2', spec: '1.75→2.5rem · Geist 600 · 1.08 / −0.03em', use: 'Section heading', sample: 'How we work' },
+  { cls: 'ds-h3', name: 'H3', spec: '1.3→1.65rem · Geist 600 · 1.2 / −0.02em', use: 'Sub-heading', sample: 'Where the shift begins' },
+  { cls: 'ds-lede', name: 'Lede', spec: '1.1→1.3rem · Geist 400 · muted', use: 'Intro paragraph', sample: 'A problem you’re trying to solve. A conversation you’re not quite sure how to have.' },
+  { cls: 'ds-body', name: 'Body', spec: '17px · Geist 400 · 1.6', use: 'Running text', sample: 'Good answers don’t always come from knowing more. Sometimes they come from looking differently.' },
+  { cls: 'ds-small', name: 'Small', spec: '15px · Geist 400 · muted', use: 'Captions, meta', sample: 'A different way of looking.' },
+  { cls: 'ds-label', name: 'Label', spec: '12px · Geist Mono 500 · +0.16em · UPPER', use: 'Eyebrows / section tags', sample: 'How we work' },
+];
+
+const colors = [
+  { t: '--paper', hex: '#F7F5F0', role: 'Page background', dark: false },
+  { t: '--panel', hex: '#F1EFE9', role: 'Subtle raised surface', dark: false },
+  { t: '--surface', hex: '#FFFFFF', role: 'White cards', dark: false },
+  { t: '--card', hex: '#DDDEDD→#C7C9C8', role: 'Slate — the shift card', dark: false },
+  { t: '--ink', hex: '#141311', role: 'Primary text · dark bg', dark: true },
+  { t: '--muted', hex: '#6F6A60', role: 'Secondary text', dark: true },
+  { t: '--faint', hex: '#B9B5AC', role: 'Tertiary / “unread”', dark: false },
+  { t: '--line', hex: '#E5E2DB', role: 'Hairlines', dark: false },
+  { t: '--orange', hex: '#E8551A', role: 'Loud accent (one only)', dark: true },
+  { t: '--orange-deep', hex: '#B23F10', role: 'Accent text on paper', dark: true },
+];
+
+const space = [
+  { t: '--sp-1', v: '4px' }, { t: '--sp-2', v: '8px' }, { t: '--sp-3', v: '12px' }, { t: '--sp-4', v: '16px' },
+  { t: '--sp-5', v: '24px' }, { t: '--sp-6', v: '32px' }, { t: '--sp-7', v: '48px' }, { t: '--sp-8', v: '64px' },
+  { t: '--sp-9', v: '96px' }, { t: '--sp-10', v: '128px' },
+];
+const radii = [{ t: '--r-sm', v: '10px' }, { t: '--r-md', v: '18px' }, { t: '--r-lg', v: '26px' }, { t: '--r-pill', v: '999px' }];
+const shadows = [{ t: '--sh-sm', label: 'sm' }, { t: '--sh-md', label: 'md' }, { t: '--sh-lg', label: 'lg' }];
+---
+
+<Base title="Alpha Shift — Design System">
+  <main class="ds-doc">
+    <header class="ds-head">
+      <span class="ds-label">Alpha Shift · design system v1</span>
+      <h1 class="ds-display" style="margin-top:var(--sp-5)">The system, locked.</h1>
+      <p class="ds-lede" style="margin-top:var(--sp-5);max-width:60ch">One type scale, one palette, one spacing rhythm.
+        Everything the site and the internal pages are built from. <span class="ds-serif ds-accent">Change it here, it changes everywhere.</span></p>
+    </header>
+
+    <section class="ds-sec">
+      <h2 class="ds-h2">Type scale</h2>
+      <p class="ds-small" style="margin-top:var(--sp-3)">Geist for text & headings · Instrument Serif <span class="ds-serif">italic</span> for emphasis · Geist Mono for labels.</p>
+      <div class="ds-rows">
+        {type.map((t) => (
+          <div class="ds-row">
+            <div class="ds-row-meta">
+              <span class="ds-label" style="color:var(--ink)">{t.name}</span>
+              <p class="ds-small" style="margin-top:6px">{t.spec}</p>
+              <p class="ds-small" style="color:var(--faint)">{t.use}</p>
+            </div>
+            <div class="ds-row-sample"><span class={t.cls}>{t.sample}</span></div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="ds-sec">
+      <h2 class="ds-h2">Color</h2>
+      <p class="ds-small" style="margin-top:var(--sp-3)">Warm neutrals + a single loud accent. Pastels appear only inside artwork, never as UI chrome.</p>
+      <div class="ds-swatches">
+        {colors.map((c) => (
+          <div class="ds-swatch">
+            <div class="ds-chip" style={`background:${c.hex.includes('→') ? 'var(--card)' : c.hex}`}></div>
+            <div>
+              <p class="ds-body" style="font-weight:600">{c.t}</p>
+              <p class="ds-small" style="font-family:var(--mono)">{c.hex}</p>
+              <p class="ds-small" style="color:var(--faint)">{c.role}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="ds-sec">
+      <h2 class="ds-h2">Spacing</h2>
+      <p class="ds-small" style="margin-top:var(--sp-3)">4px base scale · section rhythm <code>--section</code> = clamp(64px, 10vw, 140px).</p>
+      <div class="ds-space">
+        {space.map((s) => (
+          <div class="ds-space-row">
+            <span class="ds-small" style="font-family:var(--mono);width:120px">{s.t}</span>
+            <span class="ds-bar" style={`width:${s.v}`}></span>
+            <span class="ds-small" style="color:var(--faint)">{s.v}</span>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="ds-sec ds-two">
+      <div>
+        <h2 class="ds-h2">Radii</h2>
+        <div class="ds-radii">
+          {radii.map((r) => (
+            <div class="ds-radii-item">
+              <div class="ds-radbox" style={`border-radius:${r.v === '999px' ? '999px' : r.v}`}></div>
+              <p class="ds-small" style="font-family:var(--mono);margin-top:var(--sp-3)">{r.t} · {r.v}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div>
+        <h2 class="ds-h2">Shadows</h2>
+        <div class="ds-shadows">
+          {shadows.map((s) => (
+            <div class="ds-shadow-item" style={`box-shadow:var(${s.t})`}>
+              <span class="ds-small" style="font-family:var(--mono)">{s.t}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="ds-sec">
+      <h2 class="ds-h2">Components</h2>
+      <div class="ds-comps">
+        <div class="ds-comp">
+          <span class="ds-label" style="color:var(--ink)">Buttons</span>
+          <div class="ds-comp-row">
+            <a class="ds-btn ds-btn--primary" href="#">Let’s explore <span aria-hidden="true">→</span></a>
+            <a class="ds-btn ds-btn--ghost" href="#">Meet Chetan</a>
+          </div>
+        </div>
+        <div class="ds-comp">
+          <span class="ds-label" style="color:var(--ink)">Eyebrow</span>
+          <div class="ds-comp-row"><span class="ds-label">Where the shift begins</span></div>
+        </div>
+        <div class="ds-comp">
+          <span class="ds-label" style="color:var(--ink)">Link</span>
+          <div class="ds-comp-row"><p class="ds-body">Read <a class="ds-link" href="#">how we work</a> with you.</p></div>
+        </div>
+        <div class="ds-comp" style="grid-column:1/-1">
+          <span class="ds-label" style="color:var(--ink)">Card</span>
+          <div class="ds-card" style="max-width:420px;margin-top:var(--sp-4)">
+            <span class="ds-label">Card surface</span>
+            <h3 class="ds-h3" style="margin-top:var(--sp-3)">A raised paper panel</h3>
+            <p class="ds-body" style="margin-top:var(--sp-3)">Surface, hairline border, <code>--r-lg</code> radius, <code>--sh-md</code> shadow.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</Base>
+
+<style>
+  .ds-doc{max-width:var(--maxw);margin:0 auto;padding:calc(var(--nav-h) + var(--sp-8)) var(--gutter) var(--sp-10);background:var(--paper)}
+  .ds-head{padding-bottom:var(--sp-8);border-bottom:1px solid var(--line)}
+  .ds-sec{padding-block:var(--sp-8);border-bottom:1px solid var(--line)}
+  .ds-sec > .ds-h2 + p{margin-bottom:var(--sp-6)}
+
+  .ds-rows{margin-top:var(--sp-6);display:flex;flex-direction:column;gap:var(--sp-5)}
+  .ds-row{display:grid;grid-template-columns:220px 1fr;gap:var(--sp-6);align-items:baseline;padding-bottom:var(--sp-5);border-bottom:1px solid var(--line-soft)}
+  .ds-row-meta p{margin:0}
+  .ds-row-sample{overflow:hidden}
+  @media(max-width:720px){.ds-row{grid-template-columns:1fr;gap:var(--sp-3)}}
+
+  .ds-swatches{margin-top:var(--sp-5);display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:var(--sp-5)}
+  .ds-swatch{display:flex;gap:var(--sp-4);align-items:center}
+  .ds-swatch p{margin:0}
+  .ds-chip{width:52px;height:52px;border-radius:var(--r-sm);border:1px solid var(--line);flex:none}
+
+  .ds-space{margin-top:var(--sp-5);display:flex;flex-direction:column;gap:var(--sp-3)}
+  .ds-space-row{display:flex;align-items:center;gap:var(--sp-4)}
+  .ds-bar{height:16px;background:var(--orange);border-radius:3px;flex:none}
+
+  .ds-two{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-8)}
+  @media(max-width:720px){.ds-two{grid-template-columns:1fr}}
+  .ds-radii{margin-top:var(--sp-5);display:flex;gap:var(--sp-5);flex-wrap:wrap}
+  .ds-radbox{width:84px;height:84px;background:var(--panel);border:1px solid var(--line)}
+  .ds-shadows{margin-top:var(--sp-5);display:flex;gap:var(--sp-6);flex-wrap:wrap}
+  .ds-shadow-item{width:120px;height:84px;background:var(--surface);border-radius:var(--r-md);display:flex;align-items:center;justify-content:center}
+
+  .ds-comps{margin-top:var(--sp-5);display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-7)}
+  @media(max-width:720px){.ds-comps{grid-template-columns:1fr}}
+  .ds-comp-row{margin-top:var(--sp-4);display:flex;gap:var(--sp-4);align-items:center;flex-wrap:wrap}
+
+  code{font-family:var(--mono);font-size:.86em;background:var(--panel);border:1px solid var(--line);border-radius:5px;padding:1px 6px}
+</style>
+
+<script>
+  // reveal main (Base hides it until .loaded) + clear the preloader
+  document.body.classList.add('loaded');
+  const pre = document.getElementById('preloader');
+  if (pre) { pre.classList.add('done'); setTimeout(() => pre.remove(), 400); }
+</script>
